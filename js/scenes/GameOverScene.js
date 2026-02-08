@@ -356,7 +356,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Red CV section
         this.add.image(CFG.WIDTH / 2 + 40, statsY, 'cv-bad').setScale(0.8);
-        this.add.text(CFG.WIDTH / 2 + 60, statsY, 'Shot: ' + badHit + '  Missed: ' + badMissed, statStyle).setOrigin(0, 0.5);
+        this.add.text(CFG.WIDTH / 2 + 60, statsY, 'Hit: ' + badHit + '  Missed: ' + badMissed, statStyle).setOrigin(0, 0.5);
 
         // Save score
         const company = this.registry.get('companyName') || '';
