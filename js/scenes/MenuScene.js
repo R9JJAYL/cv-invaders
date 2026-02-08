@@ -58,14 +58,6 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             fontStyle: 'normal'
         }).setOrigin(1, 0.5).setAlpha(0.4);
 
-        // Tagline below powered-by
-        this.taglineText = this.add.text(CFG.WIDTH / 2, subtitleY + 16, 'The best tool for managing application volume', {
-            fontFamily: 'Roboto',
-            fontSize: '11px',
-            color: CFG.COLORS.TEXT_SECONDARY,
-            fontStyle: 'italic'
-        }).setOrigin(0.5, 0.5).setAlpha(0.35);
-
         // Form inputs — name & company side by side, type below
         const formHTML = '<div class="menu-form">' +
             '<div class="form-row">' +
@@ -211,12 +203,6 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             alpha: 0.85,
             duration: 150
         });
-        this.tweens.add({
-            targets: this.taglineText,
-            alpha: 0.65,
-            duration: 150
-        });
-
         this.cameras.main.fadeOut(600);
         this.time.delayedCall(600, () => {
             this.scene.start('TutorialScene');
