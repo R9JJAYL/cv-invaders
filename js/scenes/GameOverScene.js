@@ -210,9 +210,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 const isPlayer = entry.name === name && entry.score === score;
                 const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
                 const typeClass = entry.type === 'agency' ? 'type-agency' : '';
-                const rowClass = isPlayer ? 'lb-highlight' : '';
+                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
+                const podiumRow = i < 3 ? ' lb-podium' : '';
+                const rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
                 return '<tr class="' + rowClass + '">' +
-                    '<td class="lb-cell lb-rank">' + (i + 1) + '.</td>' +
+                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
                     '<td class="lb-cell lb-name">' + entry.name + '</td>' +
                     '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
                     '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +

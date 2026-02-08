@@ -191,7 +191,8 @@ body {
 
 /* Leaderboard table */
 .leaderboard-table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
     font-family: 'Roboto', sans-serif;
 }
@@ -199,18 +200,20 @@ body {
 .lb-title {
     font-size: 13px;
     color: #FFFFFF;
-    padding: 0 0 4px 0;
+    padding: 0 0 6px 0;
     text-align: center;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .lb-head {
     font-size: 9px;
     color: #AAAAAA;
-    opacity: 0.5;
-    padding: 0 0 3px 0;
-    font-weight: normal;
-    border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+    opacity: 0.6;
+    padding: 4px 0;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.4);
+    letter-spacing: 0.5px;
 }
 
 .lb-head.lb-rank { text-align: left; width: 28px; }
@@ -219,18 +222,37 @@ body {
 .lb-head.lb-type { text-align: left; width: 70px; }
 .lb-head.lb-score { text-align: right; width: 60px; }
 
+/* Alternating row backgrounds */
+.leaderboard-table tbody tr {
+    transition: background 0.2s ease;
+}
+.leaderboard-table tbody tr:nth-child(odd) {
+    background: rgba(155, 89, 182, 0.06);
+}
+.leaderboard-table tbody tr:hover {
+    background: rgba(155, 89, 182, 0.15);
+}
+
 .lb-cell {
     font-size: 11px;
-    padding: 2px 0;
+    padding: 3px 0;
     color: #AAAAAA;
 }
 
 .lb-cell.lb-rank { color: #AAAAAA; opacity: 0.6; }
-.lb-cell.lb-name { color: #AAAAAA; }
+.lb-cell.lb-name { color: #CCCCCC; }
 .lb-cell.lb-company { opacity: 0.6; }
 .lb-cell.lb-type { opacity: 0.7; }
 .lb-cell.lb-type.type-agency { color: #9B59B6; }
-.lb-cell.lb-score { text-align: right; color: #FFFFFF; }
+.lb-cell.lb-score { text-align: right; color: #FFFFFF; font-size: 12px; font-weight: 500; }
+
+/* Podium ranks — gold, silver, bronze */
+.lb-cell.lb-rank.lb-gold { color: #FFD700; opacity: 1; font-weight: bold; }
+.lb-cell.lb-rank.lb-silver { color: #C0C0C0; opacity: 1; font-weight: bold; }
+.lb-cell.lb-rank.lb-bronze { color: #CD7F32; opacity: 1; font-weight: bold; }
+
+/* Top 3 score glow */
+.lb-podium .lb-cell.lb-score { text-shadow: 0 0 6px rgba(155, 89, 182, 0.5); }
 
 /* Player highlight row */
 .lb-highlight .lb-cell { color: #9B59B6; font-weight: bold; opacity: 1; }

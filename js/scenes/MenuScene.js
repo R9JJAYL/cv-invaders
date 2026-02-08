@@ -141,8 +141,10 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             allScores.slice(0, 10).map((entry, i) => {
                 const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
                 const typeClass = entry.type === 'agency' ? 'type-agency' : '';
-                return '<tr>' +
-                    '<td class="lb-cell lb-rank">' + (i + 1) + '.</td>' +
+                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
+                const podiumRow = i < 3 ? ' lb-podium' : '';
+                return '<tr class="' + podiumRow + '">' +
+                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
                     '<td class="lb-cell lb-name">' + entry.name + '</td>' +
                     '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
                     '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
