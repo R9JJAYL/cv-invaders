@@ -51,7 +51,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Headline — the game tie-in
-        const headline = this.add.text(cx, cy - 200, 'Drowning in CVs?', {
+        const headline = this.add.text(cx, cy - 200, 'Drowning in CVs...?', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
@@ -69,16 +69,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(tagline);
-
-        // Sub-tagline
-        const subTagline = this.add.text(cx, cy - 132, "That's why teams use First.", {
-            fontFamily: 'Roboto',
-            fontSize: '12px',
-            color: CFG.COLORS.PURPLE_ACCENT_HEX,
-            align: 'center',
-            resolution: 2
-        }).setOrigin(0.5).setAlpha(0);
-        adElements.push(subTagline);
 
         // Stat pills — key product highlights
         const stats = [
@@ -111,7 +101,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(divider);
 
         // Integrations label
-        const intLabel = this.add.text(cx, cy + 5, 'Plugs into', {
+        const intLabel = this.add.text(cx, cy + 5, 'Plug into', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: CFG.COLORS.TEXT_SECONDARY,
@@ -240,14 +230,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             delay: 1400
         });
 
-        // 2b. Sub-tagline fades in after a pause
-        this.tweens.add({
-            targets: subTagline,
-            alpha: 0.6,
-            duration: 400,
-            delay: 2400
-        });
-
         // 3. Stats count in one at a time
         statTexts.forEach((t, i) => {
             this.tweens.add({
@@ -366,21 +348,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             ).setAlpha(Phaser.Math.FloatBetween(0.2, 0.6));
         }
 
-        // Title + score on same row
-        const titleText = bossDefeated ? 'MISSION COMPLETE!' : 'GAME OVER';
-        const titleColor = bossDefeated ? '#00FF00' : '#FF4444';
-        this.add.text(CFG.WIDTH / 2, 22, titleText, {
-            fontFamily: 'Courier New',
-            fontSize: '28px',
-            color: titleColor,
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-
         // Score with count-up
         const grade = this.getGrade(score);
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 58, '0', {
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 22, 'SCORE: 0', {
             fontFamily: 'Courier New',
-            fontSize: '36px',
+            fontSize: '28px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
@@ -391,15 +363,15 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             duration: 1500,
             ease: 'Power2',
             onUpdate: (tween) => {
-                this.scoreDisplay.setText(Math.floor(tween.getValue()).toString());
+                this.scoreDisplay.setText('SCORE: ' + Math.floor(tween.getValue()).toString());
             }
         });
 
-        // Grade title
+        // Grade + title
         this.time.delayedCall(1600, () => {
-            this.add.text(CFG.WIDTH / 2, 88, grade.title, {
+            this.add.text(CFG.WIDTH / 2, 55, 'GRADE ' + grade.grade + ': ' + grade.title, {
                 fontFamily: 'Courier New',
-                fontSize: '16px',
+                fontSize: '14px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
             }).setOrigin(0.5);
@@ -410,7 +382,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = 118;
+        const statsY = 100;
         const cx = CFG.WIDTH / 2;
 
         const innerH = 18;
@@ -464,9 +436,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             const gw = groupWidths[gi];
             const outerTop = statsY - outerH / 2;
 
-            // Outer container pill
-            pillGfx.fillStyle(group.color, 0.06);
-            pillGfx.lineStyle(1, group.color, 0.15);
+            // Outer container pill — neutral glass, no colour tint
+            pillGfx.fillStyle(0xFFFFFF, 0.06);
+            pillGfx.lineStyle(1, 0xFFFFFF, 0.12);
             pillGfx.fillRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
             pillGfx.strokeRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
 
@@ -638,7 +610,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, 330).createFromHTML(statsHTML);
+        this.add.dom(CFG.WIDTH / 2, 320).createFromHTML(statsHTML);
     }
 
     getGrade(score) {
