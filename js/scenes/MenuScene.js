@@ -46,7 +46,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
 
         // Subtitle — "powered by" + First logo, right-aligned to end of INVADERS
         const subtitleY = 50 + titleCV.height / 2 + 8;
-        const rightEdge = titleCV.x + totalW - 20;
+        const rightEdge = titleCV.x + totalW - 10;
         const logo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
             .setOrigin(1, 0.5)
             .setScale(0.34)
