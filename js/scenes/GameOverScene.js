@@ -8,13 +8,13 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     create() {
         const CFG = window.CVInvaders.Config;
 
-        // Show the First ad interstitial first, then the results
-        this.showFirstAd(CFG, () => {
-            this.showResults(CFG);
-        });
+        // Build both screens: ad at top, results below
+        // Then scroll down to reveal results like a page scroll
+        this.showFirstAd(CFG);
+        this.showResults(CFG, CFG.HEIGHT); // offset results one screen below
     }
 
-    showFirstAd(CFG, onComplete) {
+    showFirstAd(CFG) {
         this.cameras.main.setBackgroundColor(CFG.COLORS.BG_HEX);
         const adElements = [];
         const cx = CFG.WIDTH / 2;
@@ -61,7 +61,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(headline);
 
         // Tagline from First
-        const tagline = this.add.text(cx, cy - 155, 'Swap CV sifting for candidate calls.', {
+        const tagline = this.add.text(cx, cy - 155, 'Maybe it\'s time to swap CV sifting for candidate calls.', {
             fontFamily: 'Roboto',
             fontSize: '15px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -72,7 +72,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Stat pills — key product highlights
         const stats = [
-            { val: '90%', label: 'less screening time' },
+            { val: '90%', label: 'less CV sift' },
             { val: '3x', label: 'more roles handled' },
             { val: '4.6/5', label: 'candidate rating' }
         ];
@@ -320,56 +320,58 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // After 10 seconds, fade out and show results
+        // After 10 seconds, scroll down to results like someone is scrolling
         this.time.delayedCall(10000, () => {
             this.tweens.add({
-                targets: adElements,
-                alpha: 0,
-                duration: 400,
-                onComplete: () => {
-                    adElements.forEach(el => el.destroy());
-                    onComplete();
-                }
+                targets: this.cameras.main,
+                scrollY: CFG.HEIGHT,
+                duration: 800,
+                ease: 'Power2.easeInOut'
             });
         });
     }
 
-    showResults(CFG) {
+    showResults(CFG, yOff) {
+        yOff = yOff || 0;
         const bossDefeated = this.registry.get('bossDefeated');
         const score = this.registry.get('score') || 0;
         const name = this.registry.get('playerName') || 'Recruiter';
 
-        // Background stars (fresh set)
+        // Background stars (in the results area)
         for (let i = 0; i < 40; i++) {
             this.add.image(
                 Phaser.Math.Between(0, CFG.WIDTH),
-                Phaser.Math.Between(0, CFG.HEIGHT),
+                yOff + Phaser.Math.Between(0, CFG.HEIGHT),
                 'star'
             ).setAlpha(Phaser.Math.FloatBetween(0.2, 0.6));
         }
 
-        // Score with count-up
+        // Score with count-up — delay until page scrolls into view
         const grade = this.getGrade(score);
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 22, 'SCORE: 0', {
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 22, 'SCORE: 0', {
             fontFamily: 'Courier New',
             fontSize: '28px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        this.tweens.addCounter({
-            from: 0,
-            to: score,
-            duration: 1500,
-            ease: 'Power2',
-            onUpdate: (tween) => {
-                this.scoreDisplay.setText('SCORE: ' + Math.floor(tween.getValue()).toString());
-            }
+        // Start score count-up after scroll completes (10s ad + 0.8s scroll)
+        const scoreDelay = yOff > 0 ? 10800 : 0;
+        this.time.delayedCall(scoreDelay, () => {
+            this.tweens.addCounter({
+                from: 0,
+                to: score,
+                duration: 1500,
+                ease: 'Power2',
+                onUpdate: (tween) => {
+                    this.scoreDisplay.setText('SCORE: ' + Math.floor(tween.getValue()).toString());
+                }
+            });
         });
 
-        // Grade + title
-        this.time.delayedCall(1600, () => {
-            this.add.text(CFG.WIDTH / 2, 55, 'GRADE ' + grade.grade + ': ' + grade.title, {
+        // Grade + title — delayed after score count-up
+        this.time.delayedCall(scoreDelay + 1600, () => {
+            this.add.text(CFG.WIDTH / 2, yOff + 55, 'GRADE ' + grade.grade + ': ' + grade.title, {
                 fontFamily: 'Courier New',
                 fontSize: '14px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -382,7 +384,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = 100;
+        const statsY = yOff + 100;
         const cx = CFG.WIDTH / 2;
 
         const innerH = 18;
@@ -436,11 +438,18 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             const gw = groupWidths[gi];
             const outerTop = statsY - outerH / 2;
 
-            // Outer container pill — neutral glass, no colour tint
-            pillGfx.fillStyle(0xFFFFFF, 0.06);
-            pillGfx.lineStyle(1, 0xFFFFFF, 0.12);
+            // Outer container pill — glass-pill style matching leaderboard
+            // Glow shadow layer
+            pillGfx.fillStyle(0x6B3FA0, 0.15);
+            pillGfx.fillRoundedRect(ox - 1, outerTop - 1, gw.outerW + 2, outerH + 2, outerR + 1);
+            // Main fill — dark purple translucent
+            pillGfx.fillStyle(0x1A0A2E, 0.45);
+            pillGfx.lineStyle(1, 0x9B59B6, 0.25);
             pillGfx.fillRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
             pillGfx.strokeRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
+            // Inset highlight — top edge
+            pillGfx.lineStyle(1, 0xFFFFFF, 0.05);
+            pillGfx.strokeRoundedRect(ox + 1, outerTop + 1, gw.outerW - 2, outerH - 2, outerR - 1);
 
             // CV icon inside outer pill, vertically centred
             this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(0.6).setAlpha(0.8);
@@ -451,9 +460,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 const iw = gw.maxInnerW;
                 const iy = outerTop + outerPad + si * (innerH + innerGap) + innerH / 2;
 
-                // Inner capsule background
-                pillGfx.fillStyle(stat.color, 0.08);
-                pillGfx.lineStyle(1, stat.color, 0.2);
+                // Inner capsule — purple-tinted glass to match
+                pillGfx.fillStyle(0x9B59B6, 0.06);
+                pillGfx.lineStyle(1, 0x9B59B6, 0.12);
                 pillGfx.fillRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
                 pillGfx.strokeRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
 
@@ -476,15 +485,15 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Leaderboard — exact copy of MenuScene.renderTables
         const allScores = this.getLeaderboard();
-        this.renderTables(CFG, allScores, name, score);
+        this.renderTables(CFG, allScores, name, score, yOff);
 
-        // Buttons
-        const btnY = 546;
+        // Buttons — all on one line
+        const btnY = yOff + 546;
 
         // Play Again
-        const playBtn = this.add.text(CFG.WIDTH / 2 - 120, btnY, '[ PLAY AGAIN ]', {
+        const playBtn = this.add.text(CFG.WIDTH / 2 - 210, btnY, '[ PLAY AGAIN ]', {
             fontFamily: 'Courier New',
-            fontSize: '16px',
+            fontSize: '13px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -511,10 +520,24 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // Share to LinkedIn
-        const shareBtn = this.add.text(CFG.WIDTH / 2 + 140, btnY, '[ SHARE ON LINKEDIN ]', {
+        // Watch Demo
+        const demoBtn = this.add.text(CFG.WIDTH / 2, btnY, '[ 6 MIN DEMO OF FIRST ]', {
             fontFamily: 'Courier New',
-            fontSize: '16px',
+            fontSize: '13px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
+        demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
+        demoBtn.on('pointerdown', () => {
+            window.open('https://www.first.cx/demo', '_blank');
+        });
+
+        // Share to LinkedIn
+        const shareBtn = this.add.text(CFG.WIDTH / 2 + 210, btnY, '[ SHARE ON LINKEDIN ]', {
+            fontFamily: 'Courier New',
+            fontSize: '13px',
             color: '#0A66C2',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -544,10 +567,10 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        this.cameras.main.fadeIn(400);
     }
 
-    renderTables(CFG, allScores, playerName, playerScore) {
+    renderTables(CFG, allScores, playerName, playerScore, yOff) {
+        yOff = yOff || 0;
         const agency = allScores.filter(e => e.type === 'agency');
         const internal = allScores.filter(e => e.type === 'internal');
         const agencyTotal = agency.reduce((s, e) => s + e.score, 0);
@@ -610,7 +633,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, 320).createFromHTML(statsHTML);
+        this.add.dom(CFG.WIDTH / 2, yOff + 320).createFromHTML(statsHTML);
     }
 
     getGrade(score) {
