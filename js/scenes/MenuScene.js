@@ -74,7 +74,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.formInput = this.add.dom(CFG.WIDTH / 2, 145).createFromHTML(formHTML);
 
         // Start button
-        this.startBtn = this.add.text(CFG.WIDTH / 2, 220, '[ CLICK TO START MISSION ]', {
+        this.startBtn = this.add.text(CFG.WIDTH / 2, 213, '[ CLICK TO START MISSION ]', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
