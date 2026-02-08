@@ -144,7 +144,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 this.scoreManager.combo = 0;
                 this.scoreManager.maxCombo = 0;
                 this.scoreManager.goodCVsCaught = 0;
+                this.scoreManager.goodCVsMissed = 0;
                 this.scoreManager.badCVsShot = 0;
+                this.scoreManager.badCVsMissed = 0;
                 this.registry.set('score', 0);
                 this.bossPhase = true;
                 this.bossSpawnTimer = 0;
@@ -222,7 +224,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.scoreManager.combo = 0;
         this.scoreManager.maxCombo = 0;
         this.scoreManager.goodCVsCaught = 0;
+        this.scoreManager.goodCVsMissed = 0;
         this.scoreManager.badCVsShot = 0;
+        this.scoreManager.badCVsMissed = 0;
         this.registry.set('score', 0);
         this.waveManager.startWave(0);
     }

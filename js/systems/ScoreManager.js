@@ -7,7 +7,9 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         this.combo = 0;
         this.maxCombo = 0;
         this.goodCVsCaught = 0;
+        this.goodCVsMissed = 0;
         this.badCVsShot = 0;
+        this.badCVsMissed = 0;
         this.enemiesDefeated = 0;
     }
 
@@ -60,11 +62,15 @@ window.CVInvaders.ScoreManager = class ScoreManager {
     }
 
     missGoodCV() {
+        this.goodCVsMissed++;
+        this.scene.registry.set('goodCVsMissed', this.goodCVsMissed);
         this.resetCombo();
         return this.addScore(window.CVInvaders.Config.SCORE.MISS_GOOD);
     }
 
     badCVReachesBottom() {
+        this.badCVsMissed++;
+        this.scene.registry.set('badCVsMissed', this.badCVsMissed);
         this.resetCombo();
         return this.addScore(window.CVInvaders.Config.SCORE.BAD_REACHES_BOTTOM);
     }

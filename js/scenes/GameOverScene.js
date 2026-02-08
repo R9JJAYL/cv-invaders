@@ -339,15 +339,24 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).setOrigin(0.5);
         });
 
-        // Compact stats row — single line
-        const goodCVs = this.registry.get('goodCVsCaught') || 0;
-        const badCVs = this.registry.get('badCVsShot') || 0;
-        const maxCombo = this.registry.get('maxCombo') || 0;
-        this.add.text(CFG.WIDTH / 2, 110, 'Good: ' + goodCVs + '  |  Bad: ' + badCVs + '  |  Combo: ' + maxCombo, {
-            fontFamily: 'Courier New',
-            fontSize: '10px',
-            color: CFG.COLORS.TEXT_SECONDARY
-        }).setOrigin(0.5);
+        // Stats row — green CV hit/missed | red CV hit/missed
+        const goodHit = this.registry.get('goodCVsCaught') || 0;
+        const goodMissed = this.registry.get('goodCVsMissed') || 0;
+        const badHit = this.registry.get('badCVsShot') || 0;
+        const badMissed = this.registry.get('badCVsMissed') || 0;
+        const statsY = 112;
+        const statStyle = { fontFamily: 'Courier New', fontSize: '11px', color: CFG.COLORS.TEXT_SECONDARY };
+
+        // Green CV section
+        this.add.image(CFG.WIDTH / 2 - 155, statsY, 'cv-good').setScale(0.8);
+        this.add.text(CFG.WIDTH / 2 - 135, statsY, 'Caught: ' + goodHit + '  Missed: ' + goodMissed, statStyle).setOrigin(0, 0.5);
+
+        // Divider
+        this.add.text(CFG.WIDTH / 2 + 15, statsY, '|', statStyle).setOrigin(0.5, 0.5);
+
+        // Red CV section
+        this.add.image(CFG.WIDTH / 2 + 40, statsY, 'cv-bad').setScale(0.8);
+        this.add.text(CFG.WIDTH / 2 + 60, statsY, 'Shot: ' + badHit + '  Missed: ' + badMissed, statStyle).setOrigin(0, 0.5);
 
         // Save score
         const company = this.registry.get('companyName') || '';
@@ -378,7 +387,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 this.registry.set('score', 0);
                 this.registry.set('health', CFG.PLAYER_HEALTH);
                 this.registry.set('goodCVsCaught', 0);
+                this.registry.set('goodCVsMissed', 0);
                 this.registry.set('badCVsShot', 0);
+                this.registry.set('badCVsMissed', 0);
                 this.registry.set('enemiesDefeated', 0);
                 this.registry.set('maxCombo', 0);
                 this.registry.set('bossTime', 0);
@@ -410,7 +421,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 this.registry.set('score', 0);
                 this.registry.set('health', CFG.PLAYER_HEALTH);
                 this.registry.set('goodCVsCaught', 0);
+                this.registry.set('goodCVsMissed', 0);
                 this.registry.set('badCVsShot', 0);
+                this.registry.set('badCVsMissed', 0);
                 this.registry.set('enemiesDefeated', 0);
                 this.registry.set('maxCombo', 0);
                 this.registry.set('bossTime', 0);
