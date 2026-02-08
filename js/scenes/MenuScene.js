@@ -18,11 +18,13 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         }
 
         // Title — CV in purple, INVADERS in white
+        // Measure natural width first, then scale letter spacing to match leaderboard (600px)
+        const targetWidth = 600;
         const titleStyle = {
             fontFamily: 'Courier New',
             fontSize: '56px',
             fontStyle: 'bold',
-            letterSpacing: 12
+            letterSpacing: 0
         };
         const titleCV = this.add.text(0, 0, 'CV', {
             ...titleStyle,
@@ -33,12 +35,18 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             color: '#FFFFFF'
         });
         const gap = 20;
+        const naturalW = titleCV.width + gap + titleInvaders.width;
+        // Distribute extra space across all characters (2 + 8 = 10 chars)
+        const extraPerChar = (targetWidth - naturalW) / 10;
+        const spacing = Math.max(0, Math.round(extraPerChar));
+        titleCV.setLetterSpacing(spacing);
+        titleInvaders.setLetterSpacing(spacing);
         const totalW = titleCV.width + gap + titleInvaders.width;
         titleCV.setPosition(CFG.WIDTH / 2 - totalW / 2, 50 - titleCV.height / 2);
         titleInvaders.setPosition(titleCV.x + titleCV.width + gap, 50 - titleInvaders.height / 2);
 
         // Subtitle — "powered by First"
-        const subtitleX = titleInvaders.x + titleInvaders.width;
+        const subtitleX = titleCV.x + totalW;
         this.add.text(subtitleX, 50 + titleCV.height / 2 + 4, 'powered by First', {
             fontFamily: 'Roboto',
             fontSize: '11px',
