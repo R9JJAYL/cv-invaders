@@ -10,6 +10,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(9);
         this.setScale(1.5);
         this.body.setSize(60, 45);
+        this.body.setOffset(10, 5);
         this.body.setAllowGravity(false);
 
         const CFG = window.CVInvaders.Config;
@@ -30,19 +31,24 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
 
-        if (!this.isAlive || !this.entryComplete) return;
+        if (this.isAlive && this.entryComplete) {
+            const CFG = window.CVInvaders.Config;
 
-        const CFG = window.CVInvaders.Config;
+            // Check phase transition
+            if (this.phase === 1 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
+                this.enterPhase2();
+            }
 
-        // Check phase transition
-        if (this.phase === 1 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
-            this.enterPhase2();
+            if (this.phase === 1) {
+                this.updatePhase1(time, delta, CFG);
+            } else {
+                this.updatePhase2(time, delta, CFG);
+            }
         }
 
-        if (this.phase === 1) {
-            this.updatePhase1(time, delta, CFG);
-        } else {
-            this.updatePhase2(time, delta, CFG);
+        // Always sync physics body to display position (covers entry tween + manual movement)
+        if (this.body) {
+            this.body.updateFromGameObject();
         }
     }
 
