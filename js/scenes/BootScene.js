@@ -34,7 +34,19 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         this.registry.set('maxCombo', 0);
         this.registry.set('bossTime', 0);
 
-        this.scene.start('MenuScene');
+        // Wait for Google Font to load before showing menu
+        document.fonts.load('16px "Press Start 2P"').then(() => {
+            this.scene.start('MenuScene');
+        }).catch(() => {
+            // Fallback — start anyway after timeout
+            this.scene.start('MenuScene');
+        });
+        // Safety timeout in case fonts API hangs
+        this.time.delayedCall(3000, () => {
+            if (this.scene.isActive('BootScene')) {
+                this.scene.start('MenuScene');
+            }
+        });
     }
 
     generateShipTexture(CFG) {
