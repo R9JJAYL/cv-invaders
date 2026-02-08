@@ -169,9 +169,12 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
             duration: 2000,
             ease: 'Power2',
             onComplete: () => {
-                this.entryComplete = true;
-                this.body.enable = true;
-                this.body.updateFromGameObject();
+                // 3-second grace period after landing before taking damage
+                this.scene.time.delayedCall(3000, () => {
+                    this.entryComplete = true;
+                    this.body.enable = true;
+                    this.body.updateFromGameObject();
+                });
             }
         });
     }
