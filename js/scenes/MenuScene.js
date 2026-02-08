@@ -53,7 +53,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             .setAlpha(0.5);
         this.add.text(logo.x - logo.displayWidth - 4, subtitleY, 'powered by', {
             fontFamily: 'Roboto',
-            fontSize: '11px',
+            fontSize: '13px',
             color: CFG.COLORS.TEXT_SECONDARY,
             fontStyle: 'normal'
         }).setOrigin(1, 0.5).setAlpha(0.4);
