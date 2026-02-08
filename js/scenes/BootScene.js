@@ -38,28 +38,28 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
     }
 
     generateShipTexture(CFG) {
-        const W = 120;
-        const H = 50;
-        const cx = W / 2; // 60
+        const W = 100;
+        const H = 46;
+        const cx = W / 2; // 50
         const g = this.add.graphics();
 
         // === Retro stealth bomber (B-2 flying wing) ===
 
         // Engine glow (twin exhausts at rear centre)
         g.fillStyle(0x00E5FF, 0.5);
-        g.fillRect(cx - 16, H - 4, 10, 3);
-        g.fillRect(cx + 6, H - 4, 10, 3);
+        g.fillRect(cx - 13, H - 4, 8, 3);
+        g.fillRect(cx + 5, H - 4, 8, 3);
 
         // Main flying-wing body — wide flat chevron shape
         g.fillStyle(CFG.COLORS.PURPLE_LIGHT, 1);
         g.beginPath();
         g.moveTo(cx, 4);          // nose tip
         g.lineTo(2, H - 8);       // left wing tip
-        g.lineTo(18, H - 4);      // left wing trailing edge
-        g.lineTo(cx - 10, H - 10);// left inner notch
+        g.lineTo(15, H - 4);      // left wing trailing edge
+        g.lineTo(cx - 8, H - 10); // left inner notch
         g.lineTo(cx, H - 6);      // centre rear
-        g.lineTo(cx + 10, H - 10);// right inner notch
-        g.lineTo(W - 18, H - 4);  // right wing trailing edge
+        g.lineTo(cx + 8, H - 10); // right inner notch
+        g.lineTo(W - 15, H - 4);  // right wing trailing edge
         g.lineTo(W - 2, H - 8);   // right wing tip
         g.closePath();
         g.fillPath();
@@ -68,11 +68,11 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.fillStyle(CFG.COLORS.PURPLE_PRIMARY, 0.8);
         g.beginPath();
         g.moveTo(cx, 4);
-        g.lineTo(cx - 18, H - 10);
-        g.lineTo(cx - 10, H - 10);
+        g.lineTo(cx - 15, H - 10);
+        g.lineTo(cx - 8, H - 10);
         g.lineTo(cx, H - 6);
-        g.lineTo(cx + 10, H - 10);
-        g.lineTo(cx + 18, H - 10);
+        g.lineTo(cx + 8, H - 10);
+        g.lineTo(cx + 15, H - 10);
         g.closePath();
         g.fillPath();
 
@@ -89,22 +89,22 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
 
         // Cockpit window
         g.fillStyle(0x00E5FF, 0.4);
-        g.fillEllipse(cx, 16, 8, 5);
+        g.fillEllipse(cx, 15, 7, 4);
 
         // Catch tray (sensor bar along leading edge)
         g.fillStyle(CFG.COLORS.PURPLE_GLOW, 0.6);
         g.beginPath();
-        g.moveTo(cx - 4, 7);
-        g.lineTo(12, H - 14);
-        g.lineTo(14, H - 12);
-        g.lineTo(cx - 2, 9);
+        g.moveTo(cx - 3, 7);
+        g.lineTo(10, H - 14);
+        g.lineTo(12, H - 12);
+        g.lineTo(cx - 1, 9);
         g.closePath();
         g.fillPath();
         g.beginPath();
-        g.moveTo(cx + 4, 7);
-        g.lineTo(W - 12, H - 14);
-        g.lineTo(W - 14, H - 12);
-        g.lineTo(cx + 2, 9);
+        g.moveTo(cx + 3, 7);
+        g.lineTo(W - 10, H - 14);
+        g.lineTo(W - 12, H - 12);
+        g.lineTo(cx + 1, 9);
         g.closePath();
         g.fillPath();
 
@@ -120,9 +120,9 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         canvas.height = H;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(baseImg, 0, 0);
-        const logoW = 36;
+        const logoW = 30;
         const logoH = logoW * (logoImg.height / logoImg.width);
-        const logoY = 30;
+        const logoY = 28;
         ctx.globalAlpha = 0.55;
         ctx.drawImage(logoImg, cx - logoW / 2, logoY - logoH / 2, logoW, logoH);
         ctx.globalAlpha = 1;

@@ -9,8 +9,8 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
 
         this.setCollideWorldBounds(true);
         this.setDepth(10);
-        this.body.setSize(90, 36);
-        this.body.setOffset(15, 8);
+        this.body.setSize(76, 34);
+        this.body.setOffset(12, 8);
 
         this.speed = window.CVInvaders.Config.PLAYER_SPEED;
         this.fireRate = window.CVInvaders.Config.FIRE_RATE;
