@@ -117,15 +117,23 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Combined stats + leaderboard (single glass pill)
         const statsHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
-            '<table class="stats-table">' +
-            '<thead><tr>' +
-            '<th class="stats-header" colspan="3">AGENCY vs INTERNAL</th>' +
-            '</tr></thead>' +
-            '<tbody>' +
-            '<tr><td class="agency-val">' + fmt(agency.length) + '</td><td class="stat-label">Games</td><td class="internal-val">' + fmt(internal.length) + '</td></tr>' +
-            '<tr><td class="agency-val">' + fmt(agencyTotal) + '</td><td class="stat-label">Total</td><td class="internal-val">' + fmt(internalTotal) + '</td></tr>' +
-            '<tr><td class="agency-val">' + fmt(agencyAvg) + '</td><td class="stat-label">Avg</td><td class="internal-val">' + fmt(internalAvg) + '</td></tr>' +
-            '</tbody></table>' +
+            '<div class="stats-section">' +
+            '<div class="stats-columns">' +
+            '<div class="stats-team">' +
+            '<div class="team-label agency-label">AGENCY</div>' +
+            '<div class="stat-pills">' +
+            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '</div></div>' +
+            '<div class="stats-team">' +
+            '<div class="team-label internal-label">INTERNAL</div>' +
+            '<div class="stat-pills">' +
+            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '</div></div>' +
+            '</div></div>' +
             '<div class="lb-divider"></div>' +
             '<table class="leaderboard-table">' +
             '<thead><tr><th colspan="5" class="lb-title">TOP 10 SCORES</th></tr>' +

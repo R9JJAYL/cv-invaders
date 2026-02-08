@@ -133,71 +133,70 @@ body {
     margin: 8px 0;
 }
 
-/* Stats table */
-.stats-table {
-    border-collapse: collapse;
-    width: 320px;
-    margin: 0 auto;
+/* Stats section — two-column pill layout */
+.stats-section {
+    width: 100%;
+}
+
+.stats-columns {
+    display: flex;
+    gap: 16px;
+}
+
+.stats-team {
+    flex: 1;
+}
+
+.team-label {
     font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+    text-align: center;
 }
 
-.stats-header {
-    font-size: 11px;
+.agency-label { color: #9B59B6; }
+.internal-label { color: #FFFFFF; opacity: 0.7; }
+
+.stat-pills {
+    display: flex;
+    gap: 6px;
+}
+
+.stat-pill {
+    flex: 1;
+    background: rgba(155, 89, 182, 0.06);
+    border: 1px solid rgba(155, 89, 182, 0.12);
+    border-radius: 8px;
+    padding: 6px 4px;
+    text-align: center;
+}
+
+.stat-pill.agency-pill .stat-val {
+    color: #9B59B6;
+}
+
+.stat-pill.internal-pill .stat-val {
     color: #FFFFFF;
-    padding: 0 0 4px 0;
-    letter-spacing: 1px;
 }
 
-.stats-col {
-    font-size: 9px;
-    padding: 0 0 2px 0;
+.stat-val {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-name {
+    font-family: 'Roboto', sans-serif;
+    font-size: 8px;
+    color: #AAAAAA;
+    opacity: 0.5;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-.agency-col {
-    color: #9B59B6;
-    text-align: right;
-    width: 40%;
-    padding-right: 16px;
-}
-
-.label-col {
-    text-align: center;
-    width: 20%;
-    color: #AAAAAA;
-}
-
-.internal-col {
-    color: #FFFFFF;
-    text-align: left;
-    width: 40%;
-    padding-left: 16px;
-}
-
-.stats-table tbody td {
-    padding: 2px 0;
-    font-size: 11px;
-}
-
-.agency-val {
-    text-align: right;
-    padding-right: 16px;
-    color: #9B59B6;
-    font-weight: bold;
-}
-
-.stat-label {
-    text-align: center;
-    color: #AAAAAA;
-    font-size: 9px;
-    opacity: 0.6;
-}
-
-.internal-val {
-    text-align: left;
-    padding-left: 16px;
-    color: #FFFFFF;
-    font-weight: bold;
+    margin-top: 2px;
 }
 
 /* Leaderboard table */
