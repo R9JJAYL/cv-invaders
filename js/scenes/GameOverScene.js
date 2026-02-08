@@ -111,8 +111,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Integration name pills — glass style with subtle shadow
         const intNames = [
-            ['Greenhouse', 'Ashby', 'Workable', 'Pinpoint', 'Bullhorn'],
-            ['LinkedIn', 'Indeed', 'CV-Library', 'Teamtailor', 'Broadbean']
+            ['Greenhouse', 'Ashby', 'Workable'],
+            ['LinkedIn', 'Pinpoint', 'Bullhorn', 'Indeed'],
+            ['CV-Library', 'Teamtailor', 'Broadbean']
         ];
         const intPillH = 24;
         const intPillPad = 12;
@@ -123,7 +124,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(intGfx);
 
         intNames.forEach((row, ri) => {
-            const rowY = cy + 32 + ri * 36;
+            const rowY = cy + 32 + ri * 30;
             // Measure pill widths using a temp text to get width
             const tempTexts = row.map(name => {
                 const t = this.add.text(0, -100, name, {
@@ -171,7 +172,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
         const morePW = moreTmp.width + intPillPad * 2;
         moreTmp.destroy();
-        const moreY = cy + 32 + intNames.length * 36; // same row spacing as above
+        const moreY = cy + 32 + intNames.length * 30; // same row spacing as above
         const morePillH = intPillH;
         const morePillR = morePillH / 2;
         // Shadow
@@ -193,14 +194,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         intPills.push(moreText);
 
         // First logo
-        const firstLogo = this.add.image(cx, cy + 170, 'first-logo')
+        const firstLogo = this.add.image(cx, cy + 180, 'first-logo')
             .setOrigin(0.5)
             .setScale(0.03)
             .setAlpha(0);
         adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(cx, cy + 215, 'Where AI speed meets candidate experience.', {
+        const cta = this.add.text(cx, cy + 225, 'Where AI speed meets candidate experience.', {
             fontFamily: 'Roboto',
             fontSize: '16px',
             fontStyle: 'italic',

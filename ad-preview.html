@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CV Invaders - A Recruiter's Worst Nightmare</title>
-    <meta name="description" content="Can you defeat the AI bot flooding your inbox? Catch good CVs, shoot bad ones, and save recruitment!">
-    <link rel="icon" type="image/png" href="assets/first-icon.png">
+    <title>Ad Preview</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
@@ -46,7 +44,40 @@
     <script src="js/scenes/BossScene.js?v=14"></script>
     <script src="js/scenes/GameOverScene.js?v=38"></script>
 
-    <!-- Main (must be last) -->
+    <script>
+    // Override BootScene to jump straight to GameOverScene with fake data
+    const OriginalBoot = window.CVInvaders.BootScene;
+    window.CVInvaders.BootScene = class extends OriginalBoot {
+        create() {
+            // Load assets as normal, then jump to GameOverScene
+            const originalStart = this.scene.start.bind(this.scene);
+            this.scene.start = (key) => {
+                // Intercept MenuScene transition, go to GameOver instead
+                if (key === 'MenuScene') {
+                    // Set fake game data
+                    this.registry.set('score', 4250);
+                    this.registry.set('playerName', 'Recruiter');
+                    this.registry.set('companyName', 'Acme Corp');
+                    this.registry.set('recruiterType', 'agency');
+                    this.registry.set('health', 3);
+                    this.registry.set('goodCVsCaught', 12);
+                    this.registry.set('goodCVsMissed', 3);
+                    this.registry.set('badCVsShot', 8);
+                    this.registry.set('badCVsMissed', 5);
+                    this.registry.set('enemiesDefeated', 4);
+                    this.registry.set('maxCombo', 6);
+                    this.registry.set('bossTime', 15000);
+                    this.registry.set('bossDefeated', true);
+                    originalStart('GameOverScene');
+                } else {
+                    originalStart(key);
+                }
+            };
+            super.create();
+        }
+    };
+    </script>
+
     <script src="js/main.js?v=4"></script>
 </body>
 </html>
