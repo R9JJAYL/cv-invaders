@@ -10,5 +10,9 @@ window.CVInvaders.FakeLeaderboard = [
     { name: 'Boolean Betty', company: 'Amazon', type: 'internal', score: 4200 },
     { name: 'InMail Ian', company: 'Robert Half', type: 'agency', score: 2800 },
     { name: 'ATS Bot 9000', company: 'Workday', type: 'internal', score: 1500 },
-    { name: 'The Ghost', company: 'Unknown', type: 'agency', score: 500 }
+    { name: 'The Ghost', company: 'Unknown', type: 'agency', score: 500 },
+    { name: 'Sourcing Sam', company: 'Apple', type: 'internal', score: 3800 },
+    { name: 'Talent Tanya', company: 'Netflix', type: 'internal', score: 3100 },
+    { name: 'Hiring Holly', company: 'Spotify', type: 'internal', score: 2500 },
+    { name: 'Culture Chris', company: 'Stripe', type: 'internal', score: 1800 }
 ];
