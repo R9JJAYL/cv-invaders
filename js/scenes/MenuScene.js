@@ -44,7 +44,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         titleCV.setPosition(CFG.WIDTH / 2 - totalW / 2, 50 - titleCV.height / 2);
         titleInvaders.setPosition(titleCV.x + titleCV.width + gap, 50 - titleInvaders.height / 2);
 
-        // Subtitle — "powered by" + First logo, right-aligned to end of INVADERS
+        // Subtitle — "powered by" + First logo + tagline
         const subtitleY = 50 + titleCV.height / 2 + 8;
         const rightEdge = titleCV.x + totalW - 7;
         this.firstLogo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
@@ -57,6 +57,14 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             color: CFG.COLORS.TEXT_SECONDARY,
             fontStyle: 'normal'
         }).setOrigin(1, 0.5).setAlpha(0.4);
+
+        // Tagline below powered-by
+        this.taglineText = this.add.text(CFG.WIDTH / 2, subtitleY + 16, 'The best tool for managing application volume', {
+            fontFamily: 'Roboto',
+            fontSize: '11px',
+            color: CFG.COLORS.TEXT_SECONDARY,
+            fontStyle: 'italic'
+        }).setOrigin(0.5, 0.5).setAlpha(0.35);
 
         // Form inputs — name & company side by side, type below
         const formHTML = '<div class="menu-form">' +
@@ -71,10 +79,10 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<option value="other">Other</option>' +
             '</select>' +
             '</div>';
-        this.formInput = this.add.dom(CFG.WIDTH / 2, 135).createFromHTML(formHTML);
+        this.formInput = this.add.dom(CFG.WIDTH / 2, 145).createFromHTML(formHTML);
 
         // Start button
-        this.startBtn = this.add.text(CFG.WIDTH / 2, 205, '[ CLICK TO START MISSION ]', {
+        this.startBtn = this.add.text(CFG.WIDTH / 2, 220, '[ CLICK TO START MISSION ]', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
@@ -168,7 +176,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, 410).createFromHTML(statsHTML);
+        this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
     }
 
     startGame() {
@@ -201,6 +209,11 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.firstLogo,
             alpha: 0.85,
+            duration: 150
+        });
+        this.tweens.add({
+            targets: this.taglineText,
+            alpha: 0.65,
             duration: 150
         });
 
