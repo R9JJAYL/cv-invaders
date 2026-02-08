@@ -203,7 +203,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             '<th class="lb-head lb-rank">#</th>' +
             '<th class="lb-head lb-name">NAME</th>' +
             '<th class="lb-head lb-company">COMPANY</th>' +
-            '<th class="lb-head lb-type">TYPE</th>' +
+            '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
             leaderboard.slice(0, 10).map((entry, i) => {

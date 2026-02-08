@@ -129,17 +129,17 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<div class="stats-team">' +
             '<div class="team-label agency-label">AGENCY</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games' + (gamesWin === 'agency' ? crown : noCrown) + '</div></div>' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total' + (totalWin === 'agency' ? crown : noCrown) + '</div></div>' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg' + (avgWin === 'agency' ? crown : noCrown) + '</div></div>' +
+            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">INTERNAL</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games' + (gamesWin === 'internal' ? crown : noCrown) + '</div></div>' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total' + (totalWin === 'internal' ? crown : noCrown) + '</div></div>' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg' + (avgWin === 'internal' ? crown : noCrown) + '</div></div>' +
+            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '</div></div>' +
             '<div class="lb-divider"></div>' +
@@ -149,7 +149,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<th class="lb-head lb-rank">#</th>' +
             '<th class="lb-head lb-name">NAME</th>' +
             '<th class="lb-head lb-company">COMPANY</th>' +
-            '<th class="lb-head lb-type">TYPE</th>' +
+            '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
             allScores.slice(0, 10).map((entry, i) => {

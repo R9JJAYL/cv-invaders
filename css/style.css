@@ -189,7 +189,9 @@ body {
 
 .stat-crown {
     font-size: 9px;
-    margin-left: 2px;
+    position: absolute;
+    top: 2px;
+    right: 2px;
 }
 
 .stat-pill.agency-pill .stat-val {
