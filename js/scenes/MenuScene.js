@@ -53,10 +53,10 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             color: CFG.COLORS.TEXT_SECONDARY,
             fontStyle: 'normal'
         }).setOrigin(1, 0.5).setAlpha(0.4);
-        // First logo inline, same size as text
-        this.add.image(subtitleX + 4, subtitleY, 'first-logo')
+        // First logo inline, pre-sized small version for crisp rendering
+        this.add.image(subtitleX + 4, subtitleY, 'first-logo-small')
             .setOrigin(0, 0.5)
-            .setScale(0.018)
+            .setScale(0.45)
             .setAlpha(0.5);
 
         // Form inputs — name & company side by side, type below

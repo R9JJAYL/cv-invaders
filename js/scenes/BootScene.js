@@ -7,6 +7,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
 
     preload() {
         this.load.image('first-logo', 'assets/first-logo-white.png');
+        this.load.image('first-logo-small', 'assets/first-logo-small.png');
     }
 
     create() {
