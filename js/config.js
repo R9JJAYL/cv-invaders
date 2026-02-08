@@ -61,7 +61,7 @@ window.CVInvaders.Config = {
     BOSS_DISGUISE_CHANCE: 0.4,
 
     // Enemies
-    ENEMY_HEALTH: 3,
+    ENEMY_HEALTH: 2,
     ENEMY_SPEED: 100,
     ENEMY_FIRE_RATE: 2000,
 

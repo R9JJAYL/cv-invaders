@@ -88,6 +88,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Enemies group (not pooled, created per wave)
         this.enemies = this.physics.add.group();
 
+        // Boss group (boss must be in a group for overlap detection to work)
+        this.bossGroup = this.physics.add.group();
+
         // Systems
         this.scoreManager = new window.CVInvaders.ScoreManager(this);
         this.waveManager = new window.CVInvaders.WaveManager(this);
@@ -119,12 +122,17 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 }
                 // Cancel all pending delayed calls (tutorial timers, wave announcements)
                 this.time.removeAllEvents();
-                // Clear any active CVs
+                // Clear any active CVs and enemies
                 this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
+                this.enemies.getChildren().forEach(e => { if (e.active) e.destroy(); });
                 // Clear announcement
                 this.announcementText.setAlpha(0);
                 this.waveManager.active = false;
-                this.startBossPhase();
+                // Go straight to boss (skip the 2.5s announcement delay)
+                this.bossPhase = true;
+                this.bossSpawnTimer = 0;
+                this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+                this.spawnBoss();
             }
         });
 
@@ -412,6 +420,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const CFG = window.CVInvaders.Config;
 
         this.boss = new window.CVInvaders.Boss(this, CFG.WIDTH / 2, -60);
+        this.bossGroup.add(this.boss);
         this.boss.startEntry(80);
 
         this.sound_engine.bossEntrance();
@@ -425,10 +434,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             });
         }
 
-        // Player bullets hit boss — use processCallback to ensure body overlap is checked
-        this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
+        // Player bullets hit boss (group-to-group overlap required for Arcade physics)
+        this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
             if (!bullet.active || !boss.active || !boss.isAlive) return;
-            console.log('BOSS HIT! health:', boss.health);
             bullet.recycle();
             this.scoreManager.bossHit();
             this.sound_engine.bossHit();

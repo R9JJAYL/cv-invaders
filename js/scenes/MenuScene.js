@@ -56,11 +56,11 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Form inputs — name & company side by side, type below
         const formHTML = '<div class="menu-form">' +
             '<div class="form-row">' +
-            '<input type="text" id="playerName" placeholder="Name" maxlength="30" autocomplete="off" />' +
-            '<input type="text" id="companyName" placeholder="Company" maxlength="30" autocomplete="off" />' +
+            '<input type="text" id="playerName" placeholder="Enter Name" maxlength="30" autocomplete="off" />' +
+            '<input type="text" id="companyName" placeholder="Enter Company" maxlength="30" autocomplete="off" />' +
             '</div>' +
             '<select id="recruiterType" required>' +
-            '<option value="" disabled selected>Agency or Internal</option>' +
+            '<option value="" disabled selected>Select Team</option>' +
             '<option value="agency">Agency</option>' +
             '<option value="internal">Internal</option>' +
             '<option value="other">Other</option>' +
