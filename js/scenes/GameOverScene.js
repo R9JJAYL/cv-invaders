@@ -339,24 +339,48 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).setOrigin(0.5);
         });
 
-        // Stats row — green CV hit/missed | red CV hit/missed
+        // Stats pills — green CV and red CV
         const goodHit = this.registry.get('goodCVsCaught') || 0;
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = 112;
-        const statStyle = { fontFamily: 'Courier New', fontSize: '11px', color: CFG.COLORS.TEXT_SECONDARY };
+        const statsY = 115;
+        const pillW = 170;
+        const pillH = 32;
+        const pillGap = 12;
+        const pillLeft = CFG.WIDTH / 2 - pillW - pillGap / 2;
+        const pillRight = CFG.WIDTH / 2 + pillGap / 2;
 
-        // Green CV section
-        this.add.image(CFG.WIDTH / 2 - 155, statsY, 'cv-good').setScale(0.8);
-        this.add.text(CFG.WIDTH / 2 - 135, statsY, 'Caught: ' + goodHit + '  Missed: ' + goodMissed, statStyle).setOrigin(0, 0.5);
+        // Draw pill backgrounds
+        const pillGfx = this.add.graphics();
+        // Green pill
+        pillGfx.fillStyle(0x4ADE80, 0.1);
+        pillGfx.lineStyle(1, 0x4ADE80, 0.3);
+        pillGfx.fillRoundedRect(pillLeft, statsY - pillH / 2, pillW, pillH, 8);
+        pillGfx.strokeRoundedRect(pillLeft, statsY - pillH / 2, pillW, pillH, 8);
+        // Red pill
+        pillGfx.fillStyle(0xFF8A80, 0.1);
+        pillGfx.lineStyle(1, 0xFF8A80, 0.3);
+        pillGfx.fillRoundedRect(pillRight, statsY - pillH / 2, pillW, pillH, 8);
+        pillGfx.strokeRoundedRect(pillRight, statsY - pillH / 2, pillW, pillH, 8);
 
-        // Divider
-        this.add.text(CFG.WIDTH / 2 + 15, statsY, '|', statStyle).setOrigin(0.5, 0.5);
+        // Green pill content: icon + caught/missed
+        this.add.image(pillLeft + 18, statsY, 'cv-good').setScale(0.7);
+        this.add.text(pillLeft + 36, statsY - 6, 'Caught: ' + goodHit, {
+            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.CV_GOOD_HEX, fontWeight: '700'
+        }).setOrigin(0, 0.5);
+        this.add.text(pillLeft + 36, statsY + 6, 'Missed: ' + goodMissed, {
+            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.TEXT_SECONDARY
+        }).setOrigin(0, 0.5);
 
-        // Red CV section
-        this.add.image(CFG.WIDTH / 2 + 40, statsY, 'cv-bad').setScale(0.8);
-        this.add.text(CFG.WIDTH / 2 + 60, statsY, 'Hit: ' + badHit + '  Missed: ' + badMissed, statStyle).setOrigin(0, 0.5);
+        // Red pill content: icon + hit/missed
+        this.add.image(pillRight + 18, statsY, 'cv-bad').setScale(0.7);
+        this.add.text(pillRight + 36, statsY - 6, 'Hit: ' + badHit, {
+            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.CV_BAD_HEX, fontWeight: '700'
+        }).setOrigin(0, 0.5);
+        this.add.text(pillRight + 36, statsY + 6, 'Missed: ' + badMissed, {
+            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.TEXT_SECONDARY
+        }).setOrigin(0, 0.5);
 
         // Save score
         const company = this.registry.get('companyName') || '';
