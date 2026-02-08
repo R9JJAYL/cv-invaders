@@ -373,13 +373,26 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         playBtn.on('pointerout', () => playBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
         playBtn.on('pointerdown', () => {
             this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => this.scene.start('MenuScene'));
+            this.time.delayedCall(400, () => {
+                // Reset game state but keep player info
+                this.registry.set('score', 0);
+                this.registry.set('health', CFG.PLAYER_HEALTH);
+                this.registry.set('goodCVsCaught', 0);
+                this.registry.set('badCVsShot', 0);
+                this.registry.set('enemiesDefeated', 0);
+                this.registry.set('maxCombo', 0);
+                this.registry.set('bossTime', 0);
+                this.registry.set('bossDefeated', false);
+                // Skip straight to countdown (no cinematic, no menu)
+                this.registry.set('skipToCountdown', true);
+                this.scene.start('TutorialScene');
+            });
         });
 
         // Share to LinkedIn
-        const shareBtn = this.add.text(CFG.WIDTH / 2 + 120, btnY, '[ SHARE ]', {
+        const shareBtn = this.add.text(CFG.WIDTH / 2 + 140, btnY, '[ SHARE ON LINKEDIN ]', {
             fontFamily: 'Courier New',
-            fontSize: '18px',
+            fontSize: '14px',
             color: '#0A66C2',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -390,10 +403,21 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             this.shareToLinkedIn(name, score, grade);
         });
 
-        // Keyboard shortcut
+        // Keyboard shortcut — same as Play Again
         this.input.keyboard.on('keydown-ENTER', () => {
             this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => this.scene.start('MenuScene'));
+            this.time.delayedCall(400, () => {
+                this.registry.set('score', 0);
+                this.registry.set('health', CFG.PLAYER_HEALTH);
+                this.registry.set('goodCVsCaught', 0);
+                this.registry.set('badCVsShot', 0);
+                this.registry.set('enemiesDefeated', 0);
+                this.registry.set('maxCombo', 0);
+                this.registry.set('bossTime', 0);
+                this.registry.set('bossDefeated', false);
+                this.registry.set('skipToCountdown', true);
+                this.scene.start('TutorialScene');
+            });
         });
 
         this.cameras.main.fadeIn(400);

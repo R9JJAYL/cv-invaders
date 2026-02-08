@@ -49,6 +49,24 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // Set camera bounds to allow panning down
         this.cameras.main.setBounds(0, 0, CFG.WIDTH, worldH);
 
+        // Check if we should skip straight to countdown (Play Again)
+        const skipToCountdown = this.registry.get('skipToCountdown');
+        if (skipToCountdown) {
+            this.registry.set('skipToCountdown', false);
+            // Don't need cinematic objects
+            if (this.ats) { this.ats.destroy(); this.ats = null; }
+            if (this.shipSprite) { this.shipSprite.destroy(); this.shipSprite = null; }
+            // Keep camera at normal viewport
+            this.cameras.main.setBounds(0, 0, CFG.WIDTH, CFG.HEIGHT);
+            this.cameras.main.setScroll(0, 0);
+            this.cameras.main.fadeIn(300);
+            // Jump straight to countdown
+            this.time.delayedCall(300, () => {
+                this.runCountdown(CFG);
+            });
+            return;
+        }
+
         // Fade in and run the cinematic
         this.cameras.main.fadeIn(500);
         this.runCinematic(DLG, CFG);

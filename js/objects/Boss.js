@@ -39,8 +39,9 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         if (this.isAlive && this.entryComplete) {
             const CFG = window.CVInvaders.Config;
 
-            // Check phase transition
-            if (this.phase === 1 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
+            // Check phase transition (guard prevents re-entry)
+            if (this.phase === 1 && !this._enteringPhase2 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
+                this._enteringPhase2 = true;
                 this.enterPhase2();
             }
 
@@ -51,26 +52,25 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
             }
         }
 
-        // Always sync physics body to display position (covers entry tween + manual movement)
-        if (this.body) {
-            this.body.updateFromGameObject();
+        // Sync physics body to display position
+        if (this.body && this.body.enable) {
+            this.body.reset(this.x, this.y);
         }
     }
 
     updatePhase1(time, delta, CFG) {
-        // Horizontal drift — pick a new target every 2s, move at 120px/s
+        // Horizontal drift — pick a new target every 2s, lerp towards it
         this.moveTimer += delta;
         if (this.moveTimer > 2000) {
             this.moveTimer = 0;
             this.moveTargetX = Phaser.Math.Between(80, CFG.WIDTH - 80);
         }
-        const diff = this.moveTargetX - this.x;
-        if (Math.abs(diff) > 2) {
-            this.x += Math.sign(diff) * 120 * (delta / 1000);
-        }
+        // Smooth lerp instead of constant speed (avoids jitter on variable frame rates)
+        const lerpSpeed = 1 - Math.pow(0.03, delta / 1000);
+        this.x += (this.moveTargetX - this.x) * lerpSpeed;
 
         // Gentle vertical bob
-        this.y = 80 + Math.sin(time * 0.002) * 12;
+        this.y = 80 + Math.sin(time * 0.001) * 8;
 
         // Spam CVs
         this.spamTimer += delta;
@@ -81,10 +81,14 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     updatePhase2(time, delta, CFG) {
-        // Figure-8 movement
+        // Figure-8 movement — lerp into it to avoid snap
         this.fig8Time += delta * 0.001;
-        this.x = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.0) * 200;
-        this.y = 80 + Math.sin(this.fig8Time * 2.0) * 30;
+        const targetX = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.0) * 200;
+        const targetY = 80 + Math.sin(this.fig8Time * 2.0) * 30;
+        // Blend factor ramps from 0→1 over ~1 second
+        this._phase2Blend = Math.min(1, (this._phase2Blend || 0) + delta * 0.002);
+        this.x += (targetX - this.x) * this._phase2Blend;
+        this.y += (targetY - this.y) * this._phase2Blend;
 
         // Spam disguised CVs
         this.spamTimer += delta;
@@ -106,6 +110,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         this.phase = 2;
         this.spamTimer = 0;
         this.bulletTimer = 0;
+        this._phase2Blend = 0; // smooth blend into figure-8 movement
 
         // Flash effect
         this.scene.cameras.main.flash(200, 120, 0, 0);
@@ -176,7 +181,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
                 this.scene.time.delayedCall(3000, () => {
                     this.entryComplete = true;
                     this.body.enable = true;
-                    this.body.updateFromGameObject();
+                    this.body.reset(this.x, this.y);
                 });
             }
         });
