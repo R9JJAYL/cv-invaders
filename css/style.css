@@ -184,6 +184,14 @@ body {
     border-radius: 8px;
     padding: 6px 4px;
     text-align: center;
+    position: relative;
+}
+
+.stat-crown {
+    font-size: 10px;
+    display: block;
+    line-height: 1;
+    margin-bottom: 1px;
 }
 
 .stat-pill.agency-pill .stat-val {

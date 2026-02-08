@@ -114,6 +114,12 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
         const fmt = (n) => n.toLocaleString();
 
+        // Determine crown winners for each stat
+        const gamesWin = agency.length > internal.length ? 'agency' : internal.length > agency.length ? 'internal' : 'tie';
+        const totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
+        const avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
+        const crown = '<span class="stat-crown">👑</span>';
+
         // Combined stats + leaderboard (single glass pill)
         const statsHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
@@ -122,17 +128,17 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<div class="stats-team">' +
             '<div class="team-label agency-label">AGENCY</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">INTERNAL</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill internal-pill"><div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '</div></div>' +
             '<div class="lb-divider"></div>' +
