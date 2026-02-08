@@ -51,7 +51,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
     }
 
     shoot() {
-        this._play('square', 1200, 0.03, 0.08);
+        this._play('square', 1200, 0.03, 0.02);
     }
 
     hitBadCV() {
