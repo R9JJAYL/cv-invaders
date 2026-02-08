@@ -167,7 +167,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Show movement hint — detect touch/mobile vs desktop
         const isMobile = !this.sys.game.device.os.desktop;
         const moveHint = isMobile
-            ? 'Tap or drag to move the ship'
+            ? 'Tap to move the ship'
             : 'Use ← → arrow keys to move';
         this.showAnnouncement(moveHint, 3000);
 
