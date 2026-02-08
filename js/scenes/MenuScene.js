@@ -124,6 +124,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Combined stats + leaderboard (single glass pill)
         const statsHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
+            '<div class="lb-title">LEADERBOARD</div>' +
             '<div class="stats-section">' +
             '<div class="stats-columns">' +
             '<div class="stats-team">' +
@@ -144,7 +145,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '</div></div>' +
             '<div class="lb-divider"></div>' +
             '<table class="leaderboard-table">' +
-            '<thead><tr><th colspan="5" class="lb-title">TOP 10 SCORES</th></tr>' +
+            '<thead>' +
             '<tr>' +
             '<th class="lb-head lb-rank">#</th>' +
             '<th class="lb-head lb-name">NAME</th>' +
