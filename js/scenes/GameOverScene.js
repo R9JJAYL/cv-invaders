@@ -97,8 +97,41 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const divider = this.add.rectangle(cx, cy + 20, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
         adElements.push(divider);
 
+        // Integrations label
+        const intLabel = this.add.text(cx, cy + 42, 'Integrates with', {
+            fontFamily: 'Roboto',
+            fontSize: '11px',
+            color: CFG.COLORS.TEXT_SECONDARY
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(intLabel);
+
+        // ATS integration names
+        const atsNames = ['Ashby', 'Greenhouse', 'Workable', 'Pinpoint', 'Bullhorn'];
+        const atsTexts = [];
+        const atsSpacing = 90;
+        const atsStartX = cx - ((atsNames.length - 1) * atsSpacing) / 2;
+        atsNames.forEach((name, i) => {
+            const t = this.add.text(atsStartX + i * atsSpacing, cy + 60, name, {
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                color: '#FFFFFF',
+                fontStyle: 'bold'
+            }).setOrigin(0.5).setAlpha(0);
+            adElements.push(t);
+            atsTexts.push(t);
+        });
+
+        // "+ more" after the list
+        const moreText = this.add.text(cx, cy + 78, '+ LinkedIn Recruiter, Indeed, CV Library & more', {
+            fontFamily: 'Roboto',
+            fontSize: '10px',
+            color: CFG.COLORS.TEXT_SECONDARY,
+            fontStyle: 'italic'
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(moreText);
+
         // "Powered by" text
-        const poweredBy = this.add.text(cx, cy + 50, 'Powered by', {
+        const poweredBy = this.add.text(cx, cy + 108, 'Powered by', {
             fontFamily: 'Roboto',
             fontSize: '14px',
             color: CFG.COLORS.TEXT_SECONDARY
@@ -106,14 +139,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(poweredBy);
 
         // First logo with subtle glow pulse
-        const firstLogo = this.add.image(cx, cy + 95, 'first-logo')
+        const firstLogo = this.add.image(cx, cy + 148, 'first-logo')
             .setOrigin(0.5)
             .setScale(0.06)
             .setAlpha(0);
         adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(cx, cy + 145, 'Be first in the race for talent  →  first.cx', {
+        const cta = this.add.text(cx, cy + 195, 'Be first in the race for talent  →  first.cx', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -163,24 +196,52 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             ease: 'Power2'
         });
 
-        // 5. Powered by + Logo (last, slightly after everything else)
+        // 5. Integrations label
+        this.tweens.add({
+            targets: intLabel,
+            alpha: 0.5,
+            duration: 400,
+            delay: 2200
+        });
+
+        // 6. ATS names pop in one by one
+        atsTexts.forEach((t, i) => {
+            this.tweens.add({
+                targets: t,
+                alpha: 0.9,
+                y: t.y - 3,
+                duration: 300,
+                delay: 2400 + i * 150,
+                ease: 'Power2'
+            });
+        });
+
+        // 7. "+ more" text
+        this.tweens.add({
+            targets: moreText,
+            alpha: 0.4,
+            duration: 400,
+            delay: 3200
+        });
+
+        // 8. Powered by + Logo (last, slightly after everything else)
         this.tweens.add({
             targets: poweredBy,
             alpha: 0.6,
             duration: 500,
-            delay: 2400
+            delay: 3500
         });
         this.tweens.add({
             targets: firstLogo,
             alpha: 1,
             scale: { from: 0.04, to: 0.06 },
             duration: 600,
-            delay: 2600,
+            delay: 3700,
             ease: 'Back.easeOut'
         });
 
         // Logo gentle glow pulse
-        this.time.delayedCall(3200, () => {
+        this.time.delayedCall(4300, () => {
             this.tweens.add({
                 targets: firstLogo,
                 alpha: { from: 1, to: 0.7 },
@@ -191,16 +252,16 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // 6. CTA
+        // 9. CTA
         this.tweens.add({
             targets: cta,
             alpha: 0.8,
             duration: 500,
-            delay: 3000
+            delay: 4100
         });
 
         // CTA subtle pulse
-        this.time.delayedCall(3500, () => {
+        this.time.delayedCall(4600, () => {
             this.tweens.add({
                 targets: cta,
                 alpha: { from: 0.8, to: 0.5 },
@@ -211,8 +272,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // After 6 seconds, fade out and show results
-        this.time.delayedCall(6000, () => {
+        // After 7 seconds, fade out and show results
+        this.time.delayedCall(7000, () => {
             this.tweens.add({
                 targets: adElements,
                 alpha: 0,
