@@ -51,21 +51,22 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Headline — the game tie-in
-        const headline = this.add.text(cx, cy - 120, 'Drowning in CVs?', {
+        const headline = this.add.text(cx, cy - 200, 'Drowning in CVs?', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(headline);
 
         // Tagline from First
-        const tagline = this.add.text(cx, cy - 85, 'AI speed. First class candidate experience.', {
+        const tagline = this.add.text(cx, cy - 155, "That's why teams use First.", {
             fontFamily: 'Roboto',
             fontSize: '15px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
-            fontStyle: 'italic',
-            align: 'center'
+            align: 'center',
+            resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(tagline);
 
@@ -78,79 +79,133 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const statTexts = [];
         stats.forEach((stat, i) => {
             const sx = cx - 160 + i * 160;
-            const valText = this.add.text(sx, cy - 30, stat.val, {
+            const valText = this.add.text(sx, cy - 90, stat.val, {
                 fontFamily: 'Courier New',
                 fontSize: '26px',
                 color: '#FFFFFF',
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                resolution: 2
             }).setOrigin(0.5).setAlpha(0);
-            const labelText = this.add.text(sx, cy - 5, stat.label, {
+            const labelText = this.add.text(sx, cy - 65, stat.label, {
                 fontFamily: 'Roboto',
                 fontSize: '11px',
-                color: CFG.COLORS.TEXT_SECONDARY
+                color: CFG.COLORS.TEXT_SECONDARY,
+                resolution: 2
             }).setOrigin(0.5).setAlpha(0);
             adElements.push(valText, labelText);
             statTexts.push(valText, labelText);
         });
 
         // Divider line
-        const divider = this.add.rectangle(cx, cy + 25, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
+        const divider = this.add.rectangle(cx, cy - 25, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
         adElements.push(divider);
 
         // Integrations label
-        const intLabel = this.add.text(cx, cy + 50, 'Integrates with', {
+        const intLabel = this.add.text(cx, cy + 5, 'Plugs into', {
             fontFamily: 'Roboto',
             fontSize: '11px',
-            color: CFG.COLORS.TEXT_SECONDARY
+            color: CFG.COLORS.TEXT_SECONDARY,
+            resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(intLabel);
 
-        // ATS integration names
-        const atsNames = ['Ashby', 'Greenhouse', 'Workable', 'Pinpoint', 'Bullhorn'];
-        const atsTexts = [];
-        const atsSpacing = 90;
-        const atsStartX = cx - ((atsNames.length - 1) * atsSpacing) / 2;
-        atsNames.forEach((name, i) => {
-            const t = this.add.text(atsStartX + i * atsSpacing, cy + 72, name, {
-                fontFamily: 'Roboto',
-                fontSize: '12px',
-                color: '#FFFFFF',
-                fontStyle: 'bold'
-            }).setOrigin(0.5).setAlpha(0);
-            adElements.push(t);
-            atsTexts.push(t);
+        // Integration name pills — glass style with subtle shadow
+        const intNames = [
+            ['Greenhouse', 'Ashby', 'Workable', 'Pinpoint', 'Bullhorn'],
+            ['LinkedIn', 'Indeed', 'CV-Library', 'Teamtailor', 'Broadbean']
+        ];
+        const intPillH = 24;
+        const intPillPad = 12;
+        const intGap = 6;
+        const intPillR = intPillH / 2; // fully rounded ends
+        const intPills = [];
+        const intGfx = this.add.graphics();
+        adElements.push(intGfx);
+
+        intNames.forEach((row, ri) => {
+            const rowY = cy + 32 + ri * 36;
+            // Measure pill widths using a temp text to get width
+            const tempTexts = row.map(name => {
+                const t = this.add.text(0, -100, name, {
+                    fontFamily: 'Roboto', fontSize: '11px', fontStyle: 'bold'
+                });
+                const w = t.width;
+                t.destroy();
+                return w;
+            });
+            const pillWidths = tempTexts.map(w => w + intPillPad * 2);
+            const totalW = pillWidths.reduce((s, w) => s + w, 0) + (row.length - 1) * intGap;
+            let px = cx - totalW / 2;
+
+            row.forEach((name, i) => {
+                const pw = pillWidths[i];
+                // Shadow
+                intGfx.fillStyle(0x000000, 0.15);
+                intGfx.fillRoundedRect(px + 1, rowY - intPillH / 2 + 1, pw, intPillH, intPillR);
+                // Glass pill
+                intGfx.fillStyle(0xFFFFFF, 0.06);
+                intGfx.lineStyle(1, 0xFFFFFF, 0.12);
+                intGfx.fillRoundedRect(px, rowY - intPillH / 2, pw, intPillH, intPillR);
+                intGfx.strokeRoundedRect(px, rowY - intPillH / 2, pw, intPillH, intPillR);
+
+                const label = this.add.text(px + pw / 2, rowY, name, {
+                    fontFamily: 'Roboto',
+                    fontSize: '11px',
+                    color: '#FFFFFF',
+                    fontStyle: 'bold',
+                    resolution: 2
+                }).setOrigin(0.5).setAlpha(0);
+                adElements.push(label);
+                intPills.push(label);
+
+                px += pw + intGap;
+            });
         });
 
-        // "+ more" after the list
-        const moreText = this.add.text(cx, cy + 94, '+ LinkedIn Recruiter, Indeed, CV Library & more', {
+        intGfx.setAlpha(0);
+
+        // "+ more" pill
+        const moreLabel = '& more';
+        const moreTmp = this.add.text(0, -100, moreLabel, {
+            fontFamily: 'Roboto', fontSize: '10px', fontStyle: 'italic'
+        });
+        const morePW = moreTmp.width + intPillPad * 2;
+        moreTmp.destroy();
+        const moreY = cy + 32 + intNames.length * 36; // same row spacing as above
+        const morePillH = intPillH;
+        const morePillR = morePillH / 2;
+        // Shadow
+        intGfx.fillStyle(0x000000, 0.1);
+        intGfx.fillRoundedRect(cx - morePW / 2 + 1, moreY - morePillH / 2 + 1, morePW, morePillH, morePillR);
+        // Glass pill
+        intGfx.fillStyle(0xFFFFFF, 0.04);
+        intGfx.lineStyle(1, 0xFFFFFF, 0.08);
+        intGfx.fillRoundedRect(cx - morePW / 2, moreY - morePillH / 2, morePW, morePillH, morePillR);
+        intGfx.strokeRoundedRect(cx - morePW / 2, moreY - morePillH / 2, morePW, morePillH, morePillR);
+        const moreText = this.add.text(cx, moreY, moreLabel, {
             fontFamily: 'Roboto',
             fontSize: '10px',
             color: CFG.COLORS.TEXT_SECONDARY,
-            fontStyle: 'italic'
+            fontStyle: 'italic',
+            resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(moreText);
+        intPills.push(moreText);
 
-        // "Powered by" text
-        const poweredBy = this.add.text(cx, cy + 135, 'Powered by', {
-            fontFamily: 'Roboto',
-            fontSize: '14px',
-            color: CFG.COLORS.TEXT_SECONDARY
-        }).setOrigin(0.5).setAlpha(0);
-        adElements.push(poweredBy);
-
-        // First logo with subtle glow pulse
-        const firstLogo = this.add.image(cx, cy + 175, 'first-logo')
+        // First logo
+        const firstLogo = this.add.image(cx, cy + 170, 'first-logo')
             .setOrigin(0.5)
-            .setScale(0.06)
+            .setScale(0.03)
             .setAlpha(0);
         adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(cx, cy + 225, 'Be first in the race for talent  →  first.cx', {
+        const cta = this.add.text(cx, cy + 215, 'Where AI speed meets candidate experience.', {
             fontFamily: 'Roboto',
-            fontSize: '13px',
+            fontSize: '16px',
+            fontStyle: 'italic',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
-            fontStyle: 'bold'
+            resolution: 2
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(cta);
 
@@ -160,18 +215,18 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.tweens.add({
             targets: headline,
             alpha: 1,
-            y: cy - 110,
+            y: cy - 190,
             duration: 500,
             delay: 200,
             ease: 'Back.easeOut'
         });
 
-        // 2. Tagline fades in
+        // 2. Tagline fades in (after a beat)
         this.tweens.add({
             targets: tagline,
             alpha: 0.9,
             duration: 500,
-            delay: 600
+            delay: 1400
         });
 
         // 3. Stats count in one at a time
@@ -181,7 +236,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 alpha: i % 2 === 0 ? 1 : 0.6,
                 y: t.y - 5,
                 duration: 400,
-                delay: 1000 + Math.floor(i / 2) * 300,
+                delay: 3200 + Math.floor(i / 2) * 500,
                 ease: 'Power2'
             });
         });
@@ -192,7 +247,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             alpha: 1,
             scaleX: { from: 0, to: 1 },
             duration: 400,
-            delay: 2000,
+            delay: 4800,
             ease: 'Power2'
         });
 
@@ -201,50 +256,42 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             targets: intLabel,
             alpha: 0.5,
             duration: 400,
-            delay: 2200
+            delay: 5100
         });
 
-        // 6. ATS names pop in one by one
-        atsTexts.forEach((t, i) => {
+        // 6. Integration pills fade in
+        this.tweens.add({
+            targets: intGfx,
+            alpha: 1,
+            duration: 400,
+            delay: 5300,
+            ease: 'Power2'
+        });
+        intPills.forEach((t, i) => {
             this.tweens.add({
                 targets: t,
-                alpha: 0.9,
-                y: t.y - 3,
+                alpha: 0.85,
                 duration: 300,
-                delay: 2400 + i * 150,
+                delay: 5400 + i * 120,
                 ease: 'Power2'
             });
         });
 
-        // 7. "+ more" text
-        this.tweens.add({
-            targets: moreText,
-            alpha: 0.4,
-            duration: 400,
-            delay: 3200
-        });
-
-        // 8. Powered by + Logo (last, slightly after everything else)
-        this.tweens.add({
-            targets: poweredBy,
-            alpha: 0.6,
-            duration: 500,
-            delay: 3500
-        });
+        // 7. First logo
         this.tweens.add({
             targets: firstLogo,
-            alpha: 1,
-            scale: { from: 0.04, to: 0.06 },
+            alpha: 0.5,
+            scale: { from: 0.02, to: 0.03 },
             duration: 600,
-            delay: 3700,
+            delay: 7000,
             ease: 'Back.easeOut'
         });
 
         // Logo gentle glow pulse
-        this.time.delayedCall(4300, () => {
+        this.time.delayedCall(7600, () => {
             this.tweens.add({
                 targets: firstLogo,
-                alpha: { from: 1, to: 0.7 },
+                alpha: { from: 0.5, to: 0.3 },
                 duration: 1200,
                 yoyo: true,
                 repeat: -1,
@@ -252,16 +299,16 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // 9. CTA
+        // 8. CTA
         this.tweens.add({
             targets: cta,
             alpha: 0.8,
             duration: 500,
-            delay: 4100
+            delay: 7500
         });
 
         // CTA subtle pulse
-        this.time.delayedCall(4600, () => {
+        this.time.delayedCall(8000, () => {
             this.tweens.add({
                 targets: cta,
                 alpha: { from: 0.8, to: 0.5 },
@@ -272,8 +319,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // After 7 seconds, fade out and show results
-        this.time.delayedCall(7000, () => {
+        // After 10 seconds, fade out and show results
+        this.time.delayedCall(10000, () => {
             this.tweens.add({
                 targets: adElements,
                 alpha: 0,
@@ -473,6 +520,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
         const avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
         const crown = '<span class="stat-crown">👑</span>';
+        const noCrown = '<span class="stat-crown" style="visibility:hidden">👑</span>';
 
         const statsHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
@@ -482,17 +530,17 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             '<div class="stats-team">' +
             '<div class="team-label agency-label">AGENCY</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">INTERNAL</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
             '</div></div>' +
             '<div class="lb-divider"></div>' +
