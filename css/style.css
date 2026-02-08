@@ -228,7 +228,9 @@ body {
 }
 
 .lb-title {
+    font-family: 'Roboto', sans-serif;
     font-size: 13px;
+    font-weight: 700;
     color: #FFFFFF;
     padding: 0 0 6px 0;
     text-align: center;
