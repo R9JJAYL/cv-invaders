@@ -44,14 +44,20 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         titleCV.setPosition(CFG.WIDTH / 2 - totalW / 2, 50 - titleCV.height / 2);
         titleInvaders.setPosition(titleCV.x + titleCV.width + gap, 50 - titleInvaders.height / 2);
 
-        // Subtitle — "powered by First"
+        // Subtitle — "powered by" text + First logo image
         const subtitleX = titleCV.x + totalW;
-        this.add.text(subtitleX, 50 + titleCV.height / 2 + 4, 'powered by First', {
+        const poweredByText = this.add.text(subtitleX, 50 + titleCV.height / 2 + 6, 'powered by', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: CFG.COLORS.TEXT_SECONDARY,
             fontStyle: 'normal'
         }).setOrigin(1, 0).setAlpha(0.4);
+        // First logo right-aligned next to "powered by"
+        const logoY = poweredByText.y + poweredByText.height + 4;
+        this.add.image(subtitleX, logoY, 'first-logo')
+            .setOrigin(1, 0)
+            .setScale(0.06)
+            .setAlpha(0.5);
 
         // Form inputs — name & company side by side, type below
         const formHTML = '<div class="menu-form">' +

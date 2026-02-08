@@ -5,6 +5,10 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         super({ key: 'BootScene' });
     }
 
+    preload() {
+        this.load.image('first-logo', 'assets/first-logo-white.png');
+    }
+
     create() {
         const CFG = window.CVInvaders.Config;
 
@@ -78,19 +82,21 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.generateTexture('ship-base', 60, 42);
         g.destroy();
 
-        // Composite "First" text onto the ship via canvas
+        // Composite First logo onto the ship via canvas
         const baseTex = this.textures.get('ship-base');
         const baseImg = baseTex.getSourceImage();
+        const logoImg = this.textures.get('first-logo').getSourceImage();
         const canvas = document.createElement('canvas');
         canvas.width = 60;
         canvas.height = 42;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(baseImg, 0, 0);
-        ctx.font = 'bold 10px Roboto, sans-serif';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('First', 30, 30);
+        // Draw scaled-down First logo onto the hull
+        const logoW = 28;
+        const logoH = logoW * (logoImg.height / logoImg.width);
+        ctx.globalAlpha = 0.85;
+        ctx.drawImage(logoImg, 30 - logoW / 2, 30 - logoH / 2, logoW, logoH);
+        ctx.globalAlpha = 1;
         this.textures.addCanvas('ship', canvas);
         // Don't remove ship-base — Phaser can throw frame.data.cut errors if removed too early
     }

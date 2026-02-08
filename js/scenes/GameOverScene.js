@@ -35,13 +35,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             fontStyle: 'normal'
         }).setOrigin(0.5).setAlpha(0);
 
-        // "First" logo text
-        const firstLogo = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 20, 'First', {
-            fontFamily: 'Roboto',
-            fontSize: '52px',
-            color: '#FFFFFF',
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setAlpha(0);
+        // First logo image
+        const firstLogo = this.add.image(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 10, 'first-logo')
+            .setOrigin(0.5)
+            .setScale(0.15)
+            .setAlpha(0);
 
         // Tagline
         const tagline = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 30, 'The best tool on the market for\nmanaging applicant volume.', {
