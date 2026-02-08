@@ -17,13 +17,12 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             ).setAlpha(Phaser.Math.FloatBetween(0.2, 0.7));
         }
 
-        // Title — CV in purple, INVADERS in white
+        // Title — CV in purple, INVADERS in white (retro arcade font)
         // Measure natural width first, then scale letter spacing to match leaderboard (600px)
         const targetWidth = 600;
         const titleStyle = {
-            fontFamily: 'Roboto',
-            fontSize: '56px',
-            fontStyle: 'bold',
+            fontFamily: '"Press Start 2P"',
+            fontSize: '38px',
             letterSpacing: 0
         };
         const titleCV = this.add.text(0, 0, 'CV', {
@@ -34,7 +33,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             ...titleStyle,
             color: '#FFFFFF'
         });
-        const gap = 20;
+        const gap = 16;
         const naturalW = titleCV.width + gap + titleInvaders.width;
         // Distribute extra space across all characters (2 + 8 = 10 chars)
         const extraPerChar = (targetWidth - naturalW) / 10;
