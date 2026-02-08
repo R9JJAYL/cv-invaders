@@ -444,16 +444,27 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             });
         }
 
-        // Player bullets hit boss (group-to-group overlap required for Arcade physics)
-        this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
-            if (!bullet.active || !boss.active || !boss.isAlive || !boss.entryComplete) return;
-            bullet.recycle();
-            this.scoreManager.bossHit();
-            this.sound_engine.bossHit();
-            boss.takeDamage();
-        }, null, this);
-
+        // Player bullets hit boss — delay collider until entry animation finishes
         this.bossStartTime = this.time.now;
+
+        const waitForEntry = this.time.addEvent({
+            delay: 100,
+            loop: true,
+            callback: () => {
+                if (this.boss && this.boss.entryComplete) {
+                    waitForEntry.remove();
+                    this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
+                        if (!bullet.active || !boss.active || !boss.isAlive) return;
+                        bullet.recycle();
+                        this.scoreManager.bossHit();
+                        this.sound_engine.bossHit();
+                        boss.takeDamage();
+                    }, (bullet, boss) => {
+                        return bullet.active && boss.active && boss.isAlive && boss.entryComplete;
+                    }, this);
+                }
+            }
+        });
     }
 
     spawnBossBackgroundCV() {

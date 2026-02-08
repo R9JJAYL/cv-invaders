@@ -107,6 +107,10 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0);
 
+        // Start music at boss tempo
+        this.sound_engine.startMusic();
+        this.sound_engine.setMusicTempo(1.6);
+
         // Fade in and spawn boss
         this.cameras.main.fadeIn(500);
         this.time.delayedCall(1000, () => this.spawnBoss());
@@ -184,16 +188,27 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
             });
         }
 
-        // Player bullets hit boss
-        this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
-            if (!bullet.active || !boss.active || !boss.isAlive) return;
-            bullet.recycle();
-            this.scoreManager.bossHit();
-            this.sound_engine.bossHit();
-            boss.takeDamage();
-        }, null, this);
-
+        // Player bullets hit boss — delay collider until entry animation finishes
         this.bossStartTime = this.time.now;
+
+        const waitForEntry = this.time.addEvent({
+            delay: 100,
+            loop: true,
+            callback: () => {
+                if (this.boss && this.boss.entryComplete) {
+                    waitForEntry.remove();
+                    this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
+                        if (!bullet.active || !boss.active || !boss.isAlive) return;
+                        bullet.recycle();
+                        this.scoreManager.bossHit();
+                        this.sound_engine.bossHit();
+                        boss.takeDamage();
+                    }, (bullet, boss) => {
+                        return bullet.active && boss.active && boss.isAlive && boss.entryComplete;
+                    }, this);
+                }
+            }
+        });
     }
 
     bossSpawnCV(x, y, isDisguised) {
@@ -202,7 +217,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         if (!cv) return;
 
         const spreadX = x + Phaser.Math.Between(-60, 60);
-        cv.spawn(spreadX, y, isDisguised, 180 + Phaser.Math.Between(0, 80), isDisguised);
+        cv.spawn(spreadX, y, isDisguised, 160 + Phaser.Math.Between(0, 30), isDisguised);
     }
 
     bossFire(x, y) {
@@ -244,6 +259,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.registry.set('bossTime', bossTime);
         this.registry.set('bossDefeated', true);
 
+        this.sound_engine.stopMusic();
         this.scoreManager.bossKill(bossTime);
         this.sound_engine.bossDefeated();
 
@@ -276,6 +292,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
     onPlayerDeath() {
         this.gameOver = true;
+        this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 
         // Stop boss from continuing to act
@@ -308,7 +325,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         if (this.ship.fireBullet(time)) {
             const bullet = this.bullets.getFirstDead(false);
             if (bullet) {
-                bullet.fire(this.ship.x, this.ship.y - 25);
+                bullet.fire(this.ship.x, this.ship.y - 30);
                 this.sound_engine.shoot();
             }
         }

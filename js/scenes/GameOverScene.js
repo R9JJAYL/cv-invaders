@@ -15,86 +15,210 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     showFirstAd(CFG, onComplete) {
-        // Dark background
         this.cameras.main.setBackgroundColor(CFG.COLORS.BG_HEX);
+        const adElements = [];
+        const cx = CFG.WIDTH / 2;
+        const cy = CFG.HEIGHT / 2;
 
         // Starfield
-        for (let i = 0; i < 30; i++) {
-            this.add.image(
+        for (let i = 0; i < 40; i++) {
+            const star = this.add.image(
                 Phaser.Math.Between(0, CFG.WIDTH),
                 Phaser.Math.Between(0, CFG.HEIGHT),
                 'star'
-            ).setAlpha(Phaser.Math.FloatBetween(0.1, 0.4));
+            ).setAlpha(Phaser.Math.FloatBetween(0.1, 0.5));
+            adElements.push(star);
         }
 
-        // "Powered by" small text
-        const poweredBy = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 70, 'Powered by', {
-            fontFamily: 'Roboto',
-            fontSize: '16px',
-            color: CFG.COLORS.TEXT_SECONDARY,
-            fontStyle: 'normal'
-        }).setOrigin(0.5).setAlpha(0);
+        // Floating purple particles for atmosphere
+        for (let i = 0; i < 8; i++) {
+            const p = this.add.image(
+                Phaser.Math.Between(50, CFG.WIDTH - 50),
+                Phaser.Math.Between(50, CFG.HEIGHT - 50),
+                'particle-purple'
+            ).setAlpha(0).setScale(Phaser.Math.FloatBetween(0.5, 1.5));
+            adElements.push(p);
+            this.tweens.add({
+                targets: p,
+                alpha: { from: 0, to: 0.3 },
+                y: p.y - 40,
+                x: p.x + Phaser.Math.Between(-20, 20),
+                scale: p.scale * 0.5,
+                duration: 3000 + i * 400,
+                delay: i * 300,
+                ease: 'Sine.easeInOut'
+            });
+        }
 
-        // First logo image
-        const firstLogo = this.add.image(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 20, 'first-logo')
+        // Headline — the game tie-in
+        const headline = this.add.text(cx, cy - 120, 'Drowning in CVs?', {
+            fontFamily: 'Courier New',
+            fontSize: '22px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(headline);
+
+        // Tagline from First
+        const tagline = this.add.text(cx, cy - 85, 'AI speed. First class candidate experience.', {
+            fontFamily: 'Roboto',
+            fontSize: '15px',
+            color: CFG.COLORS.PURPLE_ACCENT_HEX,
+            fontStyle: 'italic',
+            align: 'center'
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(tagline);
+
+        // Stat pills — key product highlights
+        const stats = [
+            { val: '90%', label: 'less screening time' },
+            { val: '3x', label: 'more roles handled' },
+            { val: '4.6/5', label: 'candidate satisfaction' }
+        ];
+        const statTexts = [];
+        stats.forEach((stat, i) => {
+            const sx = cx - 160 + i * 160;
+            const valText = this.add.text(sx, cy - 30, stat.val, {
+                fontFamily: 'Courier New',
+                fontSize: '26px',
+                color: '#FFFFFF',
+                fontStyle: 'bold'
+            }).setOrigin(0.5).setAlpha(0);
+            const labelText = this.add.text(sx, cy - 5, stat.label, {
+                fontFamily: 'Roboto',
+                fontSize: '11px',
+                color: CFG.COLORS.TEXT_SECONDARY
+            }).setOrigin(0.5).setAlpha(0);
+            adElements.push(valText, labelText);
+            statTexts.push(valText, labelText);
+        });
+
+        // Divider line
+        const divider = this.add.rectangle(cx, cy + 20, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
+        adElements.push(divider);
+
+        // "Powered by" text
+        const poweredBy = this.add.text(cx, cy + 50, 'Powered by', {
+            fontFamily: 'Roboto',
+            fontSize: '14px',
+            color: CFG.COLORS.TEXT_SECONDARY
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(poweredBy);
+
+        // First logo with subtle glow pulse
+        const firstLogo = this.add.image(cx, cy + 95, 'first-logo')
             .setOrigin(0.5)
             .setScale(0.06)
             .setAlpha(0);
-
-        // Tagline
-        const tagline = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 40, 'The best tool on the market for\nmanaging applicant volume.', {
-            fontFamily: 'Roboto',
-            fontSize: '14px',
-            color: CFG.COLORS.PURPLE_ACCENT_HEX,
-            align: 'center',
-            lineSpacing: 4
-        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 90, 'tryfirst.co.uk', {
+        const cta = this.add.text(cx, cy + 145, 'Be first in the race for talent  →  first.cx', {
             fontFamily: 'Roboto',
             fontSize: '13px',
-            color: CFG.COLORS.TEXT_SECONDARY,
-            fontStyle: 'normal'
+            color: CFG.COLORS.PURPLE_ACCENT_HEX,
+            fontStyle: 'bold'
         }).setOrigin(0.5).setAlpha(0);
+        adElements.push(cta);
 
-        // Fade in sequence — tagline & CTA first, then "Powered by First" last
+        // === Animation sequence ===
+
+        // 1. Headline drops in
+        this.tweens.add({
+            targets: headline,
+            alpha: 1,
+            y: cy - 110,
+            duration: 500,
+            delay: 200,
+            ease: 'Back.easeOut'
+        });
+
+        // 2. Tagline fades in
         this.tweens.add({
             targets: tagline,
-            alpha: 0.8,
-            duration: 600,
-            delay: 200
-        });
-        this.tweens.add({
-            targets: cta,
-            alpha: 0.5,
-            duration: 600,
+            alpha: 0.9,
+            duration: 500,
             delay: 600
         });
+
+        // 3. Stats count in one at a time
+        statTexts.forEach((t, i) => {
+            this.tweens.add({
+                targets: t,
+                alpha: i % 2 === 0 ? 1 : 0.6,
+                y: t.y - 5,
+                duration: 400,
+                delay: 1000 + Math.floor(i / 2) * 300,
+                ease: 'Power2'
+            });
+        });
+
+        // 4. Divider slides in
+        this.tweens.add({
+            targets: divider,
+            alpha: 1,
+            scaleX: { from: 0, to: 1 },
+            duration: 400,
+            delay: 2000,
+            ease: 'Power2'
+        });
+
+        // 5. Powered by + Logo (last, slightly after everything else)
         this.tweens.add({
             targets: poweredBy,
             alpha: 0.6,
-            duration: 600,
-            delay: 900
+            duration: 500,
+            delay: 2400
         });
         this.tweens.add({
             targets: firstLogo,
             alpha: 1,
+            scale: { from: 0.04, to: 0.06 },
             duration: 600,
-            delay: 1100
+            delay: 2600,
+            ease: 'Back.easeOut'
         });
 
-        // After 5 seconds, fade out and show results
-        this.time.delayedCall(5000, () => {
+        // Logo gentle glow pulse
+        this.time.delayedCall(3200, () => {
             this.tweens.add({
-                targets: [poweredBy, firstLogo, tagline, cta],
+                targets: firstLogo,
+                alpha: { from: 1, to: 0.7 },
+                duration: 1200,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        });
+
+        // 6. CTA
+        this.tweens.add({
+            targets: cta,
+            alpha: 0.8,
+            duration: 500,
+            delay: 3000
+        });
+
+        // CTA subtle pulse
+        this.time.delayedCall(3500, () => {
+            this.tweens.add({
+                targets: cta,
+                alpha: { from: 0.8, to: 0.5 },
+                duration: 1500,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        });
+
+        // After 6 seconds, fade out and show results
+        this.time.delayedCall(6000, () => {
+            this.tweens.add({
+                targets: adElements,
                 alpha: 0,
                 duration: 400,
                 onComplete: () => {
-                    poweredBy.destroy();
-                    firstLogo.destroy();
-                    tagline.destroy();
-                    cta.destroy();
+                    adElements.forEach(el => el.destroy());
                     onComplete();
                 }
             });
