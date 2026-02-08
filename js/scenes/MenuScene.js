@@ -49,7 +49,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const rightEdge = titleCV.x + totalW;
         const logo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
             .setOrigin(1, 0.5)
-            .setScale(0.45)
+            .setScale(0.225)
             .setAlpha(0.5);
         this.add.text(logo.x - logo.displayWidth - 4, subtitleY, 'powered by', {
             fontFamily: 'Roboto',
