@@ -425,9 +425,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             });
         }
 
-        // Player bullets hit boss
+        // Player bullets hit boss — use processCallback to ensure body overlap is checked
         this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
             if (!bullet.active || !boss.active || !boss.isAlive) return;
+            console.log('BOSS HIT! health:', boss.health);
             bullet.recycle();
             this.scoreManager.bossHit();
             this.sound_engine.bossHit();
