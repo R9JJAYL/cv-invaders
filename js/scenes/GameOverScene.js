@@ -7,11 +7,108 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     create() {
         const CFG = window.CVInvaders.Config;
+
+        // Show the First ad interstitial first, then the results
+        this.showFirstAd(CFG, () => {
+            this.showResults(CFG);
+        });
+    }
+
+    showFirstAd(CFG, onComplete) {
+        // Dark background
+        this.cameras.main.setBackgroundColor(CFG.COLORS.BG_HEX);
+
+        // Starfield
+        for (let i = 0; i < 30; i++) {
+            this.add.image(
+                Phaser.Math.Between(0, CFG.WIDTH),
+                Phaser.Math.Between(0, CFG.HEIGHT),
+                'star'
+            ).setAlpha(Phaser.Math.FloatBetween(0.1, 0.4));
+        }
+
+        // "Powered by" small text
+        const poweredBy = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 60, 'Powered by', {
+            fontFamily: 'Roboto',
+            fontSize: '16px',
+            color: CFG.COLORS.TEXT_SECONDARY,
+            fontStyle: 'normal'
+        }).setOrigin(0.5).setAlpha(0);
+
+        // "First" logo text
+        const firstLogo = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 20, 'First', {
+            fontFamily: 'Roboto',
+            fontSize: '52px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setAlpha(0);
+
+        // Tagline
+        const tagline = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 30, 'The best tool on the market for\nmanaging applicant volume.', {
+            fontFamily: 'Roboto',
+            fontSize: '14px',
+            color: CFG.COLORS.PURPLE_ACCENT_HEX,
+            align: 'center',
+            lineSpacing: 4
+        }).setOrigin(0.5).setAlpha(0);
+
+        // CTA
+        const cta = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 80, 'tryfirst.co.uk', {
+            fontFamily: 'Roboto',
+            fontSize: '13px',
+            color: CFG.COLORS.TEXT_SECONDARY,
+            fontStyle: 'normal'
+        }).setOrigin(0.5).setAlpha(0);
+
+        // Fade in sequence
+        this.tweens.add({
+            targets: poweredBy,
+            alpha: 0.6,
+            duration: 600,
+            delay: 200
+        });
+        this.tweens.add({
+            targets: firstLogo,
+            alpha: 1,
+            duration: 600,
+            delay: 500
+        });
+        this.tweens.add({
+            targets: tagline,
+            alpha: 0.8,
+            duration: 600,
+            delay: 900
+        });
+        this.tweens.add({
+            targets: cta,
+            alpha: 0.5,
+            duration: 600,
+            delay: 1200
+        });
+
+        // After 5 seconds, fade out and show results
+        this.time.delayedCall(5000, () => {
+            this.tweens.add({
+                targets: [poweredBy, firstLogo, tagline, cta],
+                alpha: 0,
+                duration: 400,
+                onComplete: () => {
+                    poweredBy.destroy();
+                    firstLogo.destroy();
+                    tagline.destroy();
+                    cta.destroy();
+                    onComplete();
+                }
+            });
+        });
+    }
+
+    showResults(CFG) {
         const bossDefeated = this.registry.get('bossDefeated');
         const score = this.registry.get('score') || 0;
         const name = this.registry.get('playerName') || 'Recruiter';
 
-        // Background
+        // Background stars (fresh set)
         for (let i = 0; i < 40; i++) {
             this.add.image(
                 Phaser.Math.Between(0, CFG.WIDTH),
@@ -42,14 +139,13 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Score with count-up
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 130, '0', {
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 125, '0', {
             fontFamily: 'Courier New',
             fontSize: '48px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Count-up tween
         this.tweens.addCounter({
             from: 0,
             to: score,
@@ -63,42 +159,30 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Grade
         const grade = this.getGrade(score);
         this.time.delayedCall(1600, () => {
-            this.add.text(CFG.WIDTH / 2, 175, grade.title, {
+            this.add.text(CFG.WIDTH / 2, 165, grade.title, {
                 fontFamily: 'Courier New',
                 fontSize: '20px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
             }).setOrigin(0.5);
-
-            this.add.text(CFG.WIDTH / 2, 200, 'Grade: ' + grade.grade, {
-                fontFamily: 'Courier New',
-                fontSize: '16px',
-                color: CFG.COLORS.TEXT_PRIMARY
-            }).setOrigin(0.5);
         });
 
-        // Stats
+        // Stats row (compact)
+        const statsY = 195;
         const stats = [
-            ['Good CVs Caught', this.registry.get('goodCVsCaught') || 0],
+            ['Good CVs', this.registry.get('goodCVsCaught') || 0],
             ['Bad CVs Shot', this.registry.get('badCVsShot') || 0],
-            ['Enemies Defeated', this.registry.get('enemiesDefeated') || 0],
             ['Max Combo', this.registry.get('maxCombo') || 0],
         ];
-
-        if (bossDefeated) {
-            const bossTime = this.registry.get('bossTime') || 0;
-            stats.push(['Boss Time', (bossTime / 1000).toFixed(1) + 's']);
-        }
-
         stats.forEach((stat, i) => {
-            this.add.text(CFG.WIDTH / 2 - 120, 240 + i * 22, stat[0], {
+            this.add.text(CFG.WIDTH / 2 - 100, statsY + i * 18, stat[0], {
                 fontFamily: 'Courier New',
-                fontSize: '13px',
+                fontSize: '11px',
                 color: CFG.COLORS.TEXT_SECONDARY
             });
-            this.add.text(CFG.WIDTH / 2 + 120, 240 + i * 22, String(stat[1]), {
+            this.add.text(CFG.WIDTH / 2 + 100, statsY + i * 18, String(stat[1]), {
                 fontFamily: 'Courier New',
-                fontSize: '13px',
+                fontSize: '11px',
                 color: CFG.COLORS.TEXT_PRIMARY,
                 fontStyle: 'bold'
             }).setOrigin(1, 0);
@@ -109,45 +193,40 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const recruiterType = this.registry.get('recruiterType') || '';
         this.saveScore(name, score, grade.grade, company, recruiterType);
 
-        // Leaderboard
-        const leaderY = 370;
-        this.add.text(CFG.WIDTH / 2, leaderY, 'LEADERBOARD', {
-            fontFamily: 'Courier New',
-            fontSize: '16px',
-            color: CFG.COLORS.COMBO,
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-
+        // Leaderboard — HTML table matching MenuScene glass pill design
         const leaderboard = this.getLeaderboard();
-        leaderboard.slice(0, 8).forEach((entry, i) => {
-            const isPlayer = entry.name === name && entry.score === score;
-            const color = isPlayer ? CFG.COLORS.PURPLE_ACCENT_HEX : CFG.COLORS.TEXT_SECONDARY;
-            const y = leaderY + 25 + i * 18;
-            const typeTag = entry.type === 'agency' ? 'AG' : entry.type === 'internal' ? 'IN' : '';
-            const detail = (entry.company || '') + (typeTag ? ' [' + typeTag + ']' : '');
+        const leaderY = 270;
 
-            this.add.text(CFG.WIDTH / 2 - 200, y,
-                (i + 1) + '. ' + entry.name, {
-                fontFamily: 'Courier New',
-                fontSize: '12px',
-                color: color
-            });
-            this.add.text(CFG.WIDTH / 2 + 50, y, detail, {
-                fontFamily: 'Courier New',
-                fontSize: '10px',
-                color: isPlayer ? CFG.COLORS.TEXT_PRIMARY : CFG.COLORS.TEXT_SECONDARY
-            }).setOrigin(0.5, 0).setAlpha(0.7);
-            this.add.text(CFG.WIDTH / 2 + 200, y,
-                String(entry.score), {
-                fontFamily: 'Courier New',
-                fontSize: '12px',
-                color: isPlayer ? '#FFFFFF' : CFG.COLORS.TEXT_PRIMARY,
-                fontStyle: isPlayer ? 'bold' : 'normal'
-            }).setOrigin(1, 0);
-        });
+        const leaderHTML = '<div class="menu-tables">' +
+            '<div class="glass-pill lb-pill">' +
+            '<table class="leaderboard-table">' +
+            '<thead><tr><th colspan="5" class="lb-title">TOP 10 SCORES</th></tr>' +
+            '<tr>' +
+            '<th class="lb-head lb-rank">#</th>' +
+            '<th class="lb-head lb-name">NAME</th>' +
+            '<th class="lb-head lb-company">COMPANY</th>' +
+            '<th class="lb-head lb-type">TYPE</th>' +
+            '<th class="lb-head lb-score">SCORE</th>' +
+            '</tr></thead><tbody>' +
+            leaderboard.slice(0, 10).map((entry, i) => {
+                const isPlayer = entry.name === name && entry.score === score;
+                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
+                const typeClass = entry.type === 'agency' ? 'type-agency' : '';
+                const rowClass = isPlayer ? 'lb-highlight' : '';
+                return '<tr class="' + rowClass + '">' +
+                    '<td class="lb-cell lb-rank">' + (i + 1) + '.</td>' +
+                    '<td class="lb-cell lb-name">' + entry.name + '</td>' +
+                    '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
+                    '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
+                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
+                    '</tr>';
+            }).join('') +
+            '</tbody></table></div></div>';
+
+        this.add.dom(CFG.WIDTH / 2, leaderY + 110).createFromHTML(leaderHTML);
 
         // Buttons
-        const btnY = CFG.HEIGHT - 50;
+        const btnY = CFG.HEIGHT - 40;
 
         // Play Again
         const playBtn = this.add.text(CFG.WIDTH / 2 - 120, btnY, '[ PLAY AGAIN ]', {
@@ -184,7 +263,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             this.time.delayedCall(400, () => this.scene.start('MenuScene'));
         });
 
-        this.cameras.main.fadeIn(500);
+        this.cameras.main.fadeIn(400);
     }
 
     getGrade(score) {
@@ -223,14 +302,12 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             '"! Can you beat the AI?\n\n' +
             '#CVInvaders #Recruiting #TalentAcquisition';
 
-        // Copy to clipboard
         if (navigator.clipboard) {
             navigator.clipboard.writeText(shareText).then(() => {
                 this.showCopiedMessage();
             });
         }
 
-        // Open LinkedIn share (generic share URL)
         const url = encodeURIComponent(window.location.href);
         window.open(
             'https://www.linkedin.com/sharing/share-offsite/?url=' + url,
@@ -241,7 +318,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     showCopiedMessage() {
         const msg = this.add.text(
             window.CVInvaders.Config.WIDTH / 2,
-            window.CVInvaders.Config.HEIGHT - 80,
+            window.CVInvaders.Config.HEIGHT - 70,
             'Score copied to clipboard!',
             {
                 fontFamily: 'Courier New',

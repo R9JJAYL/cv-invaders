@@ -56,6 +56,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<option value="" disabled selected>Agency or Internal</option>' +
             '<option value="agency">Agency</option>' +
             '<option value="internal">Internal</option>' +
+            '<option value="other">Other</option>' +
             '</select>' +
             '</div>';
         this.formInput = this.add.dom(CFG.WIDTH / 2, 135).createFromHTML(formHTML);

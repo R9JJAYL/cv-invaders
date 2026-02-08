@@ -303,14 +303,11 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         }
         if (hud && hud.updateCountdown) {
             if (this.bossPhase) {
-                hud.updateCountdown(this.bossTimeRemaining);
-            } else {
-                // Before waves start, show full duration; once waves are active, use actual remaining
-                const remaining = this.waveManager.active
-                    ? this.waveManager.getTotalRemainingMs()
-                    : this.totalGameDuration;
-                hud.updateCountdown(remaining);
+                hud.updateCountdown(this.bossTimeRemaining, true);
+            } else if (this.waveManager.active) {
+                hud.updateCountdown(this.waveManager.getTotalRemainingMs(), false);
             }
+            // Don't show timer during tutorial — it only starts when waves begin
         }
     }
 
@@ -471,7 +468,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.boss.body.enable = false;
         }
 
-        this.showAnnouncement('TIME\'S UP!\nThe AI Bot wins...', 2000);
+        this.showAnnouncement('TIME\'S UP!', 2000);
 
         // Clean up
         this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });

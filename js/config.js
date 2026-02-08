@@ -87,12 +87,13 @@ window.CVInvaders.Config = {
 
     // Grades
     GRADES: [
-        { min: 20000, grade: 'S', title: 'Chief Talent Officer' },
-        { min: 15000, grade: 'A', title: 'Head of Recruitment' },
+        { min: 20000, grade: 'S', title: 'Unicorn Hunter' },
+        { min: 15000, grade: 'A', title: 'Head of Talent' },
         { min: 10000, grade: 'B', title: 'Senior Recruiter' },
         { min: 6000, grade: 'C', title: 'Recruiter' },
         { min: 3000, grade: 'D', title: 'Junior Recruiter' },
-        { min: 0, grade: 'F', title: 'The AI Replaced You' }
+        { min: 1000, grade: 'E', title: 'Apprentice Recruiter' },
+        { min: 0, grade: 'F', title: 'Work Experience' }
     ],
 
     // Colors

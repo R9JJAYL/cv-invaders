@@ -106,16 +106,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         });
     }
 
-    updateCountdown(remainingMs) {
+    updateCountdown(remainingMs, isBossPhase) {
+        const label = isBossPhase ? 'FINAL BOSS ROUND' : 'TIME REMAINING';
         if (remainingMs <= 0) {
-            this.countdownText.setText('TIME REMAINING: 0s');
+            this.countdownText.setText(label + ': 0s');
             this.countdownText.setColor('#FF4444');
         } else {
             const secs = Math.ceil(remainingMs / 1000);
-            const mins = Math.floor(secs / 60);
-            const s = secs % 60;
-            const timeStr = mins > 0 ? mins + ':' + String(s).padStart(2, '0') : String(s) + 's';
-            this.countdownText.setText('TIME REMAINING: ' + timeStr);
+            this.countdownText.setText(label + ': ' + secs + 's');
 
             // Urgency color shift in last 10 seconds
             if (secs <= 10) {

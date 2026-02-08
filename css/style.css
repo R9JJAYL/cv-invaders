@@ -231,3 +231,7 @@ body {
 .lb-cell.lb-type { opacity: 0.7; }
 .lb-cell.lb-type.type-agency { color: #9B59B6; }
 .lb-cell.lb-score { text-align: right; color: #FFFFFF; }
+
+/* Player highlight row */
+.lb-highlight .lb-cell { color: #9B59B6; font-weight: bold; opacity: 1; }
+.lb-highlight .lb-cell.lb-score { color: #FFFFFF; }
