@@ -392,7 +392,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.renderTables(CFG, allScores, name, score);
 
         // Buttons
-        const btnY = CFG.HEIGHT - 25;
+        const btnY = 546;
 
         // Play Again
         const playBtn = this.add.text(CFG.WIDTH / 2 - 120, btnY, '[ PLAY AGAIN ]', {
