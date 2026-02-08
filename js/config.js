@@ -53,7 +53,7 @@ window.CVInvaders.Config = {
     ],
 
     // Boss
-    BOSS_HEALTH: 25,
+    BOSS_HEALTH: 14,
     BOSS_TIMER: 30000,
     BOSS_PHASE2_THRESHOLD: 0.5,
     BOSS_SPAM_RATE: 1200,
@@ -74,7 +74,8 @@ window.CVInvaders.Config = {
         BAD_HITS_PLAYER: -100,
         ENEMY_KILL: 200,
         BOSS_HIT: 50,
-        BOSS_KILL_BASE: 1000,
+        BOSS_KILL_MAX: 2500,
+        BOSS_KILL_MIN: 1000,
         CAUGHT_DISGUISED: -150,
         COMBO_THRESHOLDS: [
             { min: 30, multiplier: 4.0 },
@@ -87,13 +88,13 @@ window.CVInvaders.Config = {
 
     // Grades
     GRADES: [
-        { min: 20000, grade: 'S', title: 'Unicorn Hunter' },
-        { min: 15000, grade: 'A', title: 'Head of Talent' },
-        { min: 10000, grade: 'B', title: 'Senior Recruiter' },
-        { min: 6000, grade: 'C', title: 'Recruiter' },
-        { min: 3000, grade: 'D', title: 'Junior Recruiter' },
-        { min: 1000, grade: 'E', title: 'Apprentice Recruiter' },
-        { min: 0, grade: 'F', title: 'Work Experience' }
+        { min: 15000, grade: 'S', title: 'Unicorn Hunter' },
+        { min: 12500, grade: 'A', title: 'Talent Whisperer' },
+        { min: 10000, grade: 'B', title: 'CV Slayer' },
+        { min: 7500, grade: 'C', title: 'Inbox Warrior' },
+        { min: 5000, grade: 'D', title: 'LinkedIn Lurker' },
+        { min: 2500, grade: 'E', title: 'Ghost Recruiter' },
+        { min: 0, grade: 'F', title: 'First Day on the Job' }
     ],
 
     // Colors

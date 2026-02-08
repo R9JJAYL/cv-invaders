@@ -38,68 +38,95 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
     }
 
     generateShipTexture(CFG) {
+        const W = 120;
+        const H = 50;
+        const cx = W / 2; // 60
         const g = this.add.graphics();
 
-        // Engine glow
-        g.fillStyle(0x00E5FF, 0.6);
-        g.fillRect(22, 38, 16, 4);
+        // === Retro stealth bomber (B-2 flying wing) ===
 
-        // Hull body
+        // Engine glow (twin exhausts at rear centre)
+        g.fillStyle(0x00E5FF, 0.5);
+        g.fillRect(cx - 16, H - 4, 10, 3);
+        g.fillRect(cx + 6, H - 4, 10, 3);
+
+        // Main flying-wing body — wide flat chevron shape
         g.fillStyle(CFG.COLORS.PURPLE_LIGHT, 1);
-        g.fillRect(10, 22, 40, 16);
-
-        // Nose cone (triangle)
-        g.fillStyle(CFG.COLORS.PURPLE_PRIMARY, 1);
         g.beginPath();
-        g.moveTo(30, 2);
-        g.lineTo(10, 22);
-        g.lineTo(50, 22);
+        g.moveTo(cx, 4);          // nose tip
+        g.lineTo(2, H - 8);       // left wing tip
+        g.lineTo(18, H - 4);      // left wing trailing edge
+        g.lineTo(cx - 10, H - 10);// left inner notch
+        g.lineTo(cx, H - 6);      // centre rear
+        g.lineTo(cx + 10, H - 10);// right inner notch
+        g.lineTo(W - 18, H - 4);  // right wing trailing edge
+        g.lineTo(W - 2, H - 8);   // right wing tip
         g.closePath();
         g.fillPath();
 
-        // Wings
-        g.fillStyle(CFG.COLORS.PURPLE_PRIMARY, 0.9);
+        // Darker centre fuselage stripe
+        g.fillStyle(CFG.COLORS.PURPLE_PRIMARY, 0.8);
         g.beginPath();
-        g.moveTo(0, 36);
-        g.lineTo(10, 22);
-        g.lineTo(10, 38);
-        g.closePath();
-        g.fillPath();
-        g.beginPath();
-        g.moveTo(60, 36);
-        g.lineTo(50, 22);
-        g.lineTo(50, 38);
+        g.moveTo(cx, 4);
+        g.lineTo(cx - 18, H - 10);
+        g.lineTo(cx - 10, H - 10);
+        g.lineTo(cx, H - 6);
+        g.lineTo(cx + 10, H - 10);
+        g.lineTo(cx + 18, H - 10);
         g.closePath();
         g.fillPath();
 
-        // Catch tray (lighter bar)
-        g.fillStyle(CFG.COLORS.PURPLE_GLOW, 0.7);
-        g.fillRect(5, 18, 50, 5);
+        // Wing edge highlights
+        g.lineStyle(1, CFG.COLORS.PURPLE_GLOW, 0.5);
+        g.beginPath();
+        g.moveTo(cx, 4);
+        g.lineTo(2, H - 8);
+        g.strokePath();
+        g.beginPath();
+        g.moveTo(cx, 4);
+        g.lineTo(W - 2, H - 8);
+        g.strokePath();
 
         // Cockpit window
-        g.fillStyle(0x00E5FF, 0.5);
-        g.fillCircle(30, 26, 5);
+        g.fillStyle(0x00E5FF, 0.4);
+        g.fillEllipse(cx, 16, 8, 5);
 
-        g.generateTexture('ship-base', 60, 42);
+        // Catch tray (sensor bar along leading edge)
+        g.fillStyle(CFG.COLORS.PURPLE_GLOW, 0.6);
+        g.beginPath();
+        g.moveTo(cx - 4, 7);
+        g.lineTo(12, H - 14);
+        g.lineTo(14, H - 12);
+        g.lineTo(cx - 2, 9);
+        g.closePath();
+        g.fillPath();
+        g.beginPath();
+        g.moveTo(cx + 4, 7);
+        g.lineTo(W - 12, H - 14);
+        g.lineTo(W - 14, H - 12);
+        g.lineTo(cx + 2, 9);
+        g.closePath();
+        g.fillPath();
+
+        g.generateTexture('ship-base', W, H);
         g.destroy();
 
-        // Composite First logo onto the ship via canvas
+        // Composite First logo onto the centre fuselage
         const baseTex = this.textures.get('ship-base');
         const baseImg = baseTex.getSourceImage();
         const logoImg = this.textures.get('first-logo').getSourceImage();
         const canvas = document.createElement('canvas');
-        canvas.width = 60;
-        canvas.height = 42;
+        canvas.width = W;
+        canvas.height = H;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(baseImg, 0, 0);
-        // Draw scaled-down First logo onto the hull
-        const logoW = 28;
+        const logoW = 36;
         const logoH = logoW * (logoImg.height / logoImg.width);
-        ctx.globalAlpha = 0.85;
-        ctx.drawImage(logoImg, 30 - logoW / 2, 30 - logoH / 2, logoW, logoH);
+        const logoY = 30;
+        ctx.globalAlpha = 0.55;
+        ctx.drawImage(logoImg, cx - logoW / 2, logoY - logoH / 2, logoW, logoH);
         ctx.globalAlpha = 1;
         this.textures.addCanvas('ship', canvas);
-        // Don't remove ship-base — Phaser can throw frame.data.cut errors if removed too early
     }
 
     generateCVTextures(CFG) {

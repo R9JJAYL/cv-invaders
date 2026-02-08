@@ -136,6 +136,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             }
         });
 
+        // Start background music
+        this.sound_engine.startMusic();
+
         // Start with tutorial
         this.startTutorial();
     }
@@ -144,8 +147,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     startTutorial() {
         const CFG = window.CVInvaders.Config;
 
-        // Show movement hint
-        this.showAnnouncement('Use ← → arrow keys to move', 3000);
+        // Show movement hint — detect touch/mobile vs desktop
+        const isMobile = !this.sys.game.device.os.desktop;
+        const moveHint = isMobile
+            ? 'Tap or drag to move the ship'
+            : 'Use ← → arrow keys to move';
+        this.showAnnouncement(moveHint, 3000);
 
         // Start spawning tutorial CVs right away
         this.time.delayedCall(600, () => {
@@ -292,7 +299,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         if (this.ship.fireBullet(time)) {
             const bullet = this.bullets.getFirstDead(false);
             if (bullet) {
-                bullet.fire(this.ship.x, this.ship.y - 25);
+                bullet.fire(this.ship.x, this.ship.y - 30);
                 this.sound_engine.shoot();
             }
         }
@@ -407,6 +414,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.bossSpawnTimer = 0;
         this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
 
+        // Intensify music for boss fight
+        this.sound_engine.setMusicTempo(1.6);
+
         // Don't clear existing CVs — smooth transition, they keep falling
 
         this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
@@ -436,7 +446,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Player bullets hit boss (group-to-group overlap required for Arcade physics)
         this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
-            if (!bullet.active || !boss.active || !boss.isAlive) return;
+            if (!bullet.active || !boss.active || !boss.isAlive || !boss.entryComplete) return;
             bullet.recycle();
             this.scoreManager.bossHit();
             this.sound_engine.bossHit();
@@ -489,6 +499,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.gameOver = true;
         this.registry.set('bossDefeated', false);
 
+        this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 
         // Stop boss
@@ -513,9 +524,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
     onBossDefeated() {
         this.gameOver = true;
+        const bossTime = this.time.now - this.bossStartTime;
+        this.registry.set('bossTime', bossTime);
         this.registry.set('bossDefeated', true);
 
-        this.scoreManager.bossKill();
+        this.sound_engine.stopMusic();
+        this.scoreManager.bossKill(bossTime);
         this.sound_engine.bossDefeated();
 
         // Clean up all active CVs and boss bullets
@@ -618,6 +632,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
     onPlayerDeath() {
         this.gameOver = true;
+        this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 
         // Stop boss if active

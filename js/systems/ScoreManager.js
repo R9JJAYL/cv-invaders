@@ -84,8 +84,14 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         return this.addScore(window.CVInvaders.Config.SCORE.BOSS_HIT);
     }
 
-    bossKill() {
-        const points = window.CVInvaders.Config.SCORE.BOSS_KILL_BASE;
+    bossKill(bossTime) {
+        // Scale boss bonus from 2500 (instant) to 1000 (30s+)
+        // Linear interpolation based on boss fight duration
+        const maxTime = window.CVInvaders.Config.BOSS_TIMER || 30000;
+        const t = Math.min(bossTime / maxTime, 1); // 0 = instant, 1 = full timer
+        const maxPts = window.CVInvaders.Config.SCORE.BOSS_KILL_MAX;
+        const minPts = window.CVInvaders.Config.SCORE.BOSS_KILL_MIN;
+        const points = Math.round(maxPts - ((maxPts - minPts) * t));
         this.score += points;
         this.scene.registry.set('score', this.score);
         return points;

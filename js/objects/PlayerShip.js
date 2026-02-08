@@ -9,8 +9,8 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
 
         this.setCollideWorldBounds(true);
         this.setDepth(10);
-        this.body.setSize(50, 30);
-        this.body.setOffset(5, 6);
+        this.body.setSize(90, 36);
+        this.body.setOffset(15, 8);
 
         this.speed = window.CVInvaders.Config.PLAYER_SPEED;
         this.fireRate = window.CVInvaders.Config.FIRE_RATE;
@@ -23,7 +23,7 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         this.unicornActive = false;
 
         // Create catch zone as separate physics object
-        this.catchZone = scene.add.rectangle(x, y - 18, this.catchZoneWidth, 12, 0x00ff00, 0);
+        this.catchZone = scene.add.rectangle(x, y - 20, this.catchZoneWidth, 12, 0x00ff00, 0);
         scene.physics.add.existing(this.catchZone);
         this.catchZone.body.setAllowGravity(false);
         this.catchZone.setDepth(10);
@@ -77,7 +77,7 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
 
         // Sync catch zone position
         this.catchZone.x = this.x;
-        this.catchZone.y = this.y - 18;
+        this.catchZone.y = this.y - 20;
         this.catchZone.body.reset(this.catchZone.x, this.catchZone.y);
     }
 

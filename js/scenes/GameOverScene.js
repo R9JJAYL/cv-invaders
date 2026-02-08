@@ -28,7 +28,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // "Powered by" small text
-        const poweredBy = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 60, 'Powered by', {
+        const poweredBy = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 70, 'Powered by', {
             fontFamily: 'Roboto',
             fontSize: '16px',
             color: CFG.COLORS.TEXT_SECONDARY,
@@ -36,13 +36,13 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5).setAlpha(0);
 
         // First logo image
-        const firstLogo = this.add.image(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 10, 'first-logo')
+        const firstLogo = this.add.image(CFG.WIDTH / 2, CFG.HEIGHT / 2 - 20, 'first-logo')
             .setOrigin(0.5)
-            .setScale(0.15)
+            .setScale(0.06)
             .setAlpha(0);
 
         // Tagline
-        const tagline = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 30, 'The best tool on the market for\nmanaging applicant volume.', {
+        const tagline = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 40, 'The best tool on the market for\nmanaging applicant volume.', {
             fontFamily: 'Roboto',
             fontSize: '14px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -51,37 +51,37 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5).setAlpha(0);
 
         // CTA
-        const cta = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 80, 'tryfirst.co.uk', {
+        const cta = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2 + 90, 'tryfirst.co.uk', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.TEXT_SECONDARY,
             fontStyle: 'normal'
         }).setOrigin(0.5).setAlpha(0);
 
-        // Fade in sequence
-        this.tweens.add({
-            targets: poweredBy,
-            alpha: 0.6,
-            duration: 600,
-            delay: 200
-        });
-        this.tweens.add({
-            targets: firstLogo,
-            alpha: 1,
-            duration: 600,
-            delay: 500
-        });
+        // Fade in sequence — tagline & CTA first, then "Powered by First" last
         this.tweens.add({
             targets: tagline,
             alpha: 0.8,
             duration: 600,
-            delay: 900
+            delay: 200
         });
         this.tweens.add({
             targets: cta,
             alpha: 0.5,
             duration: 600,
-            delay: 1200
+            delay: 600
+        });
+        this.tweens.add({
+            targets: poweredBy,
+            alpha: 0.6,
+            duration: 600,
+            delay: 900
+        });
+        this.tweens.add({
+            targets: firstLogo,
+            alpha: 1,
+            duration: 600,
+            delay: 1100
         });
 
         // After 5 seconds, fade out and show results
@@ -115,31 +115,21 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             ).setAlpha(Phaser.Math.FloatBetween(0.2, 0.6));
         }
 
-        // Title
+        // Title + score on same row
         const titleText = bossDefeated ? 'MISSION COMPLETE!' : 'GAME OVER';
         const titleColor = bossDefeated ? '#00FF00' : '#FF4444';
-        this.add.text(CFG.WIDTH / 2, 40, titleText, {
+        this.add.text(CFG.WIDTH / 2, 22, titleText, {
             fontFamily: 'Courier New',
-            fontSize: '36px',
+            fontSize: '28px',
             color: titleColor,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        // Result message
-        const msg = bossDefeated
-            ? window.CVInvaders.Dialogue.GAME_OVER.WIN
-            : window.CVInvaders.Dialogue.GAME_OVER.LOSE;
-        this.add.text(CFG.WIDTH / 2, 80, msg, {
-            fontFamily: 'Courier New',
-            fontSize: '14px',
-            color: CFG.COLORS.TEXT_SECONDARY,
-            align: 'center'
-        }).setOrigin(0.5);
-
         // Score with count-up
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 125, '0', {
+        const grade = this.getGrade(score);
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, 58, '0', {
             fontFamily: 'Courier New',
-            fontSize: '48px',
+            fontSize: '36px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
@@ -154,79 +144,37 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }
         });
 
-        // Grade
-        const grade = this.getGrade(score);
+        // Grade title
         this.time.delayedCall(1600, () => {
-            this.add.text(CFG.WIDTH / 2, 165, grade.title, {
+            this.add.text(CFG.WIDTH / 2, 88, grade.title, {
                 fontFamily: 'Courier New',
-                fontSize: '20px',
+                fontSize: '16px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
             }).setOrigin(0.5);
         });
 
-        // Stats row (compact)
-        const statsY = 195;
-        const stats = [
-            ['Good CVs', this.registry.get('goodCVsCaught') || 0],
-            ['Bad CVs Shot', this.registry.get('badCVsShot') || 0],
-            ['Max Combo', this.registry.get('maxCombo') || 0],
-        ];
-        stats.forEach((stat, i) => {
-            this.add.text(CFG.WIDTH / 2 - 100, statsY + i * 18, stat[0], {
-                fontFamily: 'Courier New',
-                fontSize: '11px',
-                color: CFG.COLORS.TEXT_SECONDARY
-            });
-            this.add.text(CFG.WIDTH / 2 + 100, statsY + i * 18, String(stat[1]), {
-                fontFamily: 'Courier New',
-                fontSize: '11px',
-                color: CFG.COLORS.TEXT_PRIMARY,
-                fontStyle: 'bold'
-            }).setOrigin(1, 0);
-        });
+        // Compact stats row — single line
+        const goodCVs = this.registry.get('goodCVsCaught') || 0;
+        const badCVs = this.registry.get('badCVsShot') || 0;
+        const maxCombo = this.registry.get('maxCombo') || 0;
+        this.add.text(CFG.WIDTH / 2, 110, 'Good: ' + goodCVs + '  |  Bad: ' + badCVs + '  |  Combo: ' + maxCombo, {
+            fontFamily: 'Courier New',
+            fontSize: '10px',
+            color: CFG.COLORS.TEXT_SECONDARY
+        }).setOrigin(0.5);
 
         // Save score
         const company = this.registry.get('companyName') || '';
         const recruiterType = this.registry.get('recruiterType') || '';
         this.saveScore(name, score, grade.grade, company, recruiterType);
 
-        // Leaderboard — HTML table matching MenuScene glass pill design
-        const leaderboard = this.getLeaderboard();
-        const leaderY = 270;
-
-        const leaderHTML = '<div class="menu-tables">' +
-            '<div class="glass-pill lb-pill">' +
-            '<table class="leaderboard-table">' +
-            '<thead><tr><th colspan="5" class="lb-title">TOP 10 SCORES</th></tr>' +
-            '<tr>' +
-            '<th class="lb-head lb-rank">#</th>' +
-            '<th class="lb-head lb-name">NAME</th>' +
-            '<th class="lb-head lb-company">COMPANY</th>' +
-            '<th class="lb-head lb-type">TEAM</th>' +
-            '<th class="lb-head lb-score">SCORE</th>' +
-            '</tr></thead><tbody>' +
-            leaderboard.slice(0, 10).map((entry, i) => {
-                const isPlayer = entry.name === name && entry.score === score;
-                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
-                const typeClass = entry.type === 'agency' ? 'type-agency' : '';
-                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
-                const podiumRow = i < 3 ? ' lb-podium' : '';
-                const rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
-                return '<tr class="' + rowClass + '">' +
-                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
-                    '<td class="lb-cell lb-name">' + entry.name + '</td>' +
-                    '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
-                    '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
-                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
-                    '</tr>';
-            }).join('') +
-            '</tbody></table></div></div>';
-
-        this.add.dom(CFG.WIDTH / 2, leaderY + 110).createFromHTML(leaderHTML);
+        // Leaderboard — exact copy of MenuScene.renderTables
+        const allScores = this.getLeaderboard();
+        this.renderTables(CFG, allScores, name, score);
 
         // Buttons
-        const btnY = CFG.HEIGHT - 40;
+        const btnY = CFG.HEIGHT - 25;
 
         // Play Again
         const playBtn = this.add.text(CFG.WIDTH / 2 - 120, btnY, '[ PLAY AGAIN ]', {
@@ -264,6 +212,71 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         this.cameras.main.fadeIn(400);
+    }
+
+    renderTables(CFG, allScores, playerName, playerScore) {
+        const agency = allScores.filter(e => e.type === 'agency');
+        const internal = allScores.filter(e => e.type === 'internal');
+        const agencyTotal = agency.reduce((s, e) => s + e.score, 0);
+        const internalTotal = internal.reduce((s, e) => s + e.score, 0);
+        const agencyAvg = agency.length > 0 ? Math.round(agencyTotal / agency.length) : 0;
+        const internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
+        const fmt = (n) => n.toLocaleString();
+
+        const gamesWin = agency.length > internal.length ? 'agency' : internal.length > agency.length ? 'internal' : 'tie';
+        const totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
+        const avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
+        const crown = '<span class="stat-crown">👑</span>';
+
+        const statsHTML = '<div class="menu-tables">' +
+            '<div class="glass-pill combined-pill">' +
+            '<div class="lb-title">LEADERBOARD</div>' +
+            '<div class="stats-section">' +
+            '<div class="stats-columns">' +
+            '<div class="stats-team">' +
+            '<div class="team-label agency-label">AGENCY</div>' +
+            '<div class="stat-pills">' +
+            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : '') + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '</div></div>' +
+            '<div class="stats-vs">VS</div>' +
+            '<div class="stats-team">' +
+            '<div class="team-label internal-label">INTERNAL</div>' +
+            '<div class="stat-pills">' +
+            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : '') + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
+            '</div></div>' +
+            '</div></div>' +
+            '<div class="lb-divider"></div>' +
+            '<table class="leaderboard-table">' +
+            '<thead>' +
+            '<tr>' +
+            '<th class="lb-head lb-rank">#</th>' +
+            '<th class="lb-head lb-name">NAME</th>' +
+            '<th class="lb-head lb-company">COMPANY</th>' +
+            '<th class="lb-head lb-type">TEAM</th>' +
+            '<th class="lb-head lb-score">SCORE</th>' +
+            '</tr></thead><tbody>' +
+            allScores.slice(0, 10).map((entry, i) => {
+                const isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
+                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
+                const typeClass = entry.type === 'agency' ? 'type-agency' : '';
+                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
+                const podiumRow = i < 3 ? ' lb-podium' : '';
+                const rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
+                return '<tr class="' + rowClass + '">' +
+                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
+                    '<td class="lb-cell lb-name">' + entry.name + '</td>' +
+                    '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
+                    '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
+                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
+                    '</tr>';
+            }).join('') +
+            '</tbody></table></div></div>';
+
+        this.add.dom(CFG.WIDTH / 2, 345).createFromHTML(statsHTML);
     }
 
     getGrade(score) {
@@ -318,7 +331,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     showCopiedMessage() {
         const msg = this.add.text(
             window.CVInvaders.Config.WIDTH / 2,
-            window.CVInvaders.Config.HEIGHT - 70,
+            window.CVInvaders.Config.HEIGHT - 45,
             'Score copied to clipboard!',
             {
                 fontFamily: 'Courier New',
