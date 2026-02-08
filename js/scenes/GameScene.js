@@ -117,6 +117,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                     this.tutorialSpawnTimer.remove();
                     this.tutorialSpawnTimer = null;
                 }
+                // Cancel all pending delayed calls (tutorial timers, wave announcements)
+                this.time.removeAllEvents();
+                // Clear any active CVs
+                this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
+                // Clear announcement
+                this.announcementText.setAlpha(0);
                 this.waveManager.active = false;
                 this.startBossPhase();
             }

@@ -140,15 +140,16 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
                 fontStyle: 'bold'
             }).setOrigin(0.5, 0).setDepth(100);
 
+            const barX = window.CVInvaders.Config.WIDTH / 2 - 150;
             this.bossHealthBg = this.add.rectangle(
-                window.CVInvaders.Config.WIDTH / 2, 62,
+                barX, 62,
                 300, 10, 0x333333
-            ).setDepth(100);
+            ).setOrigin(0, 0.5).setDepth(100);
 
             this.bossHealthBar = this.add.rectangle(
-                window.CVInvaders.Config.WIDTH / 2, 62,
+                barX, 62,
                 300, 10, 0xFF0000
-            ).setDepth(100);
+            ).setOrigin(0, 0.5).setDepth(100);
         }
         if (!visible && this.bossHealthBar) {
             this.bossLabel.destroy();
