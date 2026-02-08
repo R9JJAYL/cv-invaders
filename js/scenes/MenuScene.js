@@ -126,6 +126,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
             '<div class="stat-pill agency-pill"><div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
             '</div></div>' +
+            '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">INTERNAL</div>' +
             '<div class="stat-pills">' +
