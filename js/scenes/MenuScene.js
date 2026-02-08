@@ -72,7 +72,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.startBtn = this.add.text(CFG.WIDTH / 2, 205, '[ CLICK TO START MISSION ]', {
             fontFamily: 'Courier New',
             fontSize: '22px',
-            color: CFG.COLORS.PURPLE_ACCENT_HEX,
+            color: '#FFFFFF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -87,8 +87,8 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
-        this.startBtn.on('pointerover', () => this.startBtn.setColor('#FFFFFF'));
-        this.startBtn.on('pointerout', () => this.startBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
+        this.startBtn.on('pointerover', () => this.startBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
+        this.startBtn.on('pointerout', () => this.startBtn.setColor('#FFFFFF'));
         this.startBtn.on('pointerdown', () => this.startGame());
 
         // Aggregate stats + Leaderboard (HTML tables)
