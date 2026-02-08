@@ -127,7 +127,7 @@ body {
 .stats-table {
     border-collapse: collapse;
     width: 320px;
-    font-family: 'Courier New', monospace;
+    font-family: 'Roboto', sans-serif;
 }
 
 .stats-header {
@@ -193,7 +193,7 @@ body {
 .leaderboard-table {
     border-collapse: collapse;
     width: 100%;
-    font-family: 'Courier New', monospace;
+    font-family: 'Roboto', sans-serif;
 }
 
 .lb-title {
