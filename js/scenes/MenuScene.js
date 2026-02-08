@@ -21,7 +21,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Measure natural width first, then scale letter spacing to match leaderboard (600px)
         const targetWidth = 600;
         const titleStyle = {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '56px',
             fontStyle: 'bold',
             letterSpacing: 0
