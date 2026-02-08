@@ -114,9 +114,9 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
         const fmt = (n) => n.toLocaleString();
 
-        // Stats table (glass pill)
+        // Combined stats + leaderboard (single glass pill)
         const statsHTML = '<div class="menu-tables">' +
-            '<div class="glass-pill stats-pill">' +
+            '<div class="glass-pill combined-pill">' +
             '<table class="stats-table">' +
             '<thead><tr>' +
             '<th class="stats-header" colspan="3">AGENCY vs INTERNAL</th>' +
@@ -125,10 +125,8 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<tr><td class="agency-val">' + fmt(agency.length) + '</td><td class="stat-label">Games</td><td class="internal-val">' + fmt(internal.length) + '</td></tr>' +
             '<tr><td class="agency-val">' + fmt(agencyTotal) + '</td><td class="stat-label">Total</td><td class="internal-val">' + fmt(internalTotal) + '</td></tr>' +
             '<tr><td class="agency-val">' + fmt(agencyAvg) + '</td><td class="stat-label">Avg</td><td class="internal-val">' + fmt(internalAvg) + '</td></tr>' +
-            '</tbody></table></div>' +
-
-            // Leaderboard table (glass pill)
-            '<div class="glass-pill lb-pill">' +
+            '</tbody></table>' +
+            '<div class="lb-divider"></div>' +
             '<table class="leaderboard-table">' +
             '<thead><tr><th colspan="5" class="lb-title">TOP 10 SCORES</th></tr>' +
             '<tr>' +
