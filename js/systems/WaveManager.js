@@ -20,6 +20,11 @@ window.CVInvaders.WaveManager = class WaveManager {
         this.enemiesSpawned = false;
 
         this.scene.registry.set('wave', index + 1);
+
+        // Increase music tempo with each wave
+        const tempos = [1.0, 1.15, 1.35];
+        const sound = window.CVInvaders._sharedSoundEngine;
+        if (sound) sound.setMusicTempo(tempos[index] || 1.35);
     }
 
     getWaveConfig() {

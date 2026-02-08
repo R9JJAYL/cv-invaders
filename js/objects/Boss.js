@@ -1,6 +1,6 @@
 window.CVInvaders = window.CVInvaders || {};
 
-window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
+window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     constructor(scene, x, y) {
         super(scene, x, y, 'boss');
 
@@ -12,6 +12,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(60, 45);
         this.body.setOffset(10, 5);
         this.body.setAllowGravity(false);
+        this.body.enable = false; // disabled until entry completes
 
         const CFG = window.CVInvaders.Config;
         this.maxHealth = CFG.BOSS_HEALTH;
@@ -26,11 +27,15 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
 
         // Figure-8 movement params for phase 2
         this.fig8Time = 0;
+
+        // Manual update since Image doesn't auto-call preUpdate
+        scene.events.on('update', this._onUpdate, this);
+        scene.events.once('shutdown', () => {
+            scene.events.off('update', this._onUpdate, this);
+        });
     }
 
-    preUpdate(time, delta) {
-        super.preUpdate(time, delta);
-
+    _onUpdate(time, delta) {
         if (this.isAlive && this.entryComplete) {
             const CFG = window.CVInvaders.Config;
 
@@ -61,7 +66,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
         }
         const diff = this.moveTargetX - this.x;
         if (Math.abs(diff) > 2) {
-            this.x += Math.sign(diff) * 80 * (delta / 1000);
+            this.x += Math.sign(diff) * 50 * (delta / 1000);
         }
 
         // Spam CVs
@@ -75,8 +80,8 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
     updatePhase2(time, delta, CFG) {
         // Figure-8 movement
         this.fig8Time += delta * 0.001;
-        this.x = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.5) * 200;
-        this.y = 80 + Math.sin(this.fig8Time * 3) * 30;
+        this.x = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.0) * 200;
+        this.y = 80 + Math.sin(this.fig8Time * 2.0) * 30;
 
         // Spam disguised CVs
         this.spamTimer += delta;
@@ -110,7 +115,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
     }
 
     takeDamage() {
-        if (!this.isAlive) return false;
+        if (!this.isAlive || !this.entryComplete) return false;
 
         this.health--;
 
@@ -165,6 +170,8 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Sprite {
             ease: 'Power2',
             onComplete: () => {
                 this.entryComplete = true;
+                this.body.enable = true;
+                this.body.updateFromGameObject();
             }
         });
     }

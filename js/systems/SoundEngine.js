@@ -19,6 +19,15 @@ window.CVInvaders.SoundEngine = class SoundEngine {
 
     toggleMute() {
         this.muted = !this.muted;
+        // Fade drone in/out with mute
+        if (this._droneGain && this.ctx) {
+            try {
+                this._droneGain.gain.linearRampToValueAtTime(
+                    this.muted ? 0 : 0.06,
+                    this.ctx.currentTime + 0.3
+                );
+            } catch (e) {}
+        }
         return this.muted;
     }
 
@@ -154,5 +163,122 @@ window.CVInvaders.SoundEngine = class SoundEngine {
     comboSound(combo) {
         const freq = 400 + Math.min(combo, 30) * 20;
         this._play('sine', freq, 0.08, 0.08);
+    }
+
+    // ===== BACKGROUND MUSIC =====
+    startMusic() {
+        if (!this.ctx || this.musicPlaying) return;
+        this.musicPlaying = true;
+        this.musicTempo = 1.0; // 1.0 = normal, higher = faster
+
+        // Ambient drone pad
+        this._startDrone();
+        // Melodic arpeggio loop
+        this._startArpeggio();
+    }
+
+    stopMusic() {
+        this.musicPlaying = false;
+        if (this._droneGain) {
+            try {
+                this._droneGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.5);
+            } catch (e) {}
+        }
+        if (this._arpTimer) {
+            clearTimeout(this._arpTimer);
+            this._arpTimer = null;
+        }
+    }
+
+    setMusicTempo(tempo) {
+        // tempo: 1.0 = normal, 1.3 = slightly faster, 1.6 = intense
+        this.musicTempo = tempo;
+    }
+
+    _startDrone() {
+        if (!this.ctx) return;
+        try {
+            // Low ambient drone — two detuned oscillators for warmth
+            const osc1 = this.ctx.createOscillator();
+            const osc2 = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(55, this.ctx.currentTime); // A1
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(55.3, this.ctx.currentTime); // slight detune
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(200, this.ctx.currentTime);
+
+            gain.gain.setValueAtTime(0, this.ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.06, this.ctx.currentTime + 2);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc1.start();
+            osc2.start();
+
+            this._droneOsc1 = osc1;
+            this._droneOsc2 = osc2;
+            this._droneGain = gain;
+        } catch (e) {}
+    }
+
+    _startArpeggio() {
+        if (!this.ctx || !this.musicPlaying) return;
+
+        // Spacey pentatonic notes in different octaves
+        const patterns = [
+            [164.81, 196.00, 246.94, 329.63, 392.00], // E3 pentatonic
+            [130.81, 164.81, 196.00, 261.63, 329.63], // C3 pentatonic
+            [146.83, 174.61, 220.00, 293.66, 349.23], // D3 pentatonic
+        ];
+        if (this._arpPatternIdx === undefined) this._arpPatternIdx = 0;
+        if (this._arpNoteIdx === undefined) this._arpNoteIdx = 0;
+
+        const pattern = patterns[this._arpPatternIdx % patterns.length];
+        const freq = pattern[this._arpNoteIdx % pattern.length];
+
+        if (!this.muted) {
+            try {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, this.ctx.currentTime);
+                filter.Q.setValueAtTime(2, this.ctx.currentTime);
+
+                const noteDur = 0.6 / this.musicTempo;
+                gain.gain.setValueAtTime(0, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.04, this.ctx.currentTime + 0.02);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + noteDur);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(this.ctx.currentTime);
+                osc.stop(this.ctx.currentTime + noteDur + 0.1);
+            } catch (e) {}
+        }
+
+        this._arpNoteIdx++;
+        if (this._arpNoteIdx >= pattern.length) {
+            this._arpNoteIdx = 0;
+            this._arpPatternIdx++;
+        }
+
+        // Schedule next note — interval decreases with tempo
+        const baseInterval = 600; // ms
+        const interval = baseInterval / this.musicTempo;
+        this._arpTimer = setTimeout(() => this._startArpeggio(), interval);
     }
 };
