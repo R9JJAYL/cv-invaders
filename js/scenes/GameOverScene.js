@@ -61,7 +61,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(headline);
 
         // Tagline from First
-        const tagline = this.add.text(cx, cy - 155, "That's why teams use First.", {
+        const tagline = this.add.text(cx, cy - 155, 'Swap CV sifting for candidate calls.', {
             fontFamily: 'Roboto',
             fontSize: '15px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -70,11 +70,21 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5).setAlpha(0);
         adElements.push(tagline);
 
+        // Sub-tagline
+        const subTagline = this.add.text(cx, cy - 132, "That's why teams use First.", {
+            fontFamily: 'Roboto',
+            fontSize: '12px',
+            color: CFG.COLORS.PURPLE_ACCENT_HEX,
+            align: 'center',
+            resolution: 2
+        }).setOrigin(0.5).setAlpha(0);
+        adElements.push(subTagline);
+
         // Stat pills — key product highlights
         const stats = [
             { val: '90%', label: 'less screening time' },
             { val: '3x', label: 'more roles handled' },
-            { val: '4.6/5', label: 'candidate satisfaction' }
+            { val: '4.6/5', label: 'candidate rating' }
         ];
         const statTexts = [];
         stats.forEach((stat, i) => {
@@ -228,6 +238,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             alpha: 0.9,
             duration: 500,
             delay: 1400
+        });
+
+        // 2b. Sub-tagline fades in after a pause
+        this.tweens.add({
+            targets: subTagline,
+            alpha: 0.6,
+            duration: 400,
+            delay: 2400
         });
 
         // 3. Stats count in one at a time
@@ -387,48 +405,97 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).setOrigin(0.5);
         });
 
-        // Stats pills — green CV and red CV
+        // Stats — nested pill layout: outer container per CV type, inner capsules stacked
         const goodHit = this.registry.get('goodCVsCaught') || 0;
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = 115;
-        const pillW = 170;
-        const pillH = 32;
-        const pillGap = 12;
-        const pillLeft = CFG.WIDTH / 2 - pillW - pillGap / 2;
-        const pillRight = CFG.WIDTH / 2 + pillGap / 2;
+        const statsY = 118;
+        const cx = CFG.WIDTH / 2;
 
-        // Draw pill backgrounds
+        const innerH = 18;
+        const innerR = innerH / 2;
+        const innerGap = 4;
+        const innerPad = 10;
+        const iconSpace = 28;
+        const outerPad = 6;
+        const outerH = innerH * 2 + innerGap + outerPad * 2;
+        const outerR = 12;
+        const outerGap = 12;
+
         const pillGfx = this.add.graphics();
-        // Green pill
-        pillGfx.fillStyle(0x4ADE80, 0.1);
-        pillGfx.lineStyle(1, 0x4ADE80, 0.3);
-        pillGfx.fillRoundedRect(pillLeft, statsY - pillH / 2, pillW, pillH, 8);
-        pillGfx.strokeRoundedRect(pillLeft, statsY - pillH / 2, pillW, pillH, 8);
-        // Red pill
-        pillGfx.fillStyle(0xFF8A80, 0.1);
-        pillGfx.lineStyle(1, 0xFF8A80, 0.3);
-        pillGfx.fillRoundedRect(pillRight, statsY - pillH / 2, pillW, pillH, 8);
-        pillGfx.strokeRoundedRect(pillRight, statsY - pillH / 2, pillW, pillH, 8);
 
-        // Green pill content: icon + caught/missed
-        this.add.image(pillLeft + 18, statsY, 'cv-good').setScale(0.7);
-        this.add.text(pillLeft + 36, statsY - 6, 'Caught: ' + goodHit, {
-            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.CV_GOOD_HEX, fontWeight: '700'
-        }).setOrigin(0, 0.5);
-        this.add.text(pillLeft + 36, statsY + 6, 'Missed: ' + goodMissed, {
-            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.TEXT_SECONDARY
-        }).setOrigin(0, 0.5);
+        const cvGroups = [
+            {
+                icon: 'cv-good', color: 0x4ADE80, hex: CFG.COLORS.CV_GOOD_HEX,
+                stats: [
+                    { label: 'Caught: ' + goodHit, color: 0x4ADE80, hex: CFG.COLORS.CV_GOOD_HEX },
+                    { label: 'Missed: ' + goodMissed, color: 0xFF8A80, hex: '#FF8A80' }
+                ]
+            },
+            {
+                icon: 'cv-bad', color: 0xFF8A80, hex: '#FF8A80',
+                stats: [
+                    { label: 'Hit: ' + badHit, color: 0x4ADE80, hex: CFG.COLORS.CV_GOOD_HEX },
+                    { label: 'Missed: ' + badMissed, color: 0xFF8A80, hex: '#FF8A80' }
+                ]
+            }
+        ];
 
-        // Red pill content: icon + hit/missed
-        this.add.image(pillRight + 18, statsY, 'cv-bad').setScale(0.7);
-        this.add.text(pillRight + 36, statsY - 6, 'Hit: ' + badHit, {
-            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.CV_BAD_HEX, fontWeight: '700'
-        }).setOrigin(0, 0.5);
-        this.add.text(pillRight + 36, statsY + 6, 'Missed: ' + badMissed, {
-            fontFamily: 'Roboto', fontSize: '10px', color: CFG.COLORS.TEXT_SECONDARY
-        }).setOrigin(0, 0.5);
+        // Measure max inner pill width per group
+        const groupWidths = cvGroups.map(group => {
+            const innerWidths = group.stats.map(s => {
+                const tmp = this.add.text(0, -100, s.label, {
+                    fontFamily: 'Roboto', fontSize: '10px', fontStyle: 'bold'
+                });
+                const w = tmp.width + innerPad * 2;
+                tmp.destroy();
+                return w;
+            });
+            const maxInnerW = Math.max(...innerWidths);
+            const outerW = iconSpace + maxInnerW + outerPad * 2;
+            return { outerW, innerWidths, maxInnerW };
+        });
+
+        const totalOuterW = groupWidths.reduce((s, g) => s + g.outerW, 0) + outerGap;
+        let ox = cx - totalOuterW / 2;
+
+        cvGroups.forEach((group, gi) => {
+            const gw = groupWidths[gi];
+            const outerTop = statsY - outerH / 2;
+
+            // Outer container pill
+            pillGfx.fillStyle(group.color, 0.06);
+            pillGfx.lineStyle(1, group.color, 0.15);
+            pillGfx.fillRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
+            pillGfx.strokeRoundedRect(ox, outerTop, gw.outerW, outerH, outerR);
+
+            // CV icon inside outer pill, vertically centred
+            this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(0.6).setAlpha(0.8);
+
+            // Inner capsules — stacked vertically
+            const innerX = ox + iconSpace + outerPad;
+            group.stats.forEach((stat, si) => {
+                const iw = gw.maxInnerW;
+                const iy = outerTop + outerPad + si * (innerH + innerGap) + innerH / 2;
+
+                // Inner capsule background
+                pillGfx.fillStyle(stat.color, 0.08);
+                pillGfx.lineStyle(1, stat.color, 0.2);
+                pillGfx.fillRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
+                pillGfx.strokeRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
+
+                this.add.text(innerX + iw / 2, iy, stat.label, {
+                    fontFamily: 'Roboto',
+                    fontSize: '10px',
+                    fontStyle: 'bold',
+                    color: stat.hex,
+                    resolution: 2
+                }).setOrigin(0.5);
+            });
+
+            ox += gw.outerW + outerGap;
+        });
 
         // Save score
         const company = this.registry.get('companyName') || '';
@@ -571,7 +638,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, 345).createFromHTML(statsHTML);
+        this.add.dom(CFG.WIDTH / 2, 330).createFromHTML(statsHTML);
     }
 
     getGrade(score) {
