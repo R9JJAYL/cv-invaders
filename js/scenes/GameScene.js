@@ -108,6 +108,20 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0);
 
+        // DEBUG: Press SPACE to skip to boss fight (REMOVE BEFORE RELEASE)
+        this.input.keyboard.on('keydown-SPACE', () => {
+            if (!this.bossPhase && !this.gameOver) {
+                this.tutorialPhase = false;
+                this.tutorialComplete = true;
+                if (this.tutorialSpawnTimer) {
+                    this.tutorialSpawnTimer.remove();
+                    this.tutorialSpawnTimer = null;
+                }
+                this.waveManager.active = false;
+                this.startBossPhase();
+            }
+        });
+
         // Start with tutorial
         this.startTutorial();
     }
