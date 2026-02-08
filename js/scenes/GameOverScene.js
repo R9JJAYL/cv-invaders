@@ -94,11 +94,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Divider line
-        const divider = this.add.rectangle(cx, cy + 20, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
+        const divider = this.add.rectangle(cx, cy + 25, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
         adElements.push(divider);
 
         // Integrations label
-        const intLabel = this.add.text(cx, cy + 42, 'Integrates with', {
+        const intLabel = this.add.text(cx, cy + 50, 'Integrates with', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: CFG.COLORS.TEXT_SECONDARY
@@ -111,7 +111,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const atsSpacing = 90;
         const atsStartX = cx - ((atsNames.length - 1) * atsSpacing) / 2;
         atsNames.forEach((name, i) => {
-            const t = this.add.text(atsStartX + i * atsSpacing, cy + 60, name, {
+            const t = this.add.text(atsStartX + i * atsSpacing, cy + 72, name, {
                 fontFamily: 'Roboto',
                 fontSize: '12px',
                 color: '#FFFFFF',
@@ -122,7 +122,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // "+ more" after the list
-        const moreText = this.add.text(cx, cy + 78, '+ LinkedIn Recruiter, Indeed, CV Library & more', {
+        const moreText = this.add.text(cx, cy + 94, '+ LinkedIn Recruiter, Indeed, CV Library & more', {
             fontFamily: 'Roboto',
             fontSize: '10px',
             color: CFG.COLORS.TEXT_SECONDARY,
@@ -131,7 +131,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(moreText);
 
         // "Powered by" text
-        const poweredBy = this.add.text(cx, cy + 108, 'Powered by', {
+        const poweredBy = this.add.text(cx, cy + 135, 'Powered by', {
             fontFamily: 'Roboto',
             fontSize: '14px',
             color: CFG.COLORS.TEXT_SECONDARY
@@ -139,14 +139,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(poweredBy);
 
         // First logo with subtle glow pulse
-        const firstLogo = this.add.image(cx, cy + 148, 'first-logo')
+        const firstLogo = this.add.image(cx, cy + 175, 'first-logo')
             .setOrigin(0.5)
             .setScale(0.06)
             .setAlpha(0);
         adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(cx, cy + 195, 'Be first in the race for talent  →  first.cx', {
+        const cta = this.add.text(cx, cy + 225, 'Be first in the race for talent  →  first.cx', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -364,7 +364,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Play Again
         const playBtn = this.add.text(CFG.WIDTH / 2 - 120, btnY, '[ PLAY AGAIN ]', {
             fontFamily: 'Courier New',
-            fontSize: '18px',
+            fontSize: '16px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -392,7 +392,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Share to LinkedIn
         const shareBtn = this.add.text(CFG.WIDTH / 2 + 140, btnY, '[ SHARE ON LINKEDIN ]', {
             fontFamily: 'Courier New',
-            fontSize: '14px',
+            fontSize: '16px',
             color: '#0A66C2',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
