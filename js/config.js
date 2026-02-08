@@ -94,7 +94,7 @@ window.CVInvaders.Config = {
         { min: 7500, grade: 'C', title: 'Inbox Warrior' },
         { min: 5000, grade: 'D', title: 'LinkedIn Lurker' },
         { min: 2500, grade: 'E', title: 'Ghost Recruiter' },
-        { min: 0, grade: 'F', title: 'First Day on the Job' }
+        { min: 0, grade: 'F', title: 'First Day on the Job?' }
     ],
 
     // Colors

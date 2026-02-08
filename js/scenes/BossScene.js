@@ -98,7 +98,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.setupCollisions();
 
         // Announcement text
-        this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2, '', {
+        this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -199,6 +199,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
                     waitForEntry.remove();
                     this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
                         if (!bullet.active || !boss.active || !boss.isAlive) return;
+                        this.spawnHitMarker(bullet.x, bullet.y, true);
                         bullet.recycle();
                         this.scoreManager.bossHit();
                         this.sound_engine.bossHit();
@@ -226,6 +227,41 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         if (bullet) {
             bullet.fire(x, y, window.CVInvaders.Config.BOSS_BULLET_SPEED);
         }
+    }
+
+    spawnHitMarker(x, y, isBoss) {
+        const len = isBoss ? 14 : 10;
+        const gap = isBoss ? 5 : 4;
+        const thick = 2;
+        const color = 0xFFFFFF;
+        const lines = [];
+
+        // 4 lines forming an X centred on the hit target (CoD style)
+        const offsets = [
+            { x1: -gap, y1: -gap, x2: -gap - len, y2: -gap - len },
+            { x1: gap, y1: -gap, x2: gap + len, y2: -gap - len },
+            { x1: -gap, y1: gap, x2: -gap - len, y2: gap + len },
+            { x1: gap, y1: gap, x2: gap + len, y2: gap + len }
+        ];
+
+        for (const o of offsets) {
+            const g = this.add.graphics().setDepth(100);
+            g.lineStyle(thick, color, 1);
+            g.beginPath();
+            g.moveTo(x + o.x1, y + o.y1);
+            g.lineTo(x + o.x2, y + o.y2);
+            g.strokePath();
+            lines.push(g);
+        }
+
+        // Flash and fade out
+        this.tweens.add({
+            targets: lines,
+            alpha: 0,
+            duration: 150,
+            delay: 50,
+            onComplete: () => lines.forEach(l => l.destroy())
+        });
     }
 
     showBossDialogue(text) {

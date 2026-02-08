@@ -47,11 +47,11 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Subtitle — "powered by" + First logo, right-aligned to end of INVADERS
         const subtitleY = 50 + titleCV.height / 2 + 8;
         const rightEdge = titleCV.x + totalW - 7;
-        const logo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
+        this.firstLogo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
             .setOrigin(1, 0.5)
             .setScale(0.34)
             .setAlpha(0.5);
-        this.add.text(logo.x - logo.displayWidth - 4, subtitleY, 'powered by', {
+        this.poweredByText = this.add.text(this.firstLogo.x - this.firstLogo.displayWidth - 4, subtitleY, 'powered by', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.TEXT_SECONDARY,
@@ -192,8 +192,20 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.registry.set('bossTime', 0);
         this.registry.set('bossDefeated', false);
 
-        this.cameras.main.fadeOut(500);
-        this.time.delayedCall(500, () => {
+        // Briefly boost powered-by so it lingers as last visible element
+        this.tweens.add({
+            targets: this.poweredByText,
+            alpha: 0.7,
+            duration: 150
+        });
+        this.tweens.add({
+            targets: this.firstLogo,
+            alpha: 0.85,
+            duration: 150
+        });
+
+        this.cameras.main.fadeOut(600);
+        this.time.delayedCall(600, () => {
             this.scene.start('TutorialScene');
         });
     }

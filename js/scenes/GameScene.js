@@ -102,7 +102,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.scene.launch('HUD');
 
         // Announcement text
-        this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT / 2, '', {
+        this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
             fontFamily: 'Courier New',
             fontSize: '24px',
             color: '#FFFFFF',
@@ -111,16 +111,27 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0);
 
-        // DEBUG: Press SPACE to skip to boss fight (REMOVE BEFORE RELEASE)
+        // Press S to skip tutorial intro and jump to Wave 1
+        this.input.keyboard.on('keydown-S', () => {
+            if (this.tutorialPhase && !this.gameOver) {
+                this.skipTutorial();
+            }
+        });
+
+        // Press SPACE to skip straight to boss fight
         this.input.keyboard.on('keydown-SPACE', () => {
             if (!this.bossPhase && !this.gameOver) {
-                this.tutorialPhase = false;
-                this.tutorialComplete = true;
-                if (this.tutorialSpawnTimer) {
-                    this.tutorialSpawnTimer.remove();
-                    this.tutorialSpawnTimer = null;
+                // If still in tutorial, clean that up first
+                if (this.tutorialPhase) {
+                    if (this.tutorialSpawnTimer) {
+                        this.tutorialSpawnTimer.remove();
+                        this.tutorialSpawnTimer = null;
+                    }
+                    if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
+                    this.tutorialPhase = false;
+                    this.tutorialComplete = true;
                 }
-                // Cancel all pending delayed calls (tutorial timers, wave announcements)
+                // Cancel all pending timers (tutorial, wave announcements, etc.)
                 this.time.removeAllEvents();
                 // Clear any active CVs and enemies
                 this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
@@ -128,7 +139,13 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 // Clear announcement
                 this.announcementText.setAlpha(0);
                 this.waveManager.active = false;
-                // Go straight to boss (skip the 2.5s announcement delay)
+                // Reset score and go straight to boss
+                this.scoreManager.score = 0;
+                this.scoreManager.combo = 0;
+                this.scoreManager.maxCombo = 0;
+                this.scoreManager.goodCVsCaught = 0;
+                this.scoreManager.badCVsShot = 0;
+                this.registry.set('score', 0);
                 this.bossPhase = true;
                 this.bossSpawnTimer = 0;
                 this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
@@ -154,6 +171,21 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             : 'Use ← → arrow keys to move';
         this.showAnnouncement(moveHint, 3000);
 
+        // "Press S to skip" hint (desktop only)
+        if (!isMobile) {
+            this.skipHint = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT - 20, 'Press S to skip intro', {
+                fontFamily: 'Courier New',
+                fontSize: '12px',
+                color: '#666666'
+            }).setOrigin(0.5).setDepth(50).setAlpha(0);
+            this.tweens.add({
+                targets: this.skipHint,
+                alpha: 0.6,
+                duration: 500,
+                delay: 1500
+            });
+        }
+
         // Start spawning tutorial CVs right away
         this.time.delayedCall(600, () => {
             this.tutorialSpawnTimer = this.time.addEvent({
@@ -167,6 +199,32 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.time.delayedCall(10400, () => {
             this.triggerTutorialJoke();
         });
+    }
+
+    skipTutorial() {
+        // Stop tutorial spawning
+        if (this.tutorialSpawnTimer) {
+            this.tutorialSpawnTimer.remove();
+            this.tutorialSpawnTimer = null;
+        }
+        // Cancel all pending tutorial timers
+        this.time.removeAllEvents();
+        // Clear any active CVs
+        this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
+        // Clear announcement
+        this.announcementText.setAlpha(0);
+        // Remove skip hint
+        if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
+        // Reset score and start Wave 1
+        this.tutorialPhase = false;
+        this.tutorialComplete = true;
+        this.scoreManager.score = 0;
+        this.scoreManager.combo = 0;
+        this.scoreManager.maxCombo = 0;
+        this.scoreManager.goodCVsCaught = 0;
+        this.scoreManager.badCVsShot = 0;
+        this.registry.set('score', 0);
+        this.waveManager.startWave(0);
     }
 
     spawnTutorialCV() {
@@ -217,6 +275,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Reset score from tutorial practice and start Wave 1
         this.time.delayedCall(4500, () => {
+            if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
             this.tutorialPhase = false;
             this.tutorialComplete = true;
             this.scoreManager.score = 0;
@@ -286,6 +345,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Player bullets hit enemies
         this.physics.add.overlap(this.bullets, this.enemies, (bullet, enemy) => {
             if (!bullet.active || !enemy.isAlive) return;
+            this.spawnHitMarker(bullet.x, bullet.y);
             bullet.recycle();
             enemy.takeDamage();
         }, null, this);
@@ -455,6 +515,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                     waitForEntry.remove();
                     this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
                         if (!bullet.active || !boss.active || !boss.isAlive) return;
+                        this.spawnHitMarker(bullet.x, bullet.y, true);
                         bullet.recycle();
                         this.scoreManager.bossHit();
                         this.sound_engine.bossHit();
@@ -614,6 +675,41 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 points
             );
         }
+    }
+
+    spawnHitMarker(x, y, isBoss) {
+        const len = isBoss ? 14 : 10;
+        const gap = isBoss ? 5 : 4;
+        const thick = 2;
+        const color = 0xFFFFFF;
+        const lines = [];
+
+        // 4 lines forming an X centred on the hit target (CoD style)
+        const offsets = [
+            { x1: -gap, y1: -gap, x2: -gap - len, y2: -gap - len },
+            { x1: gap, y1: -gap, x2: gap + len, y2: -gap - len },
+            { x1: -gap, y1: gap, x2: -gap - len, y2: gap + len },
+            { x1: gap, y1: gap, x2: gap + len, y2: gap + len }
+        ];
+
+        for (const o of offsets) {
+            const g = this.add.graphics().setDepth(100);
+            g.lineStyle(thick, color, 1);
+            g.beginPath();
+            g.moveTo(x + o.x1, y + o.y1);
+            g.lineTo(x + o.x2, y + o.y2);
+            g.strokePath();
+            lines.push(g);
+        }
+
+        // Flash and fade out
+        this.tweens.add({
+            targets: lines,
+            alpha: 0,
+            duration: 150,
+            delay: 50,
+            onComplete: () => lines.forEach(l => l.destroy())
+        });
     }
 
     showFloatingScore(x, y, points) {
