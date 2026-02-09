@@ -63,6 +63,9 @@ body {
 
 .menu-form select {
     width: 200px;
+    text-align: center;
+    text-align-last: center;
+    -moz-text-align-last: center;
 }
 
 .menu-form input:focus,
