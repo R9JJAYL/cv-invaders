@@ -85,8 +85,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         // ========== VISUAL: JOYSTICK (RIGHT SIDE) ==========
         var joyX = CFG.WIDTH - 90;
         var joyY = CFG.HEIGHT - 90;
-        var baseRadius = 60;
-        var thumbRadius = 26;
+        var baseRadius = 40;
+        var thumbRadius = 18;
 
         this.joystickBase = this.add.circle(joyX, joyY, baseRadius, 0x333333, 0.3)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.3);
