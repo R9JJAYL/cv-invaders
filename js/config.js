@@ -133,3 +133,6 @@ window.CVInvaders.Config = {
         ENEMY_BULLETS: 20
     }
 };
+
+// Clear legacy localStorage scores (now using database only)
+try { localStorage.removeItem('cv_invaders_scores'); } catch (e) {}

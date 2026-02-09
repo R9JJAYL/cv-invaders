@@ -226,22 +226,6 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     }
 
     getLeaderboard() {
-        const remote = window.CVInvaders._remoteScores || [];
-        let saved = [];
-        try {
-            saved = JSON.parse(localStorage.getItem('cv_invaders_scores') || '[]');
-        } catch (e) {}
-
-        const all = [...remote, ...saved];
-        // Deduplicate by name+score combo
-        const seen = new Set();
-        const unique = all.filter(e => {
-            const key = e.name + '|' + e.score;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-        unique.sort((a, b) => b.score - a.score);
-        return unique;
+        return (window.CVInvaders._remoteScores || []).slice();
     }
 };

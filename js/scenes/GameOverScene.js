@@ -663,15 +663,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
-        // Save to localStorage as fallback
-        try {
-            const key = 'cv_invaders_scores';
-            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-            existing.push({ name, score, grade, company, type, date: Date.now() });
-            existing.sort((a, b) => b.score - a.score);
-            localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
-        } catch (e) {}
-
         // POST to Google Sheets API — response includes updated leaderboard
         if (CFG.LEADERBOARD_URL) {
             this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
@@ -697,23 +688,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     getLeaderboard() {
-        const remote = window.CVInvaders._remoteScores || [];
-        let saved = [];
-        try {
-            saved = JSON.parse(localStorage.getItem('cv_invaders_scores') || '[]');
-        } catch (e) {}
-
-        const all = [...remote, ...saved];
-        // Deduplicate by name+score combo
-        const seen = new Set();
-        const unique = all.filter(e => {
-            const key = e.name + '|' + e.score;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-        unique.sort((a, b) => b.score - a.score);
-        return unique;
+        return (window.CVInvaders._remoteScores || []).slice();
     }
 
     shareToLinkedIn(name, score, grade) {
