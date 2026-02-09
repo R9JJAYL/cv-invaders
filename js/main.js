@@ -21,7 +21,7 @@ window.addEventListener('load', function () {
             expandParent: true
         },
         input: {
-            activePointers: 1
+            activePointers: 2
         },
         dom: {
             createContainer: true

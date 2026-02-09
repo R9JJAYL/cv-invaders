@@ -118,8 +118,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             }
         });
 
-        // Press SPACE to skip straight to boss fight
-        this.input.keyboard.on('keydown-SPACE', () => {
+        // Press B to skip straight to boss fight (debug)
+        this.input.keyboard.on('keydown-B', () => {
             if (!this.bossPhase && !this.gameOver) {
                 // If still in tutorial, clean that up first
                 if (this.tutorialPhase) {
@@ -169,8 +169,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Show movement hint — detect touch/mobile vs desktop
         const isMobile = !this.sys.game.device.os.desktop;
         const moveHint = isMobile
-            ? 'Drag to move the ship'
-            : 'Use ← → arrow keys to move';
+            ? 'Use the joystick to move\nTap FIRE to shoot!'
+            : 'Use ← → to move, SPACE to shoot';
         this.showAnnouncement(moveHint, 3000);
 
         // "Press S to skip" hint (desktop only)
@@ -359,8 +359,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     update(time, delta) {
         if (this.gameOver) return;
 
-        // Auto-fire
-        if (this.ship.fireBullet(time)) {
+        // Fire when shoot is pressed (spacebar on desktop, FIRE button on mobile)
+        if (this.ship.shootPressed && this.ship.fireBullet(time)) {
             const bullet = this.bullets.getFirstDead(false);
             if (bullet) {
                 bullet.fire(this.ship.x, this.ship.y - 30);

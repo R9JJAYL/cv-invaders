@@ -53,9 +53,142 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             }
         });
 
-        // No wave listener needed - countdown is updated directly
+        // Mobile virtual controls
+        this.isMobile = !this.sys.game.device.os.desktop;
+        if (this.isMobile) {
+            this.createMobileControls();
+            // Hide mute text on mobile (no M key)
+            this.muteText.setVisible(false);
+        }
     }
 
+    // ===== MOBILE CONTROLS =====
+    createMobileControls() {
+        var CFG = window.CVInvaders.Config;
+
+        // ========== SHOOT BUTTON (LEFT SIDE) ==========
+        var shootX = 75;
+        var shootY = CFG.HEIGHT - 75;
+        var shootRadius = 40;
+
+        // Outer ring
+        this.shootButtonBg = this.add.circle(shootX, shootY, shootRadius, 0x333333, 0.4)
+            .setDepth(200)
+            .setStrokeStyle(2, 0x00E5FF, 0.6);
+
+        // Inner filled circle
+        this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 8, 0x00E5FF, 0.25)
+            .setDepth(200);
+
+        // "FIRE" label
+        this.shootButtonLabel = this.add.text(shootX, shootY, 'FIRE', {
+            fontFamily: 'Courier New',
+            fontSize: '12px',
+            color: '#00E5FF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(201);
+
+        // Make interactive with larger hit area
+        this.shootButtonBg.setInteractive(
+            new Phaser.Geom.Circle(0, 0, shootRadius + 10),
+            Phaser.Geom.Circle.Contains
+        );
+        this._shootHeld = false;
+
+        this.shootButtonBg.on('pointerdown', () => {
+            this._shootHeld = true;
+            this.shootButtonInner.setFillStyle(0x00E5FF, 0.6);
+        });
+        this.shootButtonBg.on('pointerup', () => {
+            this._shootHeld = false;
+            this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+        });
+        this.shootButtonBg.on('pointerout', () => {
+            this._shootHeld = false;
+            this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+        });
+
+        // ========== JOYSTICK (RIGHT SIDE) ==========
+        var joyX = CFG.WIDTH - 75;
+        var joyY = CFG.HEIGHT - 75;
+        var baseRadius = 50;
+        var thumbRadius = 22;
+
+        // Base circle
+        this.joystickBase = this.add.circle(joyX, joyY, baseRadius, 0x333333, 0.3)
+            .setDepth(200)
+            .setStrokeStyle(2, 0xFFFFFF, 0.3);
+
+        // Thumb circle
+        this.joystickThumb = this.add.circle(joyX, joyY, thumbRadius, 0xFFFFFF, 0.4)
+            .setDepth(201);
+
+        // Joystick state
+        this._joystickActive = false;
+        this._joystickBaseX = joyX;
+        this._joystickBaseY = joyY;
+        this._joystickBaseRadius = baseRadius;
+        this._joystickNormX = 0;
+        this._joystickPointerId = -1;
+
+        // Make base interactive
+        this.joystickBase.setInteractive(
+            new Phaser.Geom.Circle(0, 0, baseRadius + 15),
+            Phaser.Geom.Circle.Contains
+        );
+
+        this.joystickBase.on('pointerdown', (pointer) => {
+            this._joystickActive = true;
+            this._joystickPointerId = pointer.id;
+            this._updateJoystickThumb(pointer);
+        });
+
+        // Scene-level listeners for drag beyond base
+        this.input.on('pointermove', (pointer) => {
+            if (this._joystickActive && pointer.id === this._joystickPointerId) {
+                this._updateJoystickThumb(pointer);
+            }
+        });
+
+        this.input.on('pointerup', (pointer) => {
+            if (this._joystickActive && pointer.id === this._joystickPointerId) {
+                this._joystickActive = false;
+                this._joystickPointerId = -1;
+                this._joystickNormX = 0;
+                this.joystickThumb.setPosition(this._joystickBaseX, this._joystickBaseY);
+            }
+        });
+    }
+
+    _updateJoystickThumb(pointer) {
+        var dx = pointer.x - this._joystickBaseX;
+        var clampedDx = Phaser.Math.Clamp(dx, -this._joystickBaseRadius, this._joystickBaseRadius);
+
+        // Move thumb horizontally only (vertical stays at base center)
+        this.joystickThumb.setPosition(
+            this._joystickBaseX + clampedDx,
+            this._joystickBaseY
+        );
+
+        // Normalize to -1..1
+        this._joystickNormX = clampedDx / this._joystickBaseRadius;
+    }
+
+    // ===== UPDATE — relay mobile inputs to ship =====
+    update(time, delta) {
+        if (!this.isMobile) return;
+
+        var gameScene = this.scene.get('GameScene');
+        if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
+
+        // Push joystick input
+        gameScene.ship.setMobileMovement(this._joystickNormX || 0);
+
+        // Push shoot state
+        gameScene.ship.setMobileShootPressed(this._shootHeld || false);
+    }
+
+    // ===== EXISTING HUD METHODS =====
     updateCombo(combo) {
         if (combo > 1) {
             const multiplier = this.getMultiplierText(combo);
@@ -167,5 +300,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
     shutdown() {
         this.registry.events.off('changedata-score');
+        if (this.isMobile) {
+            this.input.off('pointermove');
+            this.input.off('pointerup');
+        }
     }
 };

@@ -28,28 +28,17 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         this.catchZone.body.setAllowGravity(false);
         this.catchZone.setDepth(10);
 
-        // Input
-        this.cursors = scene.input.keyboard.createCursorKeys();
+        // Platform detection
+        this.isMobile = !scene.sys.game.device.os.desktop;
 
-        // Touch/drag input
-        this.dragging = false;
-        this.targetX = null;
-        scene.input.on('pointerdown', (pointer) => {
-            if (this.isAlive) {
-                this.dragging = true;
-                this.targetX = Phaser.Math.Clamp(pointer.x, 30, window.CVInvaders.Config.WIDTH - 30);
-            }
-        });
-        scene.input.on('pointermove', (pointer) => {
-            if (pointer.isDown && this.isAlive) {
-                this.dragging = true;
-                this.targetX = Phaser.Math.Clamp(pointer.x, 30, window.CVInvaders.Config.WIDTH - 30);
-            }
-        });
-        scene.input.on('pointerup', () => {
-            this.dragging = false;
-            // Keep targetX so ship finishes traveling to last finger position
-        });
+        // Shoot state — set by keyboard (desktop) or HUD button (mobile)
+        this.shootPressed = false;
+
+        // Mobile movement — set by HUD joystick each frame
+        this._mobileVelocityX = 0;
+
+        // Desktop: keyboard input
+        this.cursors = scene.input.keyboard.createCursorKeys();
 
         // Manual update since Image doesn't auto-call preUpdate
         scene.events.on('update', this._onUpdate, this);
@@ -61,31 +50,43 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
     _onUpdate(time, delta) {
         if (!this.isAlive) return;
 
-        // Keyboard movement
-        if (this.cursors.left.isDown) {
-            this.setVelocityX(-this.speed);
-            this.targetX = null;
-        } else if (this.cursors.right.isDown) {
-            this.setVelocityX(this.speed);
-            this.targetX = null;
-        } else if (this.targetX !== null) {
-            // Touch/drag follow — ship moves toward finger at top speed
-            const diff = this.targetX - this.x;
-            if (Math.abs(diff) < 3) {
-                this.setVelocityX(0);
-                this.x = this.targetX;
-                if (!this.dragging) this.targetX = null;
+        if (this.isMobile) {
+            // Mobile: velocity driven by joystick in HUD
+            var mv = this._mobileVelocityX || 0;
+            if (Math.abs(mv) > 0.1) {
+                this.setVelocityX(mv * this.speed);
             } else {
-                this.setVelocityX(diff > 0 ? this.speed : -this.speed);
+                this.setVelocityX(0);
             }
+            // shootPressed is set externally by HUD shoot button
         } else {
-            this.setVelocityX(0);
+            // Desktop: keyboard movement
+            if (this.cursors.left.isDown) {
+                this.setVelocityX(-this.speed);
+            } else if (this.cursors.right.isDown) {
+                this.setVelocityX(this.speed);
+            } else {
+                this.setVelocityX(0);
+            }
+
+            // Desktop shoot: spacebar (from createCursorKeys)
+            this.shootPressed = this.cursors.space.isDown;
         }
 
         // Sync catch zone position
         this.catchZone.x = this.x;
         this.catchZone.y = this.y - 20;
         this.catchZone.body.reset(this.catchZone.x, this.catchZone.y);
+    }
+
+    // Called by HUD joystick each frame (mobile only)
+    setMobileMovement(normalizedX) {
+        this._mobileVelocityX = normalizedX;
+    }
+
+    // Called by HUD shoot button (mobile only)
+    setMobileShootPressed(isPressed) {
+        this.shootPressed = isPressed;
     }
 
     fireBullet(time) {
@@ -162,8 +163,5 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
     shutdown() {
         if (this.unicornTimer) this.unicornTimer.remove();
         this.scene.events.off('update', this._onUpdate, this);
-        this.scene.input.off('pointermove');
-        this.scene.input.off('pointerdown');
-        this.scene.input.off('pointerup');
     }
 };
