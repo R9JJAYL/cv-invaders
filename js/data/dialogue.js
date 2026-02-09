@@ -28,6 +28,11 @@ window.CVInvaders.Dialogue = {
         DEFEATED: 'Pop their ships to send\nthem their feedback!'
     },
 
+    HIRING_MANAGER: {
+        THREW_OUT: 'The hiring manager\nthrew out all the CVs!',
+        READVERTISED: 'The job has been readvertised...'
+    },
+
     BOSS: {
         ENTRANCE: 'I\'ve applied to 10,000 jobs today!\nCan you keep up?',
         PHASE2: 'I won\'t go down that easy!',

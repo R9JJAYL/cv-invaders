@@ -478,14 +478,70 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.bossSpawnTimer = 0;
         this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
 
-        // Intensify music for boss fight
-        this.sound_engine.setMusicTempo(1.6);
+        const DLG = window.CVInvaders.Dialogue;
 
-        // Don't clear existing CVs — smooth transition, they keep falling
+        // --- Hiring manager throws out all the CVs ---
 
-        this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
+        // 0.5s — announcement
+        this.time.delayedCall(500, () => {
+            this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
+        });
 
-        this.time.delayedCall(2500, () => {
+        // 1.5s — CV burst animation from ship + sweep remaining CVs
+        this.time.delayedCall(1500, () => {
+            // Sweep any CVs still on screen
+            this.cvs.getChildren().forEach(cv => {
+                if (cv.active) {
+                    this.tweens.add({
+                        targets: cv,
+                        x: cv.x + Phaser.Math.Between(-200, 200),
+                        y: -60,
+                        angle: Phaser.Math.Between(-180, 180),
+                        alpha: 0,
+                        duration: 600,
+                        ease: 'Power2',
+                        onComplete: () => cv.recycle()
+                    });
+                }
+            });
+
+            // Spawn ~10 fake CVs bursting out from the ship
+            var shipX = this.ship.x;
+            var shipY = this.ship.y;
+            for (var i = 0; i < 10; i++) {
+                var tex = Math.random() < 0.5 ? 'cv-good' : 'cv-bad';
+                var fakeCv = this.add.image(shipX, shipY, tex).setDepth(15);
+                var targetX = shipX + Phaser.Math.Between(-300, 300);
+                var targetY = shipY + Phaser.Math.Between(-250, 100);
+                this.tweens.add({
+                    targets: fakeCv,
+                    x: targetX,
+                    y: targetY,
+                    angle: Phaser.Math.Between(-360, 360),
+                    alpha: 0,
+                    duration: 800,
+                    ease: 'Power2',
+                    onComplete: () => fakeCv.destroy()
+                });
+            }
+
+            // Camera shake for impact
+            this.cameras.main.shake(200, 0.006);
+        });
+
+        // 3.5s — readvertised announcement
+        this.time.delayedCall(3500, () => {
+            this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 1800);
+        });
+
+        // 5.5s — existing boss intro + intensify music
+        this.time.delayedCall(5500, () => {
+            this.sound_engine.setMusicTempo(1.6);
+            this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
+        });
+
+        // 8s — spawn boss
+        this.time.delayedCall(8000, () => {
             this.spawnBoss();
         });
     }
