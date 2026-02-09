@@ -63,90 +63,63 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     }
 
     // ===== MOBILE CONTROLS =====
+    // Uses scene-level pointer events (not interactive objects) so both
+    // controls work simultaneously with multi-touch.
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
         var halfW = CFG.WIDTH / 2;
 
-        // ========== SHOOT BUTTON (LEFT SIDE) ==========
-        // Visual: circle in bottom-left
+        // ========== VISUAL: SHOOT BUTTON (LEFT SIDE) ==========
         var shootX = 90;
         var shootY = CFG.HEIGHT - 90;
         var shootRadius = 50;
 
         this.shootButtonBg = this.add.circle(shootX, shootY, shootRadius, 0x333333, 0.4)
-            .setDepth(200)
-            .setStrokeStyle(3, 0x00E5FF, 0.6);
-
+            .setDepth(200).setStrokeStyle(3, 0x00E5FF, 0.6);
         this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 10, 0x00E5FF, 0.25)
             .setDepth(200);
-
         this.shootButtonLabel = this.add.text(shootX, shootY, 'FIRE', {
-            fontFamily: 'Courier New',
-            fontSize: '14px',
-            color: '#00E5FF',
-            fontStyle: 'bold'
+            fontFamily: 'Courier New', fontSize: '14px', color: '#00E5FF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
-        // Invisible touch zone covering entire bottom-left quadrant
-        this._shootZone = this.add.rectangle(0, CFG.HEIGHT / 2, halfW, CFG.HEIGHT / 2, 0x000000, 0)
-            .setOrigin(0, 0).setDepth(199).setInteractive();
-
-        this._shootHeld = false;
-        this._shootPointerId = -1;
-
-        this._shootZone.on('pointerdown', (pointer) => {
-            this._shootHeld = true;
-            this._shootPointerId = pointer.id;
-            this.shootButtonInner.setFillStyle(0x00E5FF, 0.6);
-        });
-        this._shootZone.on('pointerup', (pointer) => {
-            if (pointer.id === this._shootPointerId) {
-                this._shootHeld = false;
-                this._shootPointerId = -1;
-                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
-            }
-        });
-        this._shootZone.on('pointerout', (pointer) => {
-            if (pointer.id === this._shootPointerId) {
-                this._shootHeld = false;
-                this._shootPointerId = -1;
-                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
-            }
-        });
-
-        // ========== JOYSTICK (RIGHT SIDE) ==========
-        // Visual: circle in bottom-right
+        // ========== VISUAL: JOYSTICK (RIGHT SIDE) ==========
         var joyX = CFG.WIDTH - 90;
         var joyY = CFG.HEIGHT - 90;
         var baseRadius = 60;
         var thumbRadius = 26;
 
         this.joystickBase = this.add.circle(joyX, joyY, baseRadius, 0x333333, 0.3)
-            .setDepth(200)
-            .setStrokeStyle(3, 0xFFFFFF, 0.3);
-
+            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.3);
         this.joystickThumb = this.add.circle(joyX, joyY, thumbRadius, 0xFFFFFF, 0.4)
             .setDepth(201);
 
-        // Joystick state
+        // ========== STATE ==========
+        this._shootHeld = false;
+        this._shootPointerId = -1;
         this._joystickActive = false;
+        this._joystickPointerId = -1;
         this._joystickBaseX = joyX;
         this._joystickBaseY = joyY;
         this._joystickBaseRadius = baseRadius;
         this._joystickNormX = 0;
-        this._joystickPointerId = -1;
+        this._halfW = halfW;
 
-        // Invisible touch zone covering entire bottom-right quadrant
-        this._joyZone = this.add.rectangle(halfW, CFG.HEIGHT / 2, halfW, CFG.HEIGHT / 2, 0x000000, 0)
-            .setOrigin(0, 0).setDepth(199).setInteractive();
-
-        this._joyZone.on('pointerdown', (pointer) => {
-            this._joystickActive = true;
-            this._joystickPointerId = pointer.id;
-            this._updateJoystickThumb(pointer);
+        // ========== SCENE-LEVEL TOUCH HANDLERS ==========
+        // Left half = shoot, Right half = joystick. Tracked by pointer ID.
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.x < this._halfW) {
+                // Left side — shoot
+                this._shootHeld = true;
+                this._shootPointerId = pointer.id;
+                this.shootButtonInner.setFillStyle(0x00E5FF, 0.6);
+            } else {
+                // Right side — joystick
+                this._joystickActive = true;
+                this._joystickPointerId = pointer.id;
+                this._updateJoystickThumb(pointer);
+            }
         });
 
-        // Scene-level listeners for drag beyond zone
         this.input.on('pointermove', (pointer) => {
             if (this._joystickActive && pointer.id === this._joystickPointerId) {
                 this._updateJoystickThumb(pointer);
@@ -154,7 +127,12 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         });
 
         this.input.on('pointerup', (pointer) => {
-            if (this._joystickActive && pointer.id === this._joystickPointerId) {
+            if (pointer.id === this._shootPointerId) {
+                this._shootHeld = false;
+                this._shootPointerId = -1;
+                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+            }
+            if (pointer.id === this._joystickPointerId) {
                 this._joystickActive = false;
                 this._joystickPointerId = -1;
                 this._joystickNormX = 0;
@@ -167,13 +145,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var dx = pointer.x - this._joystickBaseX;
         var clampedDx = Phaser.Math.Clamp(dx, -this._joystickBaseRadius, this._joystickBaseRadius);
 
-        // Move thumb horizontally only (vertical stays at base center)
         this.joystickThumb.setPosition(
             this._joystickBaseX + clampedDx,
             this._joystickBaseY
         );
 
-        // Normalize to -1..1
         this._joystickNormX = clampedDx / this._joystickBaseRadius;
     }
 
