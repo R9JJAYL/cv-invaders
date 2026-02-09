@@ -8,15 +8,6 @@ window.CVInvaders.Dialogue = {
         { text: 'Shoot the RED CVs\nCapture the GREEN ones', duration: 2200 }
     ],
 
-    TUTORIAL: [
-        { text: 'BRIEFING:', duration: 1000 },
-        { text: 'Your mission: Catch the GREEN CVs,\nshoot the RED ones.', duration: 2500 },
-        { text: 'Wait a minute...\nThe hiring manager has changed the brief!', duration: 2000 },
-        { text: 'Throw all the CVs out\nand start again...', duration: 1500 },
-        { text: 'Just kidding,\nthat\'s the tutorial over.', duration: 1500 },
-        { text: 'Let\'s go find these CVs!', duration: 1000 }
-    ],
-
     WAVES: [
         'Wave 1: The CVs are coming in!',
         'Wave 2: More applications incoming!',

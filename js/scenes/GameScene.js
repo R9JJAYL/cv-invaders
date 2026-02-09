@@ -197,9 +197,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             });
         });
 
-        // After ~8 CVs have dropped, trigger the joke
-        this.time.delayedCall(10400, () => {
-            this.triggerTutorialJoke();
+        // After brief practice, transition to Wave 1
+        this.time.delayedCall(8000, () => {
+            this.endTutorial();
         });
     }
 
@@ -242,43 +242,16 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         cv.spawn(x, -30, isGood, 130, false);
     }
 
-    triggerTutorialJoke() {
+    endTutorial() {
         // Stop spawning tutorial CVs
         if (this.tutorialSpawnTimer) {
             this.tutorialSpawnTimer.remove();
             this.tutorialSpawnTimer = null;
         }
 
-        const CFG = window.CVInvaders.Config;
-        const DLG = window.CVInvaders.Dialogue;
+        this.showAnnouncement('Let\'s go!', 1200);
 
-        // The hiring manager joke
-        this.showAnnouncement('Wait... the hiring manager\nchanged the brief!', 2500);
-
-        // Sweep all CVs off screen
         this.time.delayedCall(1500, () => {
-            this.cvs.getChildren().forEach(cv => {
-                if (cv.active) {
-                    this.tweens.add({
-                        targets: cv,
-                        x: cv.x + Phaser.Math.Between(-200, 200),
-                        y: -60,
-                        angle: Phaser.Math.Between(-180, 180),
-                        alpha: 0,
-                        duration: 600,
-                        ease: 'Power2',
-                        onComplete: () => cv.recycle()
-                    });
-                }
-            });
-        });
-
-        this.time.delayedCall(3000, () => {
-            this.showAnnouncement('Time to reassess the CVs...', 1200);
-        });
-
-        // Reset score from tutorial practice and start Wave 1
-        this.time.delayedCall(4500, () => {
             if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
             this.tutorialPhase = false;
             this.tutorialComplete = true;
@@ -286,7 +259,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.scoreManager.combo = 0;
             this.scoreManager.maxCombo = 0;
             this.scoreManager.goodCVsCaught = 0;
+            this.scoreManager.goodCVsMissed = 0;
             this.scoreManager.badCVsShot = 0;
+            this.scoreManager.badCVsMissed = 0;
             this.registry.set('score', 0);
             this.waveManager.startWave(0);
         });
@@ -509,7 +484,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             var shipX = this.ship.x;
             var shipY = this.ship.y;
             for (var i = 0; i < 10; i++) {
-                var tex = Math.random() < 0.5 ? 'cv-good' : 'cv-bad';
+                var tex = 'cv-bad';
                 var fakeCv = this.add.image(shipX, shipY, tex).setDepth(15);
                 var targetX = shipX + Phaser.Math.Between(-300, 300);
                 var targetY = shipY + Phaser.Math.Between(-250, 100);
