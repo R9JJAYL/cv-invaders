@@ -222,24 +222,40 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const company = companyEl ? companyEl.value.trim() : '';
         const recruiterType = typeEl ? typeEl.value : '';
 
-        // Require all fields — flash red glow for 5 seconds on missing ones
+        // Require all fields — pulsing red flash for 5 seconds on missing ones
         if (!name || !company || !recruiterType) {
             var missing = [];
             if (nameEl && !name) missing.push(nameEl);
             if (companyEl && !company) missing.push(companyEl);
             if (typeEl && !recruiterType) missing.push(typeEl);
-            missing.forEach(function(el) {
-                el.style.setProperty('border-color', '#E74C3C', 'important');
-                el.style.setProperty('box-shadow', '0 0 8px rgba(231,76,60,0.5)', 'important');
-            });
-            // Clear after 5 seconds
-            if (this._validationTimer) clearTimeout(this._validationTimer);
-            this._validationTimer = setTimeout(function() {
+            // Clear any previous flash
+            if (this._flashInterval) clearInterval(this._flashInterval);
+            if (this._flashTimeout) clearTimeout(this._flashTimeout);
+            var on = true;
+            var flash = function() {
+                if (on) {
+                    missing.forEach(function(el) {
+                        el.style.setProperty('border-color', '#E74C3C', 'important');
+                        el.style.setProperty('box-shadow', '0 0 10px rgba(231,76,60,0.6)', 'important');
+                    });
+                } else {
+                    missing.forEach(function(el) {
+                        el.style.removeProperty('border-color');
+                        el.style.removeProperty('box-shadow');
+                    });
+                }
+                on = !on;
+            };
+            flash();
+            this._flashInterval = setInterval(flash, 400);
+            // Stop after 5 seconds
+            this._flashTimeout = setTimeout(function() {
+                clearInterval(this._flashInterval);
                 missing.forEach(function(el) {
                     el.style.removeProperty('border-color');
                     el.style.removeProperty('box-shadow');
                 });
-            }, 5000);
+            }.bind(this), 5000);
             return;
         }
 
