@@ -60,7 +60,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Headline — the game tie-in
-        const headline = this.add.text(cx, cy - 200, 'Drowning in CVs...?', {
+        const headline = this.add.text(cx, cy - 200, 'Fighting off CVs feel familiar?', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
