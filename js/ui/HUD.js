@@ -109,31 +109,37 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var gameScene = this.scene.get('GameScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
-        // Poll ALL pointer objects directly from the global InputManager.
-        // This bypasses scene-level event dispatch entirely and reliably
-        // reads multi-touch state even when multiple scenes are running.
-        var pointers = this.input.manager.pointers;
+        // Poll touch pointer objects directly from the global InputManager.
+        // pointers[0] = mouse (skip), pointers[1] = first touch, pointers[2] = second touch.
+        // This bypasses scene-level event dispatch entirely, which avoids
+        // multi-scene input propagation issues that block simultaneous touches.
+        var pointer1 = this.input.manager.pointers[1];  // First finger
+        var pointer2 = this.input.manager.pointers[2];  // Second finger
         var shootHeld = false;
         var joystickX = 0;
         var joystickActive = false;
 
-        for (var i = 0; i < pointers.length; i++) {
-            var p = pointers[i];
-            if (!p.isDown) continue;
-
-            // Transform pointer world coords to game coords (handles Scale.FIT)
-            var tx = p.x;
-            var ty = p.y;
-
-            if (tx < this._halfW) {
-                // Left half — shoot
+        // Check first finger
+        if (pointer1 && pointer1.isDown) {
+            if (pointer1.x < this._halfW) {
                 shootHeld = true;
             } else {
-                // Right half — joystick
                 joystickActive = true;
-                var dx = tx - this._joystickBaseX;
-                var clampedDx = Phaser.Math.Clamp(dx, -this._joystickBaseRadius, this._joystickBaseRadius);
-                joystickX = clampedDx / this._joystickBaseRadius;
+                var dx1 = pointer1.x - this._joystickBaseX;
+                var cd1 = Phaser.Math.Clamp(dx1, -this._joystickBaseRadius, this._joystickBaseRadius);
+                joystickX = cd1 / this._joystickBaseRadius;
+            }
+        }
+
+        // Check second finger
+        if (pointer2 && pointer2.isDown) {
+            if (pointer2.x < this._halfW) {
+                shootHeld = true;
+            } else {
+                joystickActive = true;
+                var dx2 = pointer2.x - this._joystickBaseX;
+                var cd2 = Phaser.Math.Clamp(dx2, -this._joystickBaseRadius, this._joystickBaseRadius);
+                joystickX = cd2 / this._joystickBaseRadius;
             }
         }
 
