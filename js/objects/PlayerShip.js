@@ -68,10 +68,16 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         } else if (this.cursors.right.isDown) {
             this.setVelocityX(this.speed);
             this.targetX = null;
-        } else if (this.dragging && this.targetX !== null) {
-            // Direct drag follow — ship tracks finger with zero lag
-            this.setVelocityX(0);
-            this.x = this.targetX;
+        } else if (this.targetX !== null) {
+            // Touch/drag follow — ship moves toward finger at top speed
+            const diff = this.targetX - this.x;
+            if (Math.abs(diff) < 3) {
+                this.setVelocityX(0);
+                this.x = this.targetX;
+                if (!this.dragging) this.targetX = null;
+            } else {
+                this.setVelocityX(diff > 0 ? this.speed : -this.speed);
+            }
         } else {
             this.setVelocityX(0);
         }
