@@ -63,11 +63,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     }
 
     // ===== MOBILE CONTROLS =====
-    // Uses scene-level pointer events (not interactive objects) so both
-    // controls work simultaneously with multi-touch.
+    // Polls raw pointer objects every frame instead of relying on scene
+    // input events, which avoids multi-scene event propagation issues
+    // that prevent simultaneous two-finger input.
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
-        var halfW = CFG.WIDTH / 2;
 
         // ========== VISUAL: SHOOT BUTTON (LEFT SIDE) ==========
         var shootX = 90;
@@ -95,76 +95,69 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== STATE ==========
         this._shootHeld = false;
-        this._shootPointerId = -1;
-        this._joystickActive = false;
-        this._joystickPointerId = -1;
+        this._joystickNormX = 0;
         this._joystickBaseX = joyX;
         this._joystickBaseY = joyY;
         this._joystickBaseRadius = baseRadius;
-        this._joystickNormX = 0;
-        this._halfW = halfW;
-
-        // ========== SCENE-LEVEL TOUCH HANDLERS ==========
-        // Left half = shoot, Right half = joystick. Tracked by pointer ID.
-        this.input.on('pointerdown', (pointer) => {
-            if (pointer.x < this._halfW) {
-                // Left side — shoot
-                this._shootHeld = true;
-                this._shootPointerId = pointer.id;
-                this.shootButtonInner.setFillStyle(0x00E5FF, 0.6);
-            } else {
-                // Right side — joystick
-                this._joystickActive = true;
-                this._joystickPointerId = pointer.id;
-                this._updateJoystickThumb(pointer);
-            }
-        });
-
-        this.input.on('pointermove', (pointer) => {
-            if (this._joystickActive && pointer.id === this._joystickPointerId) {
-                this._updateJoystickThumb(pointer);
-            }
-        });
-
-        this.input.on('pointerup', (pointer) => {
-            if (pointer.id === this._shootPointerId) {
-                this._shootHeld = false;
-                this._shootPointerId = -1;
-                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
-            }
-            if (pointer.id === this._joystickPointerId) {
-                this._joystickActive = false;
-                this._joystickPointerId = -1;
-                this._joystickNormX = 0;
-                this.joystickThumb.setPosition(this._joystickBaseX, this._joystickBaseY);
-            }
-        });
+        this._halfW = CFG.WIDTH / 2;
     }
 
-    _updateJoystickThumb(pointer) {
-        var dx = pointer.x - this._joystickBaseX;
-        var clampedDx = Phaser.Math.Clamp(dx, -this._joystickBaseRadius, this._joystickBaseRadius);
-
-        this.joystickThumb.setPosition(
-            this._joystickBaseX + clampedDx,
-            this._joystickBaseY
-        );
-
-        this._joystickNormX = clampedDx / this._joystickBaseRadius;
-    }
-
-    // ===== UPDATE — relay mobile inputs to ship =====
+    // ===== UPDATE — poll pointers directly & relay to ship =====
     update(time, delta) {
         if (!this.isMobile) return;
 
         var gameScene = this.scene.get('GameScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
-        // Push joystick input
-        gameScene.ship.setMobileMovement(this._joystickNormX || 0);
+        // Poll ALL pointer objects directly from the global InputManager.
+        // This bypasses scene-level event dispatch entirely and reliably
+        // reads multi-touch state even when multiple scenes are running.
+        var pointers = this.input.manager.pointers;
+        var shootHeld = false;
+        var joystickX = 0;
+        var joystickActive = false;
 
-        // Push shoot state
-        gameScene.ship.setMobileShootPressed(this._shootHeld || false);
+        for (var i = 0; i < pointers.length; i++) {
+            var p = pointers[i];
+            if (!p.isDown) continue;
+
+            // Transform pointer world coords to game coords (handles Scale.FIT)
+            var tx = p.x;
+            var ty = p.y;
+
+            if (tx < this._halfW) {
+                // Left half — shoot
+                shootHeld = true;
+            } else {
+                // Right half — joystick
+                joystickActive = true;
+                var dx = tx - this._joystickBaseX;
+                var clampedDx = Phaser.Math.Clamp(dx, -this._joystickBaseRadius, this._joystickBaseRadius);
+                joystickX = clampedDx / this._joystickBaseRadius;
+            }
+        }
+
+        // Update shoot visual feedback
+        if (shootHeld !== this._shootHeld) {
+            this._shootHeld = shootHeld;
+            this.shootButtonInner.setFillStyle(0x00E5FF, shootHeld ? 0.6 : 0.25);
+        }
+
+        // Update joystick thumb visual
+        if (joystickActive) {
+            this._joystickNormX = joystickX;
+            this.joystickThumb.setPosition(
+                this._joystickBaseX + joystickX * this._joystickBaseRadius,
+                this._joystickBaseY
+            );
+        } else {
+            this._joystickNormX = 0;
+            this.joystickThumb.setPosition(this._joystickBaseX, this._joystickBaseY);
+        }
+
+        // Relay to ship
+        gameScene.ship.setMobileMovement(this._joystickNormX);
+        gameScene.ship.setMobileShootPressed(this._shootHeld);
     }
 
     // ===== EXISTING HUD METHODS =====
@@ -279,9 +272,5 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
     shutdown() {
         this.registry.events.off('changedata-score');
-        if (this.isMobile) {
-            this.input.off('pointermove');
-            this.input.off('pointerup');
-        }
     }
 };
