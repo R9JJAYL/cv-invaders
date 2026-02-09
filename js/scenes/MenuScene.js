@@ -218,9 +218,21 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const companyEl = this.formInput.getChildByID('companyName');
         const typeEl = this.formInput.getChildByID('recruiterType');
 
-        const name = (nameEl ? nameEl.value.trim() : '') || 'Recruiter';
+        const name = nameEl ? nameEl.value.trim() : '';
         const company = companyEl ? companyEl.value.trim() : '';
         const recruiterType = typeEl ? typeEl.value : '';
+
+        // Require all fields
+        if (!name || !company || !recruiterType) {
+            if (nameEl && !name) nameEl.style.borderColor = '#E74C3C';
+            if (companyEl && !company) companyEl.style.borderColor = '#E74C3C';
+            if (typeEl && !recruiterType) typeEl.style.borderColor = '#E74C3C';
+            // Reset border on valid fields
+            if (nameEl && name) nameEl.style.borderColor = '';
+            if (companyEl && company) companyEl.style.borderColor = '';
+            if (typeEl && recruiterType) typeEl.style.borderColor = '';
+            return;
+        }
 
         this.registry.set('playerName', name);
         this.registry.set('companyName', company);
