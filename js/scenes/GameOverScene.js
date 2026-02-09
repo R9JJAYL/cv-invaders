@@ -683,7 +683,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                     window.CVInvaders._remoteScores = data.scores;
                 }
             })
-            .catch(function() {});
+            .catch(function(e) { console.warn('Leaderboard save failed:', e); });
         }
     }
 

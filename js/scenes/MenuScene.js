@@ -97,11 +97,14 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.startBtn.on('pointerdown', () => this.startGame());
 
         // Aggregate stats + Leaderboard (HTML tables)
-        const allScores = this.getLeaderboard();
-        this.renderTables(CFG, allScores);
-
-        // Fetch remote scores and re-render when available
-        this.fetchRemoteScores(CFG);
+        // If we already have remote scores cached, render immediately;
+        // otherwise show loading state and fetch from API
+        if (window.CVInvaders._remoteScores && window.CVInvaders._remoteScores.length > 0) {
+            this.renderTables(CFG, window.CVInvaders._remoteScores.slice());
+        } else {
+            this.renderLoadingState(CFG);
+            this.fetchRemoteScores(CFG);
+        }
 
         // Enter key to start
         this.input.keyboard.on('keydown-ENTER', () => this.startGame());
@@ -171,20 +174,43 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
+        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
+    }
+
+    renderLoadingState(CFG) {
+        var loadingHTML = '<div class="menu-tables">' +
+            '<div class="glass-pill combined-pill">' +
+            '<div class="lb-title">LEADERBOARD</div>' +
+            '<div style="text-align:center;padding:30px 0;color:#AAAAAA;font-family:Courier New;font-size:14px;">Loading scores...</div>' +
+            '</div></div>';
+        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(loadingHTML);
     }
 
     fetchRemoteScores(CFG) {
-        if (!CFG.LEADERBOARD_URL) return;
-        const url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
+        if (!CFG.LEADERBOARD_URL) {
+            // No API configured — show empty leaderboard
+            if (this.leaderboardDom) this.leaderboardDom.destroy();
+            this.renderTables(CFG, []);
+            return;
+        }
+        var self = this;
+        var url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
         fetch(url)
             .then(function(r) { return r.json(); })
             .then(function(data) {
-                if (data && data.scores) {
+                if (data && data.scores && data.scores.length > 0) {
                     window.CVInvaders._remoteScores = data.scores;
                 }
+                // Re-render with real data (or fake fallback if API returned empty)
+                if (self.leaderboardDom) self.leaderboardDom.destroy();
+                self.renderTables(CFG, self.getLeaderboard());
             })
-            .catch(function() {});
+            .catch(function(e) {
+                console.warn('Leaderboard fetch failed:', e);
+                // Fall back to fake data on error
+                if (self.leaderboardDom) self.leaderboardDom.destroy();
+                self.renderTables(CFG, self.getLeaderboard());
+            });
     }
 
     startGame() {
