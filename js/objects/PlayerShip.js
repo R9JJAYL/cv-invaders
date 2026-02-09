@@ -48,7 +48,7 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         });
         scene.input.on('pointerup', () => {
             this.dragging = false;
-            this.targetX = null;
+            // Keep targetX so ship finishes traveling to last finger position
         });
 
         // Manual update since Image doesn't auto-call preUpdate

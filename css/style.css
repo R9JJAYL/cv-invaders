@@ -22,6 +22,17 @@ body {
     box-shadow: 0 0 40px rgba(107, 63, 160, 0.3);
 }
 
+/* Mobile: game fills entire viewport with no dead zones */
+@media (max-width: 900px) and (pointer: coarse) {
+    #game {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+
 .menu-form {
     display: flex;
     flex-direction: column;
