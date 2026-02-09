@@ -122,6 +122,10 @@ window.CVInvaders.Config = {
         COMBO: '#FFD700'
     },
 
+    // Leaderboard API
+    LEADERBOARD_URL: 'https://script.google.com/macros/s/AKfycbx6Tza_RY_a23XIDliEsn1gGl_qKaqFcMxwhuRUpQAbi8K83ESQYnI-h7m9rr6Ze6n1gA/exec',
+    LEADERBOARD_TOKEN: 'cv1nv4d3rs_f1rst_2025',
+
     // Pool sizes
     POOLS: {
         BULLETS: 30,

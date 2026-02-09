@@ -483,9 +483,30 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const recruiterType = this.registry.get('recruiterType') || '';
         this.saveScore(name, score, grade.grade, company, recruiterType);
 
-        // Leaderboard — exact copy of MenuScene.renderTables
+        // Leaderboard — show local+fake data immediately, then update with remote
         const allScores = this.getLeaderboard();
         this.renderTables(CFG, allScores, name, score, yOff);
+
+        // Fetch remote scores and re-render when available
+        if (CFG.LEADERBOARD_URL) {
+            const self = this;
+            const url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data && data.scores) {
+                        window.CVInvaders._remoteScores = data.scores;
+                        // Remove old DOM leaderboard and re-render
+                        const oldDom = self.children.list.filter(function(c) { return c.type === 'DOMElement'; });
+                        if (oldDom.length > 0) {
+                            oldDom[oldDom.length - 1].destroy();
+                        }
+                        const updated = self.getLeaderboard();
+                        self.renderTables(CFG, updated, name, score, yOff);
+                    }
+                })
+                .catch(function() {});
+        }
 
         // Buttons — all on one line
         const btnY = yOff + 546;
@@ -645,6 +666,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     saveScore(name, score, grade, company, type) {
+        // Save to localStorage as fallback
         try {
             const key = 'cv_invaders_scores';
             const existing = JSON.parse(localStorage.getItem(key) || '[]');
@@ -652,18 +674,44 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             existing.sort((a, b) => b.score - a.score);
             localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)));
         } catch (e) {}
+
+        // POST to Google Sheets API
+        const CFG = window.CVInvaders.Config;
+        if (CFG.LEADERBOARD_URL) {
+            fetch(CFG.LEADERBOARD_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    token: CFG.LEADERBOARD_TOKEN,
+                    action: 'addScore',
+                    name: name,
+                    company: company,
+                    type: type,
+                    score: score,
+                    grade: grade
+                })
+            }).catch(function() {});
+        }
     }
 
     getLeaderboard() {
+        const fake = window.CVInvaders.FakeLeaderboard || [];
+        const remote = window.CVInvaders._remoteScores || [];
         let saved = [];
         try {
             saved = JSON.parse(localStorage.getItem('cv_invaders_scores') || '[]');
         } catch (e) {}
 
-        const fake = window.CVInvaders.FakeLeaderboard || [];
-        const all = [...saved, ...fake];
-        all.sort((a, b) => b.score - a.score);
-        return all;
+        const all = [...remote, ...saved, ...fake];
+        // Deduplicate by name+score combo
+        const seen = new Set();
+        const unique = all.filter(e => {
+            const key = e.name + '|' + e.score;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        unique.sort((a, b) => b.score - a.score);
+        return unique;
     }
 
     shareToLinkedIn(name, score, grade) {

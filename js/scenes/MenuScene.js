@@ -100,6 +100,9 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const allScores = this.getLeaderboard();
         this.renderTables(CFG, allScores);
 
+        // Fetch remote scores and re-render when available
+        this.fetchRemoteScores(CFG);
+
         // Enter key to start
         this.input.keyboard.on('keydown-ENTER', () => this.startGame());
 
@@ -171,6 +174,19 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
     }
 
+    fetchRemoteScores(CFG) {
+        if (!CFG.LEADERBOARD_URL) return;
+        const url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.scores) {
+                    window.CVInvaders._remoteScores = data.scores;
+                }
+            })
+            .catch(function() {});
+    }
+
     startGame() {
         const nameEl = this.formInput.getChildByID('playerName');
         const companyEl = this.formInput.getChildByID('companyName');
@@ -210,14 +226,23 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     }
 
     getLeaderboard() {
+        const fake = window.CVInvaders.FakeLeaderboard || [];
+        const remote = window.CVInvaders._remoteScores || [];
         let saved = [];
         try {
             saved = JSON.parse(localStorage.getItem('cv_invaders_scores') || '[]');
         } catch (e) {}
 
-        const fake = window.CVInvaders.FakeLeaderboard || [];
-        const all = [...saved, ...fake];
-        all.sort((a, b) => b.score - a.score);
-        return all;
+        const all = [...remote, ...saved, ...fake];
+        // Deduplicate by name+score combo
+        const seen = new Set();
+        const unique = all.filter(e => {
+            const key = e.name + '|' + e.score;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        unique.sort((a, b) => b.score - a.score);
+        return unique;
     }
 };
