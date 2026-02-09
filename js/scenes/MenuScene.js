@@ -222,15 +222,22 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         const company = companyEl ? companyEl.value.trim() : '';
         const recruiterType = typeEl ? typeEl.value : '';
 
-        // Require all fields
+        // Require all fields — flash red for 5 seconds on missing ones
         if (!name || !company || !recruiterType) {
-            if (nameEl && !name) nameEl.style.borderColor = '#E74C3C';
-            if (companyEl && !company) companyEl.style.borderColor = '#E74C3C';
-            if (typeEl && !recruiterType) typeEl.style.borderColor = '#E74C3C';
-            // Reset border on valid fields
-            if (nameEl && name) nameEl.style.borderColor = '';
-            if (companyEl && company) companyEl.style.borderColor = '';
-            if (typeEl && recruiterType) typeEl.style.borderColor = '';
+            var missing = [];
+            if (nameEl && !name) missing.push(nameEl);
+            if (companyEl && !company) missing.push(companyEl);
+            if (typeEl && !recruiterType) missing.push(typeEl);
+            missing.forEach(function(el) {
+                el.style.borderColor = '#E74C3C';
+            });
+            // Clear after 5 seconds
+            if (this._validationTimer) clearTimeout(this._validationTimer);
+            this._validationTimer = setTimeout(function() {
+                missing.forEach(function(el) {
+                    el.style.borderColor = '';
+                });
+            }, 5000);
             return;
         }
 
