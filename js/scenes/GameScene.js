@@ -484,7 +484,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             var shipX = this.ship.x;
             var shipY = this.ship.y;
             for (var i = 0; i < 10; i++) {
-                var tex = 'cv-bad';
+                var tex = Math.random() < 0.5 ? 'cv-good' : 'cv-bad';
                 var fakeCv = this.add.image(shipX, shipY, tex).setDepth(15);
                 var targetX = shipX + Phaser.Math.Between(-300, 300);
                 var targetY = shipY + Phaser.Math.Between(-250, 100);
@@ -569,8 +569,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         const CFG = window.CVInvaders.Config;
         const x = Phaser.Math.Between(40, CFG.WIDTH - 40);
-        const isGood = Math.random() < CFG.CV_GOOD_RATIO;
-        cv.spawn(x, -30, isGood, 170, false);
+        // Boss phase only drops red (bad) CVs — the good ones were thrown out
+        cv.spawn(x, -30, false, 170, false);
     }
 
     bossSpawnCV(x, y, isDisguised) {
