@@ -226,14 +226,13 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     }
 
     getLeaderboard() {
-        const fake = window.CVInvaders.FakeLeaderboard || [];
         const remote = window.CVInvaders._remoteScores || [];
         let saved = [];
         try {
             saved = JSON.parse(localStorage.getItem('cv_invaders_scores') || '[]');
         } catch (e) {}
 
-        const all = [...remote, ...saved, ...fake];
+        const all = [...remote, ...saved];
         // Deduplicate by name+score combo
         const seen = new Set();
         const unique = all.filter(e => {
