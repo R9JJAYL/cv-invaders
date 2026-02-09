@@ -65,61 +65,66 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     // ===== MOBILE CONTROLS =====
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
+        var halfW = CFG.WIDTH / 2;
 
         // ========== SHOOT BUTTON (LEFT SIDE) ==========
-        var shootX = 75;
-        var shootY = CFG.HEIGHT - 75;
-        var shootRadius = 40;
+        // Visual: circle in bottom-left
+        var shootX = 90;
+        var shootY = CFG.HEIGHT - 90;
+        var shootRadius = 50;
 
-        // Outer ring
         this.shootButtonBg = this.add.circle(shootX, shootY, shootRadius, 0x333333, 0.4)
             .setDepth(200)
-            .setStrokeStyle(2, 0x00E5FF, 0.6);
+            .setStrokeStyle(3, 0x00E5FF, 0.6);
 
-        // Inner filled circle
-        this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 8, 0x00E5FF, 0.25)
+        this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 10, 0x00E5FF, 0.25)
             .setDepth(200);
 
-        // "FIRE" label
         this.shootButtonLabel = this.add.text(shootX, shootY, 'FIRE', {
             fontFamily: 'Courier New',
-            fontSize: '12px',
+            fontSize: '14px',
             color: '#00E5FF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
-        // Make interactive with larger hit area
-        this.shootButtonBg.setInteractive(
-            new Phaser.Geom.Circle(0, 0, shootRadius + 10),
-            Phaser.Geom.Circle.Contains
-        );
-        this._shootHeld = false;
+        // Invisible touch zone covering entire bottom-left quadrant
+        this._shootZone = this.add.rectangle(0, CFG.HEIGHT / 2, halfW, CFG.HEIGHT / 2, 0x000000, 0)
+            .setOrigin(0, 0).setDepth(199).setInteractive();
 
-        this.shootButtonBg.on('pointerdown', () => {
+        this._shootHeld = false;
+        this._shootPointerId = -1;
+
+        this._shootZone.on('pointerdown', (pointer) => {
             this._shootHeld = true;
+            this._shootPointerId = pointer.id;
             this.shootButtonInner.setFillStyle(0x00E5FF, 0.6);
         });
-        this.shootButtonBg.on('pointerup', () => {
-            this._shootHeld = false;
-            this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+        this._shootZone.on('pointerup', (pointer) => {
+            if (pointer.id === this._shootPointerId) {
+                this._shootHeld = false;
+                this._shootPointerId = -1;
+                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+            }
         });
-        this.shootButtonBg.on('pointerout', () => {
-            this._shootHeld = false;
-            this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+        this._shootZone.on('pointerout', (pointer) => {
+            if (pointer.id === this._shootPointerId) {
+                this._shootHeld = false;
+                this._shootPointerId = -1;
+                this.shootButtonInner.setFillStyle(0x00E5FF, 0.25);
+            }
         });
 
         // ========== JOYSTICK (RIGHT SIDE) ==========
-        var joyX = CFG.WIDTH - 75;
-        var joyY = CFG.HEIGHT - 75;
-        var baseRadius = 50;
-        var thumbRadius = 22;
+        // Visual: circle in bottom-right
+        var joyX = CFG.WIDTH - 90;
+        var joyY = CFG.HEIGHT - 90;
+        var baseRadius = 60;
+        var thumbRadius = 26;
 
-        // Base circle
         this.joystickBase = this.add.circle(joyX, joyY, baseRadius, 0x333333, 0.3)
             .setDepth(200)
-            .setStrokeStyle(2, 0xFFFFFF, 0.3);
+            .setStrokeStyle(3, 0xFFFFFF, 0.3);
 
-        // Thumb circle
         this.joystickThumb = this.add.circle(joyX, joyY, thumbRadius, 0xFFFFFF, 0.4)
             .setDepth(201);
 
@@ -131,19 +136,17 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._joystickNormX = 0;
         this._joystickPointerId = -1;
 
-        // Make base interactive
-        this.joystickBase.setInteractive(
-            new Phaser.Geom.Circle(0, 0, baseRadius + 15),
-            Phaser.Geom.Circle.Contains
-        );
+        // Invisible touch zone covering entire bottom-right quadrant
+        this._joyZone = this.add.rectangle(halfW, CFG.HEIGHT / 2, halfW, CFG.HEIGHT / 2, 0x000000, 0)
+            .setOrigin(0, 0).setDepth(199).setInteractive();
 
-        this.joystickBase.on('pointerdown', (pointer) => {
+        this._joyZone.on('pointerdown', (pointer) => {
             this._joystickActive = true;
             this._joystickPointerId = pointer.id;
             this._updateJoystickThumb(pointer);
         });
 
-        // Scene-level listeners for drag beyond base
+        // Scene-level listeners for drag beyond zone
         this.input.on('pointermove', (pointer) => {
             if (this._joystickActive && pointer.id === this._joystickPointerId) {
                 this._updateJoystickThumb(pointer);
