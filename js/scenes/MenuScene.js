@@ -160,7 +160,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
             allScores.slice(0, 10).map((entry, i) => {
-                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : '';
+                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
                 const typeClass = entry.type === 'agency' ? 'type-agency' : '';
                 const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
                 const podiumRow = i < 3 ? ' lb-podium' : '';
