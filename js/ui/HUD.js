@@ -96,9 +96,12 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         // ========== STATE ==========
         this._shootHeld = false;
         this._joystickNormX = 0;
+        this._smoothedNormX = 0;          // Smoothed output for less erratic movement
         this._joystickBaseX = joyX;
         this._joystickBaseY = joyY;
         this._joystickBaseRadius = baseRadius;
+        this._joystickRange = 80;         // Effective input range (wider than visual)
+        this._joystickDeadZone = 0.15;    // Ignore small inputs below 15%
         this._halfW = CFG.WIDTH / 2;
     }
 
@@ -126,8 +129,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             } else {
                 joystickActive = true;
                 var dx1 = pointer1.x - this._joystickBaseX;
-                var cd1 = Phaser.Math.Clamp(dx1, -this._joystickBaseRadius, this._joystickBaseRadius);
-                joystickX = cd1 / this._joystickBaseRadius;
+                var cd1 = Phaser.Math.Clamp(dx1, -this._joystickRange, this._joystickRange);
+                joystickX = cd1 / this._joystickRange;
             }
         }
 
@@ -138,9 +141,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             } else {
                 joystickActive = true;
                 var dx2 = pointer2.x - this._joystickBaseX;
-                var cd2 = Phaser.Math.Clamp(dx2, -this._joystickBaseRadius, this._joystickBaseRadius);
-                joystickX = cd2 / this._joystickBaseRadius;
+                var cd2 = Phaser.Math.Clamp(dx2, -this._joystickRange, this._joystickRange);
+                joystickX = cd2 / this._joystickRange;
             }
+        }
+
+        // Apply dead zone — ignore tiny movements near center
+        if (Math.abs(joystickX) < this._joystickDeadZone) {
+            joystickX = 0;
         }
 
         // Update shoot visual feedback
@@ -149,20 +157,25 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             this.shootButtonInner.setFillStyle(0x00E5FF, shootHeld ? 0.6 : 0.25);
         }
 
-        // Update joystick thumb visual
+        // Smooth the joystick output (lerp towards target to reduce jitter)
+        var lerpSpeed = 0.3;
         if (joystickActive) {
             this._joystickNormX = joystickX;
+            this._smoothedNormX += (joystickX - this._smoothedNormX) * lerpSpeed;
+            // Clamp visual thumb to the smaller base circle
+            var thumbClamp = Phaser.Math.Clamp(joystickX, -1, 1);
             this.joystickThumb.setPosition(
-                this._joystickBaseX + joystickX * this._joystickBaseRadius,
+                this._joystickBaseX + thumbClamp * this._joystickBaseRadius,
                 this._joystickBaseY
             );
         } else {
             this._joystickNormX = 0;
+            this._smoothedNormX += (0 - this._smoothedNormX) * lerpSpeed;
             this.joystickThumb.setPosition(this._joystickBaseX, this._joystickBaseY);
         }
 
-        // Relay to ship
-        gameScene.ship.setMobileMovement(this._joystickNormX);
+        // Relay smoothed value to ship
+        gameScene.ship.setMobileMovement(this._smoothedNormX);
         gameScene.ship.setMobileShootPressed(this._shootHeld);
     }
 
