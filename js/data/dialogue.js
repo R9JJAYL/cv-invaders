@@ -30,7 +30,7 @@ window.CVInvaders.Dialogue = {
     },
 
     UNICORN: {
-        CAUGHT: 'Purple Unicorn caught!\nDouble points awarded!'
+        CAUGHT: 'Catch the unicorns,\nthey\'re worth 2x!'
     },
 
     GAME_OVER: {

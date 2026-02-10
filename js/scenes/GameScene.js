@@ -413,7 +413,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         if (!this.firstUnicornShown) {
             this.firstUnicornShown = true;
-            this.showAnnouncement('Catch the Purple Unicorn\nfor DOUBLE POINTS!', 2000);
+            this.showAnnouncement(window.CVInvaders.Dialogue.UNICORN.CAUGHT, 2000);
         }
 
         const onCatch = () => {
