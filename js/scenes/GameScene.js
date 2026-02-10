@@ -513,19 +513,14 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
         });
 
-        // 5s — readvertised announcement
+        // 5s — readvertised + bot warning
         this.time.delayedCall(5000, () => {
-            this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 1800);
-        });
-
-        // 7s — boss intro + intensify music
-        this.time.delayedCall(7000, () => {
             this.sound_engine.setMusicTempo(1.6);
-            this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
+            this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 2500);
         });
 
-        // 9.5s — spawn boss and START the countdown timer
-        this.time.delayedCall(9500, () => {
+        // 8s — spawn boss and START the countdown timer
+        this.time.delayedCall(8000, () => {
             this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
             this.spawnBoss();
         });
