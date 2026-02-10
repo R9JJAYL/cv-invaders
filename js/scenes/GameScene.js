@@ -469,11 +469,17 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         const DLG = window.CVInvaders.Dialogue;
 
-        // --- Hiring manager throws out all the CVs ---
+        // --- Timeline ---
+        // 0.5s: CV burst animation (clear screen)
+        // 2.0s: "Uh oh... hiring manager threw out all the CVs!" (2.5s)
+        // 5.0s: Boss entry starts (flies down over 2s, 1s grace = vulnerable at 8s)
+        //        "We readvertised the job but we're being attacked by bots. Stop them!"
+        // 7.0s: Health bar appears
+        // 8.0s: Boss vulnerable, timer + background CVs start
 
-        // 0.5s — CV burst animation first (player sees CVs fly out)
+        // 0.5s — CV burst animation (clear screen of enemies/CVs)
         this.time.delayedCall(500, () => {
-            // Sweep any surviving enemies — spin them out like the CVs
+            // Sweep any surviving enemies
             this.enemies.getChildren().forEach(enemy => {
                 if (enemy.active && enemy.isAlive) {
                     enemy.isAlive = false;
@@ -493,7 +499,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 }
             });
 
-            // Sweep any CVs still on screen — fling them dramatically
+            // Sweep any CVs still on screen
             this.cvs.getChildren().forEach(cv => {
                 if (cv.active) {
                     this.tweens.add({
@@ -511,7 +517,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 }
             });
 
-            // Spawn fake CVs bursting out from the ship — big dramatic explosion
+            // Fake CV burst explosion from ship
             var shipX = this.ship.x;
             var shipY = this.ship.y;
             var burstCount = 20;
@@ -539,10 +545,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 });
             }
 
-            // Clear any enemy bullets still flying
+            // Clear enemy bullets
             this.enemyBullets.getChildren().forEach(b => { if (b.active) b.recycle(); });
 
-            // Camera shake for impact — stronger
+            // Camera shake
             this.cameras.main.shake(400, 0.012);
         });
 
@@ -552,9 +558,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
         });
 
-        // 6s — boss drops in with entrance line
-        this.time.delayedCall(6000, () => {
-            this.bossSpawned = true;
+        // 5s — boss starts flying in
+        this.time.delayedCall(5000, () => {
             this.spawnBoss();
         });
     }
@@ -569,7 +574,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.sound_engine.bossEntrance();
         this.showAnnouncement(window.CVInvaders.Dialogue.BOSS.ENTRANCE, 2500);
 
-        // Boss health bar in HUD
+        // Show health bar after boss has landed (2s entry)
         const hud = this.scene.get('HUD');
         if (hud) {
             this.time.delayedCall(2000, () => {
@@ -577,7 +582,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             });
         }
 
-        // Player bullets hit boss — delay collider until entry animation finishes
+        // Wait for boss entry to complete before enabling combat
+        // Boss timer and background CVs only start once boss is vulnerable
         this.bossStartTime = this.time.now;
 
         const waitForEntry = this.time.addEvent({
@@ -586,6 +592,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             callback: () => {
                 if (this.boss && this.boss.entryComplete) {
                     waitForEntry.remove();
+
+                    // NOW the fight begins — start timer and background CVs
+                    this.bossSpawned = true;
+                    this.bossTimeRemaining = CFG.BOSS_TIMER;
+
+                    // Enable bullet-boss collision
                     this.physics.add.overlap(this.bullets, this.bossGroup, (bullet, boss) => {
                         if (!bullet.active || !boss.active || !boss.isAlive) return;
                         this.spawnHitMarker(bullet.x, bullet.y, true);
