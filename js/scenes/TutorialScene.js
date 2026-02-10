@@ -172,9 +172,9 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             this.narrativeText.setColor('#FFFFFF');
             this.showNarrative(DLG[2].text, DLG[2].duration);
 
-            // Show CV examples after the camera has panned up
+            // Play animated demo after the camera has panned up
             this.time.delayedCall(1500, () => {
-                this.showCVExamples(CFG);
+                this.playDemo(CFG);
             });
         });
 
@@ -313,34 +313,180 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         }
     }
 
-    showCVExamples(CFG) {
-        // Position below the narrative text so they don't overlap
-        const centerY = CFG.HEIGHT / 2 + 40;
+    playDemo(CFG) {
+        var cx = CFG.WIDTH / 2;
+        var shipY = CFG.HEIGHT / 2 + 100;
+        var cvY = CFG.HEIGHT / 2 - 10;
+        var badX = cx - 100;
+        var goodX = cx + 100;
 
-        const badCV = this.add.image(CFG.WIDTH / 2 - 120, centerY, 'cv-bad')
-            .setDepth(50).setAlpha(0).setScale(1.5).setScrollFactor(0);
-        const goodCV = this.add.image(CFG.WIDTH / 2 + 120, centerY, 'cv-good')
-            .setDepth(50).setAlpha(0).setScale(1.5).setScrollFactor(0);
+        // Create demo sprites — all purely visual, no physics
+        var demoShip = this.add.image(cx, shipY, 'ship')
+            .setDepth(50).setAlpha(0).setScale(0.9).setScrollFactor(0);
+        var badCV = this.add.image(badX, cvY, 'cv-bad')
+            .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
+        var goodCV = this.add.image(goodX, cvY, 'cv-good')
+            .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
 
-        const shootLabel = this.add.text(CFG.WIDTH / 2 - 120, centerY + 40, 'SHOOT', {
-            fontFamily: 'Courier New',
-            fontSize: '14px',
-            color: CFG.COLORS.CV_BAD_HEX,
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+        // Track surviving elements for countdown fade-out cleanup
+        this.cvExamples = [demoShip];
 
-        const catchLabel = this.add.text(CFG.WIDTH / 2 + 120, centerY + 40, 'CATCH', {
-            fontFamily: 'Courier New',
-            fontSize: '14px',
-            color: CFG.COLORS.CV_GOOD_HEX,
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
-
-        this.cvExamples = [badCV, goodCV, shootLabel, catchLabel];
+        // 0ms — Fade everything in
         this.tweens.add({
-            targets: this.cvExamples,
+            targets: [demoShip, badCV, goodCV],
             alpha: 1,
-            duration: 400
+            duration: 300
+        });
+
+        // 400ms — Ship moves left toward red CV
+        this.time.delayedCall(400, () => {
+            this.tweens.add({
+                targets: demoShip,
+                x: badX,
+                duration: 500,
+                ease: 'Power2'
+            });
+        });
+
+        // 900ms — Ship shoots the red CV
+        this.time.delayedCall(900, () => {
+            // Create bullet
+            var bullet = this.add.rectangle(badX, shipY - 20, 4, 10, 0x00E5FF)
+                .setDepth(51).setScrollFactor(0);
+
+            // Bullet flies up to CV
+            this.tweens.add({
+                targets: bullet,
+                y: cvY,
+                duration: 200,
+                ease: 'Linear',
+                onComplete: () => {
+                    bullet.destroy();
+
+                    // Flash CV white then pop it
+                    badCV.setTint(0xFFFFFF);
+                    this.time.delayedCall(80, () => {
+                        badCV.clearTint();
+                        this.tweens.add({
+                            targets: badCV,
+                            scaleX: 0,
+                            scaleY: 0,
+                            alpha: 0,
+                            duration: 300,
+                            ease: 'Back.easeIn',
+                            onComplete: () => badCV.destroy()
+                        });
+                    });
+
+                    // Floating "+50" score
+                    var scoreText = this.add.text(badX, cvY, '+50', {
+                        fontFamily: 'Courier New',
+                        fontSize: '16px',
+                        color: '#00FF00',
+                        fontStyle: 'bold'
+                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0);
+                    this.tweens.add({
+                        targets: scoreText,
+                        y: cvY - 40,
+                        alpha: 0,
+                        duration: 800,
+                        ease: 'Power2',
+                        onComplete: () => scoreText.destroy()
+                    });
+
+                    // "SHOOT" label
+                    var shootLabel = this.add.text(badX, cvY + 30, 'SHOOT', {
+                        fontFamily: 'Courier New',
+                        fontSize: '14px',
+                        color: CFG.COLORS.CV_BAD_HEX,
+                        fontStyle: 'bold'
+                    }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+                    this.cvExamples.push(shootLabel);
+                    this.tweens.add({
+                        targets: shootLabel,
+                        alpha: 1,
+                        duration: 200
+                    });
+                }
+            });
+        });
+
+        // 1600ms — Ship moves right toward green CV
+        this.time.delayedCall(1600, () => {
+            this.tweens.add({
+                targets: demoShip,
+                x: goodX,
+                duration: 600,
+                ease: 'Power2'
+            });
+        });
+
+        // 2200ms — Green CV drops down to the ship (catch)
+        this.time.delayedCall(2200, () => {
+            this.tweens.add({
+                targets: goodCV,
+                y: shipY,
+                duration: 400,
+                ease: 'Power2',
+                onComplete: () => {
+                    // Flash ship green briefly
+                    demoShip.setTint(0x00FF00);
+                    this.time.delayedCall(150, () => {
+                        demoShip.clearTint();
+                    });
+
+                    // Absorb the CV
+                    this.tweens.add({
+                        targets: goodCV,
+                        scaleX: 0,
+                        scaleY: 0,
+                        alpha: 0,
+                        duration: 250,
+                        ease: 'Power2',
+                        onComplete: () => goodCV.destroy()
+                    });
+
+                    // Floating "+100" score
+                    var catchScore = this.add.text(goodX, shipY, '+100', {
+                        fontFamily: 'Courier New',
+                        fontSize: '16px',
+                        color: '#00FF00',
+                        fontStyle: 'bold'
+                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0);
+                    this.tweens.add({
+                        targets: catchScore,
+                        y: shipY - 40,
+                        alpha: 0,
+                        duration: 800,
+                        ease: 'Power2',
+                        onComplete: () => catchScore.destroy()
+                    });
+
+                    // "CATCH" label
+                    var catchLabel = this.add.text(goodX, shipY + 40, 'CATCH', {
+                        fontFamily: 'Courier New',
+                        fontSize: '14px',
+                        color: CFG.COLORS.CV_GOOD_HEX,
+                        fontStyle: 'bold'
+                    }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+                    this.cvExamples.push(catchLabel);
+                    this.tweens.add({
+                        targets: catchLabel,
+                        alpha: 1,
+                        duration: 200
+                    });
+                }
+            });
+        });
+
+        // 2900ms — Ship returns to center
+        this.time.delayedCall(2900, () => {
+            this.tweens.add({
+                targets: demoShip,
+                x: cx,
+                duration: 400,
+                ease: 'Power2'
+            });
         });
     }
 
