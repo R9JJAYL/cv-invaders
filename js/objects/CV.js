@@ -78,6 +78,7 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
         this.body.enable = false;
         this.body.reset(0, 0);
         this.setAngle(0);
+        this.setScale(1);
         this.alpha = 1;
     }
 };
