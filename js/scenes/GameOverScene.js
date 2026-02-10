@@ -674,13 +674,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     _getRankString() {
-        var rank = this._playerRank;
-        var total = this._totalPlayers;
-        // Ordinal suffix
-        var s = ['th', 'st', 'nd', 'rd'];
-        var v = rank % 100;
-        var suffix = s[(v - 20) % 10] || s[v] || s[0];
-        return 'You placed ' + rank.toLocaleString() + suffix + ' / ' + total.toLocaleString();
+        return 'Rank ' + this._playerRank.toLocaleString() + ' / ' + this._totalPlayers.toLocaleString();
     }
 
     getGrade(score) {
