@@ -525,15 +525,20 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         }
 
-        // Buttons — all on one line: Demo | Share | Play Again
+        // Buttons — evenly spaced row: Demo | Share | Play Again
         const btnY = yOff + 560;
-
-        // Watch Demo (left)
-        const demoBtn = this.add.text(CFG.WIDTH / 2 - 210, btnY, '[ 6 MIN DEMO OF FIRST ]', {
+        const btnStyle = {
             fontFamily: 'Courier New',
             fontSize: '13px',
-            color: '#FFFFFF',
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            padding: { left: 8, right: 8 }
+        };
+        const btnSpacing = CFG.WIDTH / 4; // divide screen into 4 equal parts
+
+        // Watch Demo (left)
+        const demoBtn = this.add.text(btnSpacing, btnY, '[ WATCH DEMO ]', {
+            ...btnStyle,
+            color: '#FFFFFF'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
@@ -543,11 +548,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Share to LinkedIn (center)
-        const shareBtn = this.add.text(CFG.WIDTH / 2, btnY, '[ SHARE ON LINKEDIN ]', {
-            fontFamily: 'Courier New',
-            fontSize: '13px',
-            color: '#0A66C2',
-            fontStyle: 'bold'
+        const shareBtn = this.add.text(btnSpacing * 2, btnY, '[ SHARE SCORE ]', {
+            ...btnStyle,
+            color: '#0A66C2'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
@@ -557,11 +560,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Play Again (right)
-        const playBtn = this.add.text(CFG.WIDTH / 2 + 210, btnY, '[ PLAY AGAIN ]', {
-            fontFamily: 'Courier New',
-            fontSize: '13px',
-            color: CFG.COLORS.PURPLE_ACCENT_HEX,
-            fontStyle: 'bold'
+        const playBtn = this.add.text(btnSpacing * 3, btnY, '[ PLAY AGAIN ]', {
+            ...btnStyle,
+            color: CFG.COLORS.PURPLE_ACCENT_HEX
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         playBtn.on('pointerover', () => playBtn.setColor('#FFFFFF'));
