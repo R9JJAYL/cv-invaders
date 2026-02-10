@@ -13,12 +13,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.bossPhase = false;
         this.bossSpawned = false;
         this.bossStartTime = 0;
+        this.bossTimeRemaining = 0;
 
-        // Single unified countdown: waves + cinematic (9.5s) + boss fight
+        // Countdown covers wave gameplay only (stops when CVs are thrown out)
         const CFG = window.CVInvaders.Config;
         const waveDuration = CFG.WAVES.reduce((sum, w) => sum + w.duration, 0);
-        this.totalGameDuration = waveDuration + 9500 + CFG.BOSS_TIMER;
-        this.gameTimeRemaining = this.totalGameDuration;
+        this.gameTimeRemaining = waveDuration;
         this.gameCountdownActive = false;
     }
 
@@ -155,8 +155,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 this.bossPhase = true;
                 this.bossSpawned = true;
                 this.bossSpawnTimer = 0;
-                this.gameTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
-                this.gameCountdownActive = true;
+                this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
                 this.spawnBoss();
             }
         });
@@ -367,14 +366,18 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             }
         }
 
-        // Unified game countdown — ticks from wave start through cinematic and boss fight
-        if (this.gameCountdownActive && !this.gameOver) {
+        // Wave countdown — only ticks during wave gameplay, stops at boss phase
+        if (this.gameCountdownActive && !this.bossPhase && !this.gameOver) {
             this.gameTimeRemaining -= delta;
-            if (this.gameTimeRemaining <= 0) {
-                this.gameTimeRemaining = 0;
-                if (this.bossSpawned) {
-                    this.onBossTimeUp();
-                }
+            if (this.gameTimeRemaining < 0) this.gameTimeRemaining = 0;
+        }
+
+        // Boss timer — separate, ticks only after boss has spawned
+        if (this.bossPhase && this.bossSpawned && !this.gameOver) {
+            this.bossTimeRemaining -= delta;
+            if (this.bossTimeRemaining <= 0) {
+                this.bossTimeRemaining = 0;
+                this.onBossTimeUp();
             }
         }
 
@@ -383,8 +386,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         if (hud && hud.updateCombo) {
             hud.updateCombo(this.scoreManager.combo);
         }
-        if (hud && hud.updateCountdown && this.gameCountdownActive) {
-            hud.updateCountdown(this.gameTimeRemaining, this.bossSpawned);
+        if (hud && hud.updateCountdown && this.gameCountdownActive && !this.bossPhase) {
+            hud.updateCountdown(this.gameTimeRemaining);
         }
     }
 
@@ -455,6 +458,11 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.bossPhase = true;
         this.bossSpawned = false;
         this.bossSpawnTimer = 0;
+        this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+
+        // Hide the wave countdown
+        const hud = this.scene.get('HUD');
+        if (hud) hud.hideCountdown();
 
         const DLG = window.CVInvaders.Dialogue;
 

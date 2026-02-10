@@ -230,7 +230,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         });
     }
 
-    updateCountdown(remainingMs, isBossPhase) {
+    updateCountdown(remainingMs) {
         if (remainingMs <= 0) {
             this.countdownText.setText('TIME REMAINING: 0s');
             this.countdownText.setColor('#FF4444');
@@ -248,6 +248,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
                 this.countdownText.setColor(CFG.COLORS.PURPLE_ACCENT_HEX);
             }
         }
+    }
+
+    hideCountdown() {
+        this.countdownText.setText('');
     }
 
     updateMuteText(muted) {
