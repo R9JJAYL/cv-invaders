@@ -386,6 +386,26 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
             }).setOrigin(0.5);
+
+            // Show rank if leaderboard data has arrived
+            this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 75, '', {
+                fontFamily: 'Courier New',
+                fontSize: '12px',
+                color: CFG.COLORS.TEXT_SECONDARY,
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+
+            if (this._playerRank) {
+                this.rankText.setText(this._getRankString());
+            } else if (this._leaderboardPromise) {
+                // Data hasn't arrived yet — update when it does
+                var self = this;
+                this._leaderboardPromise.then(function() {
+                    if (self.rankText && self._playerRank) {
+                        self.rankText.setText(self._getRankString());
+                    }
+                });
+            }
         });
 
         // Stats — nested pill layout: outer container per CV type, inner capsules stacked
@@ -654,6 +674,16 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.add.dom(CFG.WIDTH / 2, yOff + 320).createFromHTML(statsHTML);
     }
 
+    _getRankString() {
+        var rank = this._playerRank;
+        var total = this._totalPlayers;
+        // Ordinal suffix
+        var s = ['th', 'st', 'nd', 'rd'];
+        var v = rank % 100;
+        var suffix = s[(v - 20) % 10] || s[v] || s[0];
+        return 'You placed ' + rank.toLocaleString() + suffix + ' / ' + total.toLocaleString();
+    }
+
     getGrade(score) {
         const grades = window.CVInvaders.Config.GRADES;
         for (const g of grades) {
@@ -665,6 +695,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
         // POST to Google Sheets API — response includes updated leaderboard
         if (CFG.LEADERBOARD_URL) {
+            var self = this;
             this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -681,6 +712,19 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             .then(function(data) {
                 if (data && data.scores) {
                     window.CVInvaders._remoteScores = data.scores;
+                    // Calculate player rank from returned scores
+                    var sorted = data.scores.slice().sort(function(a, b) { return b.score - a.score; });
+                    var rank = 1;
+                    for (var i = 0; i < sorted.length; i++) {
+                        if (sorted[i].score > score) {
+                            rank = i + 2;
+                        } else {
+                            rank = i + 1;
+                            break;
+                        }
+                    }
+                    self._playerRank = rank;
+                    self._totalPlayers = sorted.length;
                 }
             })
             .catch(function(e) { console.warn('Leaderboard save failed:', e); });
