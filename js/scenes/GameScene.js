@@ -456,66 +456,76 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // --- Hiring manager throws out all the CVs ---
 
-        // 0.5s — announcement
+        // 0.5s — CV burst animation first (player sees CVs fly out)
         this.time.delayedCall(500, () => {
-            this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
-        });
-
-        // 1.5s — CV burst animation from ship + sweep remaining CVs
-        this.time.delayedCall(1500, () => {
-            // Sweep any CVs still on screen
+            // Sweep any CVs still on screen — fling them dramatically
             this.cvs.getChildren().forEach(cv => {
                 if (cv.active) {
                     this.tweens.add({
                         targets: cv,
-                        x: cv.x + Phaser.Math.Between(-200, 200),
-                        y: -60,
-                        angle: Phaser.Math.Between(-180, 180),
+                        x: cv.x + Phaser.Math.Between(-350, 350),
+                        y: -80 + Phaser.Math.Between(-40, 0),
+                        angle: Phaser.Math.Between(-360, 360),
                         alpha: 0,
-                        duration: 600,
+                        scaleX: 0.3,
+                        scaleY: 0.3,
+                        duration: 900,
                         ease: 'Power2',
                         onComplete: () => cv.recycle()
                     });
                 }
             });
 
-            // Spawn ~10 fake CVs bursting out from the ship
+            // Spawn fake CVs bursting out from the ship — big dramatic explosion
             var shipX = this.ship.x;
             var shipY = this.ship.y;
-            for (var i = 0; i < 10; i++) {
+            var burstCount = 20;
+            for (var i = 0; i < burstCount; i++) {
                 var tex = Math.random() < 0.5 ? 'cv-good' : 'cv-bad';
                 var fakeCv = this.add.image(shipX, shipY, tex).setDepth(15);
-                var targetX = shipX + Phaser.Math.Between(-300, 300);
-                var targetY = shipY + Phaser.Math.Between(-250, 100);
+                var angle = (i / burstCount) * Math.PI * 2;
+                var dist = Phaser.Math.Between(150, 400);
+                var targetX = shipX + Math.cos(angle) * dist;
+                var targetY = shipY + Math.sin(angle) * dist * 0.7 - 80;
+                var delay = Phaser.Math.Between(0, 200);
+                fakeCv.setScale(Phaser.Math.FloatBetween(0.8, 1.3));
                 this.tweens.add({
                     targets: fakeCv,
                     x: targetX,
                     y: targetY,
-                    angle: Phaser.Math.Between(-360, 360),
+                    angle: Phaser.Math.Between(-540, 540),
                     alpha: 0,
-                    duration: 800,
+                    scaleX: 0.2,
+                    scaleY: 0.2,
+                    duration: 1200,
+                    delay: delay,
                     ease: 'Power2',
                     onComplete: () => fakeCv.destroy()
                 });
             }
 
-            // Camera shake for impact
-            this.cameras.main.shake(200, 0.006);
+            // Camera shake for impact — stronger
+            this.cameras.main.shake(400, 0.012);
         });
 
-        // 3.5s — readvertised announcement
-        this.time.delayedCall(3500, () => {
+        // 2s — "Uh oh" text appears AFTER CVs have been thrown
+        this.time.delayedCall(2000, () => {
+            this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
+        });
+
+        // 5s — readvertised announcement
+        this.time.delayedCall(5000, () => {
             this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 1800);
         });
 
-        // 5.5s — existing boss intro + intensify music
-        this.time.delayedCall(5500, () => {
+        // 7s — boss intro + intensify music
+        this.time.delayedCall(7000, () => {
             this.sound_engine.setMusicTempo(1.6);
             this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
         });
 
-        // 8s — spawn boss and START the countdown timer
-        this.time.delayedCall(8000, () => {
+        // 9.5s — spawn boss and START the countdown timer
+        this.time.delayedCall(9500, () => {
             this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
             this.spawnBoss();
         });
