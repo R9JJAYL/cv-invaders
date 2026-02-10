@@ -212,42 +212,62 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
 
     generateEnemyTexture(CFG) {
         const g = this.add.graphics();
+        // Ghost ship — "ghosted candidates" theme
+        // Canvas: 40x38
 
-        // Engine glow (top, since ship points down)
-        g.fillStyle(0xFF6644, 0.6);
-        g.fillRect(15, 2, 10, 3);
+        // Outer glow
+        g.fillStyle(0xFF4444, 0.08);
+        g.fillCircle(20, 16, 17);
 
-        // Hull body
-        g.fillStyle(CFG.COLORS.ENEMY, 1);
-        g.fillRect(7, 6, 26, 14);
-
-        // Nose cone pointing DOWN (inverted triangle)
-        g.fillStyle(0xAA2222, 1);
+        // Ghost body — rounded top, wavy bottom
+        g.fillStyle(0xCC3333, 0.75);
         g.beginPath();
-        g.moveTo(20, 36);
-        g.lineTo(7, 20);
-        g.lineTo(33, 20);
+        g.arc(20, 14, 14, Math.PI, 0, false);  // rounded head
+        g.lineTo(34, 28);
+        // Wavy tail bottom
+        g.lineTo(31, 24);
+        g.lineTo(27, 30);
+        g.lineTo(23, 24);
+        g.lineTo(20, 30);
+        g.lineTo(17, 24);
+        g.lineTo(13, 30);
+        g.lineTo(9, 24);
+        g.lineTo(6, 28);
         g.closePath();
         g.fillPath();
 
-        // Wings pointing down
-        g.fillStyle(0xAA2222, 0.9);
-        g.beginPath();
-        g.moveTo(0, 8);
-        g.lineTo(7, 20);
-        g.lineTo(7, 6);
-        g.closePath();
-        g.fillPath();
-        g.beginPath();
-        g.moveTo(40, 8);
-        g.lineTo(33, 20);
-        g.lineTo(33, 6);
-        g.closePath();
-        g.fillPath();
+        // Inner lighter highlight
+        g.fillStyle(0xFF6666, 0.3);
+        g.fillEllipse(20, 12, 16, 12);
 
-        // Cockpit window
-        g.fillStyle(0xFF4444, 0.5);
-        g.fillCircle(20, 14, 4);
+        // Eyes — hollow white with dark pupils (angry ghost look)
+        g.fillStyle(0xFFFFFF, 0.95);
+        g.fillCircle(15, 13, 4);
+        g.fillCircle(25, 13, 4);
+        // Pupils — angry, looking down
+        g.fillStyle(0x000000, 1);
+        g.fillCircle(15.5, 14, 2);
+        g.fillCircle(25.5, 14, 2);
+
+        // Angry eyebrows
+        g.lineStyle(1.5, 0x880000, 0.9);
+        g.beginPath();
+        g.moveTo(11, 9);
+        g.lineTo(17, 8);
+        g.strokePath();
+        g.beginPath();
+        g.moveTo(29, 9);
+        g.lineTo(23, 8);
+        g.strokePath();
+
+        // Mouth — annoyed frown
+        g.lineStyle(1.5, 0x880000, 0.8);
+        g.beginPath();
+        g.moveTo(15, 21);
+        g.lineTo(18, 19);
+        g.lineTo(22, 19);
+        g.lineTo(25, 21);
+        g.strokePath();
 
         g.generateTexture('enemy', 40, 38);
         g.destroy();
