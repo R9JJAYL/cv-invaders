@@ -399,18 +399,22 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         });
                     });
 
-                    // Floating "+150" score
+                    // Floating "+150" score — big and obvious
                     var scoreText = this.add.text(badX, cvY, '+150', {
                         fontFamily: 'Courier New',
-                        fontSize: '16px',
+                        fontSize: '28px',
                         color: '#00FF00',
-                        fontStyle: 'bold'
-                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0);
+                        fontStyle: 'bold',
+                        stroke: '#003300',
+                        strokeThickness: 3
+                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0).setScale(0.3);
                     this.tweens.add({
                         targets: scoreText,
-                        y: cvY - 40,
+                        scaleX: 1,
+                        scaleY: 1,
+                        y: cvY - 60,
                         alpha: 0,
-                        duration: 800,
+                        duration: 1200,
                         ease: 'Power2',
                         onComplete: () => scoreText.destroy()
                     });
@@ -453,18 +457,22 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         onComplete: () => goodCV.destroy()
                     });
 
-                    // Floating "+150" score
+                    // Floating "+150" score — big and obvious
                     var catchScore = this.add.text(goodX, shipY, '+150', {
                         fontFamily: 'Courier New',
-                        fontSize: '16px',
+                        fontSize: '28px',
                         color: '#00FF00',
-                        fontStyle: 'bold'
-                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0);
+                        fontStyle: 'bold',
+                        stroke: '#003300',
+                        strokeThickness: 3
+                    }).setOrigin(0.5).setDepth(52).setScrollFactor(0).setScale(0.3);
                     this.tweens.add({
                         targets: catchScore,
-                        y: shipY - 40,
+                        scaleX: 1,
+                        scaleY: 1,
+                        y: shipY - 60,
                         alpha: 0,
-                        duration: 800,
+                        duration: 1200,
                         ease: 'Power2',
                         onComplete: () => catchScore.destroy()
                     });
