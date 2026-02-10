@@ -357,7 +357,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Score with count-up — delay until page scrolls into view
         const grade = this.getGrade(score);
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 22, 'SCORE: 0', {
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 18, 'SCORE: 0', {
             fontFamily: 'Courier New',
             fontSize: '28px',
             color: CFG.COLORS.COMBO,
@@ -380,7 +380,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Grade + title — delayed after score count-up
         this.time.delayedCall(scoreDelay + 1600, () => {
-            this.add.text(CFG.WIDTH / 2, yOff + 55, 'GRADE ' + grade.grade + ': ' + grade.title, {
+            this.add.text(CFG.WIDTH / 2, yOff + 52, 'GRADE ' + grade.grade + ': ' + grade.title, {
                 fontFamily: 'Courier New',
                 fontSize: '14px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -388,11 +388,10 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).setOrigin(0.5);
 
             // Show rank if leaderboard data has arrived
-            this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 75, '', {
+            this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 72, '', {
                 fontFamily: 'Courier New',
-                fontSize: '12px',
-                color: CFG.COLORS.TEXT_SECONDARY,
-                fontStyle: 'bold'
+                fontSize: '11px',
+                color: CFG.COLORS.TEXT_SECONDARY
             }).setOrigin(0.5);
 
             if (this._playerRank) {
@@ -525,11 +524,39 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         }
 
-        // Buttons — all on one line
+        // Buttons — all on one line: Demo | Share | Play Again
         const btnY = yOff + 546;
 
-        // Play Again
-        const playBtn = this.add.text(CFG.WIDTH / 2 - 210, btnY, '[ PLAY AGAIN ]', {
+        // Watch Demo (left)
+        const demoBtn = this.add.text(CFG.WIDTH / 2 - 210, btnY, '[ 6 MIN DEMO OF FIRST ]', {
+            fontFamily: 'Courier New',
+            fontSize: '13px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
+        demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
+        demoBtn.on('pointerdown', () => {
+            window.open('https://www.first.cx/demo', '_blank');
+        });
+
+        // Share to LinkedIn (center)
+        const shareBtn = this.add.text(CFG.WIDTH / 2, btnY, '[ SHARE ON LINKEDIN ]', {
+            fontFamily: 'Courier New',
+            fontSize: '13px',
+            color: '#0A66C2',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
+        shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
+        shareBtn.on('pointerdown', () => {
+            this.shareToLinkedIn(name, score, grade);
+        });
+
+        // Play Again (right)
+        const playBtn = this.add.text(CFG.WIDTH / 2 + 210, btnY, '[ PLAY AGAIN ]', {
             fontFamily: 'Courier New',
             fontSize: '13px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -556,34 +583,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 this.registry.set('skipToCountdown', true);
                 this.scene.start('TutorialScene');
             });
-        });
-
-        // Watch Demo
-        const demoBtn = this.add.text(CFG.WIDTH / 2, btnY, '[ 6 MIN DEMO OF FIRST ]', {
-            fontFamily: 'Courier New',
-            fontSize: '13px',
-            color: '#FFFFFF',
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
-        demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
-        demoBtn.on('pointerdown', () => {
-            window.open('https://www.first.cx/demo', '_blank');
-        });
-
-        // Share to LinkedIn
-        const shareBtn = this.add.text(CFG.WIDTH / 2 + 210, btnY, '[ SHARE ON LINKEDIN ]', {
-            fontFamily: 'Courier New',
-            fontSize: '13px',
-            color: '#0A66C2',
-            fontStyle: 'bold'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
-        shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
-        shareBtn.on('pointerdown', () => {
-            this.shareToLinkedIn(name, score, grade);
         });
 
         // Keyboard shortcut — same as Play Again

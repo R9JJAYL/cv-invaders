@@ -6,6 +6,7 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         this.score = 0;
         this.combo = 0;
         this.maxCombo = 0;
+        this.missCount = 0;          // Tracks misses — combo resets after 3
         this.goodCVsCaught = 0;
         this.goodCVsMissed = 0;
         this.badCVsShot = 0;
@@ -37,14 +38,24 @@ window.CVInvaders.ScoreManager = class ScoreManager {
 
     incrementCombo() {
         this.combo++;
+        this.missCount = 0; // Good action resets miss counter
         if (this.combo > this.maxCombo) {
             this.maxCombo = this.combo;
             this.scene.registry.set('maxCombo', this.maxCombo);
         }
     }
 
+    trackMiss() {
+        this.missCount++;
+        if (this.missCount >= 3) {
+            this.combo = 0;
+            this.missCount = 0;
+        }
+    }
+
     resetCombo() {
         this.combo = 0;
+        this.missCount = 0;
     }
 
     catchGoodCV() {
@@ -64,19 +75,19 @@ window.CVInvaders.ScoreManager = class ScoreManager {
     missGoodCV() {
         this.goodCVsMissed++;
         this.scene.registry.set('goodCVsMissed', this.goodCVsMissed);
-        this.resetCombo();
+        this.trackMiss();
         return this.addScore(window.CVInvaders.Config.SCORE.MISS_GOOD);
     }
 
     badCVReachesBottom() {
         this.badCVsMissed++;
         this.scene.registry.set('badCVsMissed', this.badCVsMissed);
-        this.resetCombo();
+        this.trackMiss();
         return this.addScore(window.CVInvaders.Config.SCORE.BAD_REACHES_BOTTOM);
     }
 
     badCVHitsPlayer() {
-        this.resetCombo();
+        this.trackMiss();
         return this.addScore(window.CVInvaders.Config.SCORE.BAD_HITS_PLAYER);
     }
 
@@ -104,7 +115,7 @@ window.CVInvaders.ScoreManager = class ScoreManager {
     }
 
     caughtDisguisedCV() {
-        this.resetCombo();
+        this.trackMiss();
         return this.addScore(window.CVInvaders.Config.SCORE.CAUGHT_DISGUISED);
     }
 
