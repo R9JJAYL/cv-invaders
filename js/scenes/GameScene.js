@@ -249,22 +249,18 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.tutorialSpawnTimer = null;
         }
 
-        this.showAnnouncement('Let\'s go!', 1200);
-
-        this.time.delayedCall(1500, () => {
-            if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
-            this.tutorialPhase = false;
-            this.tutorialComplete = true;
-            this.scoreManager.score = 0;
-            this.scoreManager.combo = 0;
-            this.scoreManager.maxCombo = 0;
-            this.scoreManager.goodCVsCaught = 0;
-            this.scoreManager.goodCVsMissed = 0;
-            this.scoreManager.badCVsShot = 0;
-            this.scoreManager.badCVsMissed = 0;
-            this.registry.set('score', 0);
-            this.waveManager.startWave(0);
-        });
+        if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
+        this.tutorialPhase = false;
+        this.tutorialComplete = true;
+        this.scoreManager.score = 0;
+        this.scoreManager.combo = 0;
+        this.scoreManager.maxCombo = 0;
+        this.scoreManager.goodCVsCaught = 0;
+        this.scoreManager.goodCVsMissed = 0;
+        this.scoreManager.badCVsShot = 0;
+        this.scoreManager.badCVsMissed = 0;
+        this.registry.set('score', 0);
+        this.waveManager.startWave(0);
     }
 
     // ===== COLLISIONS =====
