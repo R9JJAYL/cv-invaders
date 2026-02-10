@@ -347,14 +347,16 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             }
         }
 
-        // Keep CVs falling during boss phase
+        // Keep CVs falling during boss phase — only after boss has spawned
         if (this.bossPhase && !this.gameOver) {
-            this.bossSpawnTimer += delta;
-            if (this.bossSpawnTimer >= 1400) {
-                this.bossSpawnTimer = 0;
-                const activeCVs = this.cvs.countActive(true);
-                if (activeCVs < 6) {
-                    this.spawnBossBackgroundCV();
+            if (this.bossTimeRemaining !== Infinity) {
+                this.bossSpawnTimer += delta;
+                if (this.bossSpawnTimer >= 1400) {
+                    this.bossSpawnTimer = 0;
+                    const activeCVs = this.cvs.countActive(true);
+                    if (activeCVs < 6) {
+                        this.spawnBossBackgroundCV();
+                    }
                 }
             }
 
