@@ -358,11 +358,13 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 }
             }
 
-            // Boss countdown timer
-            this.bossTimeRemaining -= delta;
-            if (this.bossTimeRemaining <= 0) {
-                this.bossTimeRemaining = 0;
-                this.onBossTimeUp();
+            // Boss countdown timer — only tick once the boss has actually spawned
+            if (this.bossTimeRemaining !== Infinity) {
+                this.bossTimeRemaining -= delta;
+                if (this.bossTimeRemaining <= 0) {
+                    this.bossTimeRemaining = 0;
+                    this.onBossTimeUp();
+                }
             }
         }
 
@@ -372,7 +374,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             hud.updateCombo(this.scoreManager.combo);
         }
         if (hud && hud.updateCountdown) {
-            if (this.bossPhase) {
+            if (this.bossPhase && this.bossTimeRemaining !== Infinity) {
                 hud.updateCountdown(this.bossTimeRemaining, true);
             } else if (this.waveManager.active) {
                 hud.updateCountdown(this.waveManager.getTotalRemainingMs(), false);
@@ -447,7 +449,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     startBossPhase() {
         this.bossPhase = true;
         this.bossSpawnTimer = 0;
-        this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+        // Don't start the countdown yet — it begins when the boss actually spawns
+        this.bossTimeRemaining = Infinity;
 
         const DLG = window.CVInvaders.Dialogue;
 
@@ -511,8 +514,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement('INCOMING: AI BOT 9000', 2000);
         });
 
-        // 8s — spawn boss
+        // 8s — spawn boss and START the countdown timer
         this.time.delayedCall(8000, () => {
+            this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
             this.spawnBoss();
         });
     }
