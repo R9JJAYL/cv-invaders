@@ -15,10 +15,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.bossStartTime = 0;
         this.bossTimeRemaining = 0;
 
-        // Countdown covers wave gameplay only (stops when CVs are thrown out)
+        // Countdown covers all gameplay before boss (tutorial + waves)
         const CFG = window.CVInvaders.Config;
         const waveDuration = CFG.WAVES.reduce((sum, w) => sum + w.duration, 0);
-        this.gameTimeRemaining = waveDuration;
+        this.gameTimeRemaining = waveDuration + 8000; // waves + 8s tutorial practice
         this.gameCountdownActive = false;
     }
 
@@ -192,6 +192,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 delay: 1500
             });
         }
+
+        // Start countdown immediately
+        this.gameCountdownActive = true;
 
         // Start spawning tutorial CVs right away
         this.time.delayedCall(600, () => {
