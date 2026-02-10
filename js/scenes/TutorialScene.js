@@ -169,6 +169,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                 'Power2'
             );
 
+            // Move narrative text higher so it doesn't overlap the demo CVs below
+            this.narrativeText.setY(CFG.HEIGHT / 2 - 120);
             this.narrativeText.setColor('#FFFFFF');
             this.showNarrative(DLG[2].text, DLG[2].duration);
 
