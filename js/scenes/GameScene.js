@@ -546,19 +546,14 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.cameras.main.shake(400, 0.012);
         });
 
-        // 2s — "Uh oh" text appears AFTER CVs have been thrown
+        // 2s — readvertised + bot warning after CVs fly out
         this.time.delayedCall(2000, () => {
-            this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
-        });
-
-        // 5s — readvertised + bot warning
-        this.time.delayedCall(5000, () => {
             this.sound_engine.setMusicTempo(1.6);
             this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 2500);
         });
 
-        // 9.5s — spawn boss (unified countdown keeps ticking throughout)
-        this.time.delayedCall(9500, () => {
+        // 6s — spawn boss
+        this.time.delayedCall(6000, () => {
             this.bossSpawned = true;
             this.spawnBoss();
         });
