@@ -251,6 +251,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         }
     }
 
+    showBossIncoming() {
+        this.countdownText.setText('BOSS INCOMING...');
+        this.countdownText.setColor('#FF4444');
+    }
+
     updateMuteText(muted) {
         this.muteText.setText('[M] Sound: ' + (muted ? 'OFF' : 'ON'));
     }

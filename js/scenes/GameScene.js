@@ -376,10 +376,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         if (hud && hud.updateCountdown) {
             if (this.bossPhase && this.bossTimeRemaining !== Infinity) {
                 hud.updateCountdown(this.bossTimeRemaining, true);
+            } else if (this.bossPhase) {
+                // During boss cinematic — show incoming message
+                hud.showBossIncoming();
             } else if (this.waveManager.active) {
                 hud.updateCountdown(this.waveManager.getTotalRemainingMs(), false);
             }
-            // Don't show timer during tutorial — it only starts when waves begin
         }
     }
 
