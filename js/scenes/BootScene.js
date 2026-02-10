@@ -300,123 +300,119 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
 
     generateUnicornTexture(CFG) {
         const g = this.add.graphics();
-        // Canvas: 40x44 — cute front-facing unicorn with glowing aura
+        // Canvas: 40x44 — side-profile unicorn facing right
 
-        // Outer glow aura
-        g.fillStyle(0xBB8FCE, 0.15);
-        g.fillCircle(20, 24, 20);
-        g.fillStyle(0xD4A8E8, 0.1);
-        g.fillCircle(20, 24, 16);
+        // Soft glow behind
+        g.fillStyle(0xBB8FCE, 0.12);
+        g.fillCircle(20, 24, 18);
 
-        // Body (rounded, front-facing)
-        g.fillStyle(0xC77DFF, 1);
-        g.fillRoundedRect(10, 20, 20, 18, 6);
+        // Tail (flowing, behind body) — rainbow colored curves
+        g.lineStyle(3, 0xFF69B4, 0.9);
+        g.beginPath(); g.moveTo(4, 22); g.lineTo(1, 16); g.lineTo(3, 10); g.strokePath();
+        g.lineStyle(3, 0x9B59B6, 0.8);
+        g.beginPath(); g.moveTo(5, 24); g.lineTo(2, 18); g.lineTo(1, 12); g.strokePath();
+        g.lineStyle(2, 0x00BFFF, 0.7);
+        g.beginPath(); g.moveTo(6, 23); g.lineTo(3, 20); g.lineTo(2, 15); g.strokePath();
 
-        // Head (large, friendly)
-        g.fillStyle(0xD9A8F0, 1);
-        g.fillCircle(20, 16, 10);
+        // Body (horse torso, oval, facing right)
+        g.fillStyle(0xE0C0F0, 1);
+        g.fillEllipse(18, 26, 22, 13);
 
-        // Ears
-        g.fillStyle(0xD9A8F0, 1);
+        // Chest highlight
+        g.fillStyle(0xEDD5F5, 0.5);
+        g.fillEllipse(22, 24, 10, 8);
+
+        // Neck (angled up-right)
+        g.fillStyle(0xE0C0F0, 1);
         g.beginPath();
-        g.moveTo(12, 10);
-        g.lineTo(10, 2);
-        g.lineTo(16, 8);
-        g.closePath();
-        g.fillPath();
-        g.beginPath();
-        g.moveTo(28, 10);
-        g.lineTo(30, 2);
-        g.lineTo(24, 8);
-        g.closePath();
-        g.fillPath();
-
-        // Inner ears
-        g.fillStyle(0xE8C5F5, 0.6);
-        g.beginPath();
-        g.moveTo(13, 9);
-        g.lineTo(11, 4);
-        g.lineTo(15, 8);
-        g.closePath();
-        g.fillPath();
-        g.beginPath();
-        g.moveTo(27, 9);
-        g.lineTo(29, 4);
-        g.lineTo(25, 8);
+        g.moveTo(24, 21);
+        g.lineTo(28, 10);
+        g.lineTo(34, 10);
+        g.lineTo(32, 23);
         g.closePath();
         g.fillPath();
 
-        // Horn (golden, centred)
+        // Head (facing right, slightly angled down)
+        g.fillStyle(0xE8CCF5, 1);
+        g.fillEllipse(34, 11, 10, 9);
+
+        // Snout (extended right)
+        g.fillStyle(0xE8CCF5, 1);
+        g.fillEllipse(38, 13, 5, 5);
+
+        // Nostril
+        g.fillStyle(0xD4A0E0, 0.6);
+        g.fillCircle(39, 13, 1);
+
+        // Ear (pointing up from head)
+        g.fillStyle(0xE0C0F0, 1);
+        g.beginPath();
+        g.moveTo(32, 7);
+        g.lineTo(30, 1);
+        g.lineTo(34, 5);
+        g.closePath();
+        g.fillPath();
+        // Inner ear
+        g.fillStyle(0xFFB6C1, 0.5);
+        g.beginPath();
+        g.moveTo(32, 6);
+        g.lineTo(31, 2);
+        g.lineTo(33, 5);
+        g.closePath();
+        g.fillPath();
+
+        // Horn (golden, spiraling from forehead, pointing up-right)
         g.fillStyle(0xFFD700, 1);
         g.beginPath();
-        g.moveTo(20, 0);
-        g.lineTo(17, 8);
-        g.lineTo(23, 8);
+        g.moveTo(37, 2);
+        g.lineTo(34, 8);
+        g.lineTo(37, 7);
         g.closePath();
         g.fillPath();
-        // Horn shine
-        g.lineStyle(1, 0xFFF8DC, 0.7);
-        g.beginPath();
-        g.moveTo(19, 3);
-        g.lineTo(20, 7);
-        g.strokePath();
+        // Horn spiral lines
+        g.lineStyle(0.5, 0xFFF8DC, 0.6);
+        g.beginPath(); g.moveTo(35, 6); g.lineTo(36, 4); g.strokePath();
+        g.beginPath(); g.moveTo(35.5, 7); g.lineTo(36.5, 5); g.strokePath();
 
-        // Eyes (big, cute)
+        // Eye (large, expressive)
         g.fillStyle(0xFFFFFF, 1);
-        g.fillCircle(16, 15, 3);
-        g.fillCircle(24, 15, 3);
+        g.fillCircle(35, 10, 2.5);
         g.fillStyle(0x4B0082, 1);
-        g.fillCircle(16, 15, 1.5);
-        g.fillCircle(24, 15, 1.5);
+        g.fillCircle(35.5, 10, 1.5);
         // Eye shine
-        g.fillStyle(0xFFFFFF, 0.8);
-        g.fillCircle(17, 14, 0.8);
-        g.fillCircle(25, 14, 0.8);
+        g.fillStyle(0xFFFFFF, 0.9);
+        g.fillCircle(36, 9.5, 0.7);
 
-        // Nose / mouth
-        g.fillStyle(0xFFB6C1, 0.8);
-        g.fillCircle(20, 20, 1.5);
+        // Mane (flowing down from head/neck — rainbow strands)
+        g.lineStyle(2.5, 0xC77DFF, 0.9);
+        g.beginPath(); g.moveTo(30, 6); g.lineTo(25, 12); g.lineTo(23, 18); g.strokePath();
+        g.lineStyle(2, 0xFF69B4, 0.8);
+        g.beginPath(); g.moveTo(31, 8); g.lineTo(26, 14); g.lineTo(25, 20); g.strokePath();
+        g.lineStyle(2, 0x9B59B6, 0.7);
+        g.beginPath(); g.moveTo(29, 5); g.lineTo(23, 10); g.lineTo(21, 16); g.strokePath();
+        g.lineStyle(1.5, 0x00BFFF, 0.6);
+        g.beginPath(); g.moveTo(28, 7); g.lineTo(22, 12); g.lineTo(20, 17); g.strokePath();
 
-        // Mane (rainbow wisps on sides)
-        g.lineStyle(2, 0xFF69B4, 0.9);
-        g.beginPath();
-        g.moveTo(10, 12);
-        g.lineTo(6, 18);
-        g.strokePath();
-        g.lineStyle(2, 0x9B59B6, 0.8);
-        g.beginPath();
-        g.moveTo(30, 12);
-        g.lineTo(34, 18);
-        g.strokePath();
-        g.lineStyle(2, 0x00BFFF, 0.7);
-        g.beginPath();
-        g.moveTo(9, 14);
-        g.lineTo(5, 22);
-        g.strokePath();
-        g.lineStyle(2, 0x00BFFF, 0.7);
-        g.beginPath();
-        g.moveTo(31, 14);
-        g.lineTo(35, 22);
-        g.strokePath();
-
-        // Legs
-        g.fillStyle(0xB266D9, 1);
-        g.fillRoundedRect(12, 36, 4, 7, 2);
-        g.fillRoundedRect(24, 36, 4, 7, 2);
+        // Front legs
+        g.fillStyle(0xD9B0E8, 1);
+        g.fillRoundedRect(23, 31, 3, 9, 1);
+        g.fillRoundedRect(27, 31, 3, 9, 1);
+        // Back legs
+        g.fillRoundedRect(10, 31, 3, 9, 1);
+        g.fillRoundedRect(14, 31, 3, 9, 1);
 
         // Hooves (golden)
         g.fillStyle(0xFFD700, 0.8);
-        g.fillRoundedRect(12, 40, 4, 3, 1);
-        g.fillRoundedRect(24, 40, 4, 3, 1);
+        g.fillRect(23, 39, 3, 2);
+        g.fillRect(27, 39, 3, 2);
+        g.fillRect(10, 39, 3, 2);
+        g.fillRect(14, 39, 3, 2);
 
-        // Star sparkles
+        // Star sparkles around the unicorn
         g.fillStyle(0xFFD700, 0.9);
-        g.fillRect(3, 3, 1, 3);
-        g.fillRect(2, 4, 3, 1);
-        g.fillRect(36, 30, 1, 3);
-        g.fillRect(35, 31, 3, 1);
-        g.fillRect(6, 38, 1, 2);
-        g.fillRect(5, 39, 3, 1);
+        g.fillRect(1, 5, 1, 3); g.fillRect(0, 6, 3, 1);
+        g.fillRect(38, 28, 1, 2); g.fillRect(37, 29, 3, 1);
+        g.fillRect(16, 1, 1, 2); g.fillRect(15, 2, 3, 1);
 
         g.generateTexture('unicorn', 40, 44);
         g.destroy();
