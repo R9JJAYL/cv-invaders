@@ -47,8 +47,8 @@ body {
 
 .menu-form input,
 .menu-form select {
-    background: rgba(26, 10, 46, 0.8);
-    border: 1px solid rgba(155, 89, 182, 0.4);
+    background: rgba(26, 10, 46, 0.9);
+    border: 1px solid rgba(155, 89, 182, 0.8);
     border-radius: 4px;
     color: #FFFFFF;
     font-family: 'Courier New', monospace;
@@ -59,6 +59,7 @@ body {
     outline: none;
     transition: border-color 0.3s, box-shadow 0.3s;
     letter-spacing: 0.5px;
+    box-shadow: 0 0 6px rgba(155, 89, 182, 0.3);
 }
 
 .menu-form select {
@@ -70,12 +71,12 @@ body {
 
 .menu-form input:focus,
 .menu-form select:focus {
-    border-color: #9B59B6;
-    box-shadow: 0 0 8px rgba(155, 89, 182, 0.3);
+    border-color: #BB8FCE;
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.6);
 }
 
 .menu-form input::placeholder {
-    color: rgba(155, 89, 182, 0.5);
+    color: rgba(187, 143, 206, 0.7);
     font-size: 13px;
 }
 
