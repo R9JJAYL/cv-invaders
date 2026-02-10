@@ -315,25 +315,44 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
 
     playDemo(CFG) {
         var cx = CFG.WIDTH / 2;
-        var shipY = CFG.HEIGHT / 2 + 100;
+        var shipY = CFG.HEIGHT - 50;
         var cvY = CFG.HEIGHT / 2 - 10;
         var badX = cx - 100;
         var goodX = cx + 100;
 
-        // Create demo sprites — all purely visual, no physics
-        var demoShip = this.add.image(cx, shipY, 'ship')
-            .setDepth(50).setAlpha(0).setScale(0.9).setScrollFactor(0);
+        // Switch the existing cinematic ship to screen-fixed coordinates
+        // so it stays consistent with the demo CVs while camera may still be panning
+        this.shipSprite.setScrollFactor(0);
+        this.shipSprite.setPosition(cx, shipY);
+        this.shipSprite.setDepth(50);
+
+        // Create demo CV sprites — purely visual, no physics
         var badCV = this.add.image(badX, cvY, 'cv-bad')
             .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
         var goodCV = this.add.image(goodX, cvY, 'cv-good')
             .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
 
-        // Track surviving elements for countdown fade-out cleanup
-        this.cvExamples = [demoShip];
+        // Labels visible from the start alongside the CVs
+        var shootLabel = this.add.text(badX, cvY + 40, 'SHOOT', {
+            fontFamily: 'Courier New',
+            fontSize: '14px',
+            color: CFG.COLORS.CV_BAD_HEX,
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        // 0ms — Fade everything in
+        var catchLabel = this.add.text(goodX, cvY + 40, 'CATCH', {
+            fontFamily: 'Courier New',
+            fontSize: '14px',
+            color: CFG.COLORS.CV_GOOD_HEX,
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+
+        // Track surviving elements for countdown fade-out cleanup
+        this.cvExamples = [shootLabel, catchLabel];
+
+        // 0ms — Fade in CVs and labels together
         this.tweens.add({
-            targets: [demoShip, badCV, goodCV],
+            targets: [badCV, goodCV, shootLabel, catchLabel],
             alpha: 1,
             duration: 300
         });
@@ -341,7 +360,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // 400ms — Ship moves left toward red CV
         this.time.delayedCall(400, () => {
             this.tweens.add({
-                targets: demoShip,
+                targets: this.shipSprite,
                 x: badX,
                 duration: 500,
                 ease: 'Power2'
@@ -378,8 +397,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         });
                     });
 
-                    // Floating "+50" score
-                    var scoreText = this.add.text(badX, cvY, '+50', {
+                    // Floating "+150" score
+                    var scoreText = this.add.text(badX, cvY, '+150', {
                         fontFamily: 'Courier New',
                         fontSize: '16px',
                         color: '#00FF00',
@@ -393,20 +412,6 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         ease: 'Power2',
                         onComplete: () => scoreText.destroy()
                     });
-
-                    // "SHOOT" label
-                    var shootLabel = this.add.text(badX, cvY + 30, 'SHOOT', {
-                        fontFamily: 'Courier New',
-                        fontSize: '14px',
-                        color: CFG.COLORS.CV_BAD_HEX,
-                        fontStyle: 'bold'
-                    }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
-                    this.cvExamples.push(shootLabel);
-                    this.tweens.add({
-                        targets: shootLabel,
-                        alpha: 1,
-                        duration: 200
-                    });
                 }
             });
         });
@@ -414,7 +419,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // 1600ms — Ship moves right toward green CV
         this.time.delayedCall(1600, () => {
             this.tweens.add({
-                targets: demoShip,
+                targets: this.shipSprite,
                 x: goodX,
                 duration: 600,
                 ease: 'Power2'
@@ -430,9 +435,9 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                 ease: 'Power2',
                 onComplete: () => {
                     // Flash ship green briefly
-                    demoShip.setTint(0x00FF00);
+                    this.shipSprite.setTint(0x00FF00);
                     this.time.delayedCall(150, () => {
-                        demoShip.clearTint();
+                        if (this.shipSprite) this.shipSprite.clearTint();
                     });
 
                     // Absorb the CV
@@ -446,8 +451,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         onComplete: () => goodCV.destroy()
                     });
 
-                    // Floating "+100" score
-                    var catchScore = this.add.text(goodX, shipY, '+100', {
+                    // Floating "+150" score
+                    var catchScore = this.add.text(goodX, shipY, '+150', {
                         fontFamily: 'Courier New',
                         fontSize: '16px',
                         color: '#00FF00',
@@ -461,20 +466,6 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
                         ease: 'Power2',
                         onComplete: () => catchScore.destroy()
                     });
-
-                    // "CATCH" label
-                    var catchLabel = this.add.text(goodX, shipY + 40, 'CATCH', {
-                        fontFamily: 'Courier New',
-                        fontSize: '14px',
-                        color: CFG.COLORS.CV_GOOD_HEX,
-                        fontStyle: 'bold'
-                    }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
-                    this.cvExamples.push(catchLabel);
-                    this.tweens.add({
-                        targets: catchLabel,
-                        alpha: 1,
-                        duration: 200
-                    });
                 }
             });
         });
@@ -482,7 +473,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // 2900ms — Ship returns to center
         this.time.delayedCall(2900, () => {
             this.tweens.add({
-                targets: demoShip,
+                targets: this.shipSprite,
                 x: cx,
                 duration: 400,
                 ease: 'Power2'
