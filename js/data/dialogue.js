@@ -35,7 +35,7 @@ window.CVInvaders.Dialogue = {
     },
 
     GAME_OVER: {
-        WIN: 'You defeated the AI!\nRecruiters: 1, Bots: 0',
+        WIN: 'You defeated the bots!\nRecruiters: 1, Bots: 0',
         LOSE: 'The bots got the better of you...\nTime to upskill!'
     }
 };
