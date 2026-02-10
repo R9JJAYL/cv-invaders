@@ -11,11 +11,15 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.tutorialComplete = false;
         this.firstUnicornShown = false;
         this.bossPhase = false;
+        this.bossSpawned = false;
         this.bossStartTime = 0;
 
-        // Calculate total wave duration for the countdown
-        const waves = window.CVInvaders.Config.WAVES;
-        this.totalGameDuration = waves.reduce((sum, w) => sum + w.duration, 0);
+        // Single unified countdown: waves + cinematic (9.5s) + boss fight
+        const CFG = window.CVInvaders.Config;
+        const waveDuration = CFG.WAVES.reduce((sum, w) => sum + w.duration, 0);
+        this.totalGameDuration = waveDuration + 9500 + CFG.BOSS_TIMER;
+        this.gameTimeRemaining = this.totalGameDuration;
+        this.gameCountdownActive = false;
     }
 
     create() {
@@ -149,8 +153,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 this.scoreManager.badCVsMissed = 0;
                 this.registry.set('score', 0);
                 this.bossPhase = true;
+                this.bossSpawned = true;
                 this.bossSpawnTimer = 0;
-                this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+                this.gameTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+                this.gameCountdownActive = true;
                 this.spawnBoss();
             }
         });
@@ -229,6 +235,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.scoreManager.badCVsMissed = 0;
         this.registry.set('score', 0);
         this.waveManager.startWave(0);
+        this.gameCountdownActive = true;
     }
 
     spawnTutorialCV() {
@@ -261,6 +268,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.scoreManager.badCVsMissed = 0;
         this.registry.set('score', 0);
         this.waveManager.startWave(0);
+        this.gameCountdownActive = true;
     }
 
     // ===== COLLISIONS =====
@@ -348,23 +356,23 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         }
 
         // Keep CVs falling during boss phase — only after boss has spawned
-        if (this.bossPhase && !this.gameOver) {
-            if (this.bossTimeRemaining !== Infinity) {
-                this.bossSpawnTimer += delta;
-                if (this.bossSpawnTimer >= 1400) {
-                    this.bossSpawnTimer = 0;
-                    const activeCVs = this.cvs.countActive(true);
-                    if (activeCVs < 6) {
-                        this.spawnBossBackgroundCV();
-                    }
+        if (this.bossPhase && this.bossSpawned && !this.gameOver) {
+            this.bossSpawnTimer += delta;
+            if (this.bossSpawnTimer >= 1400) {
+                this.bossSpawnTimer = 0;
+                const activeCVs = this.cvs.countActive(true);
+                if (activeCVs < 6) {
+                    this.spawnBossBackgroundCV();
                 }
             }
+        }
 
-            // Boss countdown timer — only tick once the boss has actually spawned
-            if (this.bossTimeRemaining !== Infinity) {
-                this.bossTimeRemaining -= delta;
-                if (this.bossTimeRemaining <= 0) {
-                    this.bossTimeRemaining = 0;
+        // Unified game countdown — ticks from wave start through cinematic and boss fight
+        if (this.gameCountdownActive && !this.gameOver) {
+            this.gameTimeRemaining -= delta;
+            if (this.gameTimeRemaining <= 0) {
+                this.gameTimeRemaining = 0;
+                if (this.bossSpawned) {
                     this.onBossTimeUp();
                 }
             }
@@ -375,15 +383,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         if (hud && hud.updateCombo) {
             hud.updateCombo(this.scoreManager.combo);
         }
-        if (hud && hud.updateCountdown) {
-            if (this.bossPhase && this.bossTimeRemaining !== Infinity) {
-                hud.updateCountdown(this.bossTimeRemaining, true);
-            } else if (this.bossPhase) {
-                // During boss cinematic — show incoming message
-                hud.showBossIncoming();
-            } else if (this.waveManager.active) {
-                hud.updateCountdown(this.waveManager.getTotalRemainingMs(), false);
-            }
+        if (hud && hud.updateCountdown && this.gameCountdownActive) {
+            hud.updateCountdown(this.gameTimeRemaining, this.bossSpawned);
         }
     }
 
@@ -452,9 +453,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     // ===== BOSS PHASE =====
     startBossPhase() {
         this.bossPhase = true;
+        this.bossSpawned = false;
         this.bossSpawnTimer = 0;
-        // Don't start the countdown yet — it begins when the boss actually spawns
-        this.bossTimeRemaining = Infinity;
 
         const DLG = window.CVInvaders.Dialogue;
 
@@ -546,9 +546,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 2500);
         });
 
-        // 9.5s — spawn boss and START the countdown timer (extra gap after text)
+        // 9.5s — spawn boss (unified countdown keeps ticking throughout)
         this.time.delayedCall(9500, () => {
-            this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
+            this.bossSpawned = true;
             this.spawnBoss();
         });
     }
