@@ -178,8 +178,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             });
         });
 
-        // Beat 4 (8.5s): Dramatic countdown 3... 2... 1... GO!
-        this.time.delayedCall(8500, () => {
+        // Beat 4 (11.5s): Dramatic countdown 3... 2... 1... GO!
+        this.time.delayedCall(11500, () => {
             this.runCountdown(CFG);
         });
     }
@@ -357,18 +357,18 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             duration: 300
         });
 
-        // 400ms — Ship moves left toward red CV
-        this.time.delayedCall(400, () => {
+        // 600ms — Ship moves left toward red CV
+        this.time.delayedCall(600, () => {
             this.tweens.add({
                 targets: this.shipSprite,
                 x: badX,
-                duration: 500,
+                duration: 600,
                 ease: 'Power2'
             });
         });
 
-        // 900ms — Ship shoots the red CV
-        this.time.delayedCall(900, () => {
+        // 1300ms — Ship shoots the red CV
+        this.time.delayedCall(1300, () => {
             // Create bullet
             var bullet = this.add.rectangle(badX, shipY - 20, 4, 10, 0x00E5FF)
                 .setDepth(51).setScrollFactor(0);
@@ -416,18 +416,18 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             });
         });
 
-        // 1600ms — Ship moves right toward green CV
-        this.time.delayedCall(1600, () => {
+        // 2400ms — Ship moves right toward green CV
+        this.time.delayedCall(2400, () => {
             this.tweens.add({
                 targets: this.shipSprite,
                 x: goodX,
-                duration: 600,
+                duration: 700,
                 ease: 'Power2'
             });
         });
 
-        // 2200ms — Green CV drops down to the ship (catch)
-        this.time.delayedCall(2200, () => {
+        // 3200ms — Green CV drops down to the ship (catch)
+        this.time.delayedCall(3200, () => {
             this.tweens.add({
                 targets: goodCV,
                 y: shipY,
@@ -470,8 +470,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             });
         });
 
-        // 2900ms — Ship returns to center
-        this.time.delayedCall(2900, () => {
+        // 4200ms — Ship returns to center
+        this.time.delayedCall(4200, () => {
             this.tweens.add({
                 targets: this.shipSprite,
                 x: cx,
