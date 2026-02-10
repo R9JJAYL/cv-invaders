@@ -31,8 +31,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             .setAlpha(0)
             .setScale(2);
 
-        // Player ship — starts off-screen at bottom-left (avoids flying through the ATS)
-        this.shipSprite = this.add.image(60, CFG.HEIGHT + 250, 'ship')
+        // Player ship — starts off-screen below (in the ATS zone)
+        this.shipSprite = this.add.image(CFG.WIDTH / 2, CFG.HEIGHT + 250, 'ship')
             .setDepth(10)
             .setAlpha(0);
 
@@ -149,23 +149,16 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             this.showNarrative(DLG[1].text, DLG[1].duration);
         });
 
-        // Beat 3 (5.4s): Ship launches up from bottom-left, arcs to center, camera follows
+        // Beat 3 (5.4s): Ship launches up, camera follows, show helm text + CV examples
         this.time.delayedCall(5400, () => {
             this.shipSprite.setAlpha(1);
 
-            // Ship flies up from bottom-left to center gameplay position
-            // Move x and y separately for a nice arc feel
-            this.tweens.add({
-                targets: this.shipSprite,
-                x: CFG.WIDTH / 2,
-                duration: 2000,
-                ease: 'Power2'
-            });
+            // Ship flies up from below ATS to gameplay position (bottom of screen)
             this.tweens.add({
                 targets: this.shipSprite,
                 y: CFG.HEIGHT - 50,
                 duration: 2000,
-                ease: 'Power3'
+                ease: 'Power2'
             });
 
             // Camera follows the ship up at the same time
