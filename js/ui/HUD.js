@@ -100,8 +100,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._joystickBaseX = joyX;
         this._joystickBaseY = joyY;
         this._joystickBaseRadius = baseRadius;
-        this._joystickRange = 80;         // Effective input range (wider than visual)
-        this._joystickDeadZone = 0.15;    // Ignore small inputs below 15%
+        this._joystickRange = 50;         // Tighter input range for snappier feel
+        this._joystickDeadZone = 0.18;    // Ignore small inputs below 18%
         this._halfW = CFG.WIDTH / 2;
     }
 
@@ -158,7 +158,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         }
 
         // Smooth the joystick output (lerp towards target to reduce jitter)
-        var lerpSpeed = 0.3;
+        var lerpSpeed = 0.55;
         if (joystickActive) {
             this._joystickNormX = joystickX;
             this._smoothedNormX += (joystickX - this._smoothedNormX) * lerpSpeed;
