@@ -546,8 +546,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 2500);
         });
 
-        // 8s — spawn boss and START the countdown timer
-        this.time.delayedCall(8000, () => {
+        // 9.5s — spawn boss and START the countdown timer (extra gap after text)
+        this.time.delayedCall(9500, () => {
             this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
             this.spawnBoss();
         });

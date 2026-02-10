@@ -171,14 +171,30 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
 
     startEntry(targetY) {
         this.y = -60;
+
+        // Pulsing alpha during entry to show invulnerability
+        this._entryPulse = this.scene.tweens.add({
+            targets: this,
+            alpha: { from: 1, to: 0.4 },
+            duration: 300,
+            yoyo: true,
+            repeat: -1
+        });
+
         this.scene.tweens.add({
             targets: this,
             y: targetY,
             duration: 2000,
             ease: 'Power2',
             onComplete: () => {
-                // 3-second grace period after landing before taking damage
-                this.scene.time.delayedCall(3000, () => {
+                // Grace period after landing before taking damage
+                this.scene.time.delayedCall(1500, () => {
+                    // Stop pulsing, go solid
+                    if (this._entryPulse) {
+                        this._entryPulse.remove();
+                        this._entryPulse = null;
+                    }
+                    this.setAlpha(1);
                     this.entryComplete = true;
                     this.body.enable = true;
                     this.body.reset(this.x, this.y);
