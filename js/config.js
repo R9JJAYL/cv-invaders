@@ -39,7 +39,7 @@ window.CVInvaders.Config = {
             dialogue: 'Wave 2: More applications incoming!'
         },
         {
-            duration: 24000,
+            duration: 27000,
             spawnRate: 900,
             fallSpeed: 210,
             maxOnScreen: 8,
