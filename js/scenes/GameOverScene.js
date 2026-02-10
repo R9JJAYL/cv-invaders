@@ -357,12 +357,20 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Score with count-up — delay until page scrolls into view
         const grade = this.getGrade(score);
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 20, 'SCORE: 0', {
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 18, 'SCORE: 0', {
             fontFamily: 'Courier New',
             fontSize: '28px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
+
+        // Rank — sits right below score, fades in once data arrives
+        this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 48, '', {
+            fontFamily: 'Courier New',
+            fontSize: '13px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setAlpha(0);
 
         // Start score count-up after scroll completes (10s ad + 0.8s scroll)
         const scoreDelay = yOff > 0 ? 10800 : 0;
@@ -376,35 +384,28 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                     this.scoreDisplay.setText('SCORE: ' + Math.floor(tween.getValue()).toString());
                 }
             });
+
+            // Show rank after score finishes counting
+            this.time.delayedCall(1600, () => {
+                this._showRank();
+            });
         });
 
-        // Grade + title — delayed after score count-up
-        this.time.delayedCall(scoreDelay + 1600, () => {
-            this.add.text(CFG.WIDTH / 2, yOff + 58, 'GRADE ' + grade.grade + ': ' + grade.title, {
+        // Grade + title — delayed after score count-up + rank
+        this.time.delayedCall(scoreDelay + 2200, () => {
+            this.add.text(CFG.WIDTH / 2, yOff + 72, 'GRADE ' + grade.grade + ': ' + grade.title, {
                 fontFamily: 'Courier New',
                 fontSize: '14px',
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
-            }).setOrigin(0.5);
+            }).setOrigin(0.5).setAlpha(0);
 
-            // Show rank if leaderboard data has arrived
-            this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 80, '', {
-                fontFamily: 'Courier New',
-                fontSize: '11px',
-                color: CFG.COLORS.TEXT_SECONDARY
-            }).setOrigin(0.5);
-
-            if (this._playerRank) {
-                this.rankText.setText(this._getRankString());
-            } else if (this._leaderboardPromise) {
-                // Data hasn't arrived yet — update when it does
-                var self = this;
-                this._leaderboardPromise.then(function() {
-                    if (self.rankText && self._playerRank) {
-                        self.rankText.setText(self._getRankString());
-                    }
-                });
-            }
+            this.tweens.add({
+                targets: this.children.list[this.children.list.length - 1],
+                alpha: 1,
+                duration: 400,
+                ease: 'Power2'
+            });
         });
 
         // Stats — nested pill layout: outer container per CV type, inner capsules stacked
@@ -412,7 +413,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = yOff + 115;
+        const statsY = yOff + 110;
         const cx = CFG.WIDTH / 2;
 
         const innerH = 18;
@@ -673,8 +674,33 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
     }
 
+    _showRank() {
+        if (this._playerRank) {
+            this.rankText.setText(this._getRankString());
+            this.tweens.add({
+                targets: this.rankText,
+                alpha: 1,
+                duration: 500,
+                ease: 'Power2'
+            });
+        } else if (this._leaderboardPromise) {
+            var self = this;
+            this._leaderboardPromise.then(function() {
+                if (self.rankText && self._playerRank) {
+                    self.rankText.setText(self._getRankString());
+                    self.tweens.add({
+                        targets: self.rankText,
+                        alpha: 1,
+                        duration: 500,
+                        ease: 'Power2'
+                    });
+                }
+            });
+        }
+    }
+
     _getRankString() {
-        return 'Rank ' + this._playerRank.toLocaleString() + ' / ' + this._totalPlayers.toLocaleString();
+        return 'RANK ' + this._playerRank.toLocaleString() + ' / ' + this._totalPlayers.toLocaleString();
     }
 
     getGrade(score) {
