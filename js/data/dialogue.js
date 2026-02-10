@@ -26,7 +26,7 @@ window.CVInvaders.Dialogue = {
 
     BOSS: {
         ENTRANCE: 'I\'ve applied to 10,000 jobs today!\nYou think you can stop me?',
-        PHASE2: 'I won\'t go down that easy!',
+        PHASE2: 'You haven\'t even seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
 
