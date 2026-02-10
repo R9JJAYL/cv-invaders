@@ -462,6 +462,23 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // 0.5s — CV burst animation first (player sees CVs fly out)
         this.time.delayedCall(500, () => {
+            // Sweep any surviving enemies off screen
+            this.enemies.getChildren().forEach(enemy => {
+                if (enemy.active && enemy.isAlive) {
+                    enemy.isAlive = false;
+                    enemy.body.enable = false;
+                    this.tweens.add({
+                        targets: enemy,
+                        y: -80,
+                        alpha: 0,
+                        angle: Phaser.Math.Between(-180, 180),
+                        duration: 700,
+                        ease: 'Power2',
+                        onComplete: () => enemy.destroy()
+                    });
+                }
+            });
+
             // Sweep any CVs still on screen — fling them dramatically
             this.cvs.getChildren().forEach(cv => {
                 if (cv.active) {
@@ -507,6 +524,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                     onComplete: () => fakeCv.destroy()
                 });
             }
+
+            // Clear any enemy bullets still flying
+            this.enemyBullets.getChildren().forEach(b => { if (b.active) b.recycle(); });
 
             // Camera shake for impact — stronger
             this.cameras.main.shake(400, 0.012);
