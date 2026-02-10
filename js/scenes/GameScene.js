@@ -552,13 +552,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.HIRING_MANAGER.THREW_OUT, 2500);
         });
 
-        // 5.5s — readvertised + bot warning
-        this.time.delayedCall(5500, () => {
-            this.showAnnouncement(DLG.HIRING_MANAGER.READVERTISED, 2500);
-        });
-
-        // 9s — spawn boss
-        this.time.delayedCall(9000, () => {
+        // 6s — boss drops in with entrance line
+        this.time.delayedCall(6000, () => {
             this.bossSpawned = true;
             this.spawnBoss();
         });

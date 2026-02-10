@@ -20,12 +20,11 @@ window.CVInvaders.Dialogue = {
     },
 
     HIRING_MANAGER: {
-        THREW_OUT: 'Uh oh.... the hiring manager\nthrew out all the CVs!',
-        READVERTISED: 'We readvertised the job but\nwe\'re being attacked by bots. Stop them!'
+        THREW_OUT: 'Uh oh.... the hiring manager\nthrew out all the CVs!'
     },
 
     BOSS: {
-        ENTRANCE: 'I\'ve applied to 10,000 jobs today!\nYou think you can stop me?',
+        ENTRANCE: 'We readvertised the job but\nwe\'re being attacked by bots. Stop them!',
         PHASE2: 'You haven\'t even seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
