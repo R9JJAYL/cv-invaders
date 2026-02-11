@@ -69,10 +69,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
 
-        // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
-        var arrowY = CFG.HEIGHT - 90;
-        var arrowSize = 45;
-        var arrowGap = 20;
+        // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, MID-SCREEN) ==========
+        var arrowY = CFG.HEIGHT / 2;
+        var arrowSize = 60;
+        var arrowGap = 25;
         var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button
@@ -81,7 +81,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
-        leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
+        leftArrow.fillTriangle(leftX - 18, arrowY, leftX + 12, arrowY - 18, leftX + 12, arrowY + 18);
 
         // Right arrow button
         var rightX = rightCenter + arrowSize + arrowGap / 2;
@@ -89,7 +89,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
-        rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);
+        rightArrow.fillTriangle(rightX + 18, arrowY, rightX - 12, arrowY - 18, rightX - 12, arrowY + 18);
 
         // ========== STATE ==========
         this._shootHeld = false;
