@@ -84,22 +84,22 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
         var arrowY = CFG.HEIGHT - 90;
-        var arrowSize = 50;
-        var arrowGap = 30;
-        var rightCenter = CFG.WIDTH - 90;
+        var arrowSize = 45;
+        var arrowGap = 20;
+        var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button
         this.leftArrowBg = this.add.circle(rightCenter - arrowSize - arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '◀', {
-            fontFamily: 'Roboto', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '<-', {
+            fontFamily: 'Roboto', fontSize: '22px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // Right arrow button
         this.rightArrowBg = this.add.circle(rightCenter + arrowSize + arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '▶', {
-            fontFamily: 'Roboto', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '->', {
+            fontFamily: 'Roboto', fontSize: '22px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // ========== STATE ==========
