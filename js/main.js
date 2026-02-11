@@ -38,4 +38,11 @@ window.addEventListener('load', function () {
     };
 
     window.CVInvaders.game = new Phaser.Game(config);
+
+    // Force Phaser to recalculate scale on orientation change
+    window.addEventListener('resize', function () {
+        if (window.CVInvaders.game && window.CVInvaders.game.scale) {
+            window.CVInvaders.game.scale.refresh();
+        }
+    });
 });
