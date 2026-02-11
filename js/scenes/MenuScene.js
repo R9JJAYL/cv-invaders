@@ -181,7 +181,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         var loadingHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
             '<div class="lb-title">LEADERBOARD</div>' +
-            '<div style="text-align:center;padding:30px 0;color:#AAAAAA;font-family:Courier New;font-size:14px;"><span class="loading-cog">⚙</span>Loading scores...</div>' +
+            '<div style="text-align:center;padding:30px 0;color:#AAAAAA;font-family:Courier New;font-size:14px;">Loading scores<span class="loading-spinner"></span></div>' +
             '</div></div>';
         this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(loadingHTML);
     }

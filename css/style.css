@@ -308,13 +308,19 @@ body {
 .lb-highlight .lb-cell.lb-rank { color: #BB8FCE; }
 .lb-highlight .lb-cell.lb-score { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
 
-/* Spinning cog for loading state */
-@keyframes spin-cog {
+/* Loading spinner for loading state */
+@keyframes spin-loader {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
-.loading-cog {
+.loading-spinner {
     display: inline-block;
-    animation: spin-cog 1.5s linear infinite;
-    margin-right: 6px;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(155, 89, 182, 0.25);
+    border-top-color: #9B59B6;
+    border-radius: 50%;
+    animation: spin-loader 0.8s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
 }
