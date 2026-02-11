@@ -390,8 +390,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         if (hud && hud.updateCombo) {
             hud.updateCombo(this.scoreManager.combo);
         }
-        if (hud && hud.updateCountdown && this.gameCountdownActive && !this.bossPhase) {
-            hud.updateCountdown(this.gameTimeRemaining);
+        if (hud && hud.updateCountdown) {
+            if (this.bossPhase && this.bossSpawned && !this.gameOver) {
+                hud.updateCountdown(this.bossTimeRemaining);
+            } else if (this.gameCountdownActive && !this.bossPhase) {
+                hud.updateCountdown(this.gameTimeRemaining);
+            }
         }
     }
 
