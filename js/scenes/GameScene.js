@@ -712,7 +712,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.boss.body.enable = false;
         }
 
-        this.showAnnouncement('TIME\'S UP!', 2000);
+        this.showAnnouncement('Time\'s up!\nThe bot lives to see another day', 2000);
 
         // Clean up
         this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });

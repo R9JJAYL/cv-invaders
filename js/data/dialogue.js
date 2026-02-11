@@ -23,7 +23,7 @@ window.CVInvaders.Dialogue = {
     },
 
     BOSS: {
-        ENTRANCE: 'The role\'s back online...\nthe bots are attacking it, stop them!',
+        ENTRANCE: 'The role\'s back online...\nbut the bots are attacking it, stop them!',
         PHASE2: 'ERROR 404: You haven\'t seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
