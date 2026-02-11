@@ -174,8 +174,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             this.narrativeText.setColor('#FFFFFF');
             this.showNarrative(DLG[2].text, DLG[2].duration);
 
-            // Play animated demo after the camera has panned up
-            this.time.delayedCall(1500, () => {
+            // Play animated demo after "Take control" text has faded out
+            this.time.delayedCall(2600, () => {
                 this.playDemo(CFG);
             });
         });
