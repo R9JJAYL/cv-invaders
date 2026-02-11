@@ -122,7 +122,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const intNames = [
             ['Greenhouse', 'Ashby', 'Workable'],
             ['LinkedIn', 'Pinpoint', 'Bullhorn', 'Indeed'],
-            ['CV-Library', 'Teamtailor', 'Broadbean']
+            ['Lever', 'Teamtailor', 'Broadbean']
         ];
         const intPillH = 24;
         const intPillPad = 12;
