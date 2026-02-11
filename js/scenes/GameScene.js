@@ -180,7 +180,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const moveHint = isMobile
             ? 'Press < > to move\nTap left side to shoot'
             : 'Use ← → to move, SPACE to shoot';
-        this.showAnnouncement(moveHint, 3000);
+        this.showAnnouncement(moveHint, 6000);
 
 
         // Start countdown immediately
