@@ -44,7 +44,7 @@ window.CVInvaders.Config = {
             fallSpeed: 230,
             maxOnScreen: 9,
             hasEnemies: true,
-            enemyCount: 4,
+            enemyCount: 3,
             enemyFireRate: 2000,
             hasUnicorn: true,
             unicornSpawnTimes: [6000, 14000],
