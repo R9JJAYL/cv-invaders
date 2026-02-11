@@ -3,8 +3,7 @@ window.CVInvaders = window.CVInvaders || {};
 window.CVInvaders.Dialogue = {
     CINEMATIC: [
         { text: '[ ALERT ]\n\nINCOMING THREAT DETECTED', duration: 1800 },
-        { text: 'The bots are attacking\nour ATS!', duration: 2000 },
-        { text: 'Take control of the ship\nand protect it!', duration: 2000 },
+        { text: 'The bots are attacking\nour job ad, stop them!', duration: 2000 },
         { text: 'Shoot the RED CVs\nCapture the GREEN ones', duration: 2200 }
     ],
 
