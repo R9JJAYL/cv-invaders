@@ -69,11 +69,6 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
 
-        // ========== LEFT SIDE: TAP TO FIRE (no button, just hint) ==========
-        this.add.text(CFG.WIDTH / 4, CFG.HEIGHT - 50, 'TAP TO FIRE', {
-            fontFamily: 'Courier New', fontSize: '11px', color: '#00E5FF', fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(200).setAlpha(0.3);
-
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
         var arrowY = CFG.HEIGHT - 90;
         var arrowSize = 45;
