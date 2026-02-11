@@ -16,10 +16,10 @@ window.CVInvaders.Config = {
     // CVs
     CV_GOOD_RATIO: 0.3,
 
-    // Waves (45s total — high tempo, no slow start)
+    // Waves (38s total — high tempo, no slow start)
     WAVES: [
         {
-            duration: 10000,
+            duration: 8000,
             spawnRate: 1200,
             fallSpeed: 180,
             maxOnScreen: 6,
@@ -29,17 +29,17 @@ window.CVInvaders.Config = {
             dialogue: 'Wave 1: The CVs are coming in!'
         },
         {
-            duration: 15000,
+            duration: 13000,
             spawnRate: 900,
             fallSpeed: 210,
             maxOnScreen: 7,
             hasEnemies: false,
             hasUnicorn: true,
-            unicornSpawnTimes: [6000],
+            unicornSpawnTimes: [5000],
             dialogue: 'Wave 2: More applications incoming!'
         },
         {
-            duration: 20000,
+            duration: 17000,
             spawnRate: 750,
             fallSpeed: 230,
             maxOnScreen: 9,
@@ -47,7 +47,7 @@ window.CVInvaders.Config = {
             enemyCount: 3,
             enemyFireRate: 2000,
             hasUnicorn: true,
-            unicornSpawnTimes: [6000, 14000],
+            unicornSpawnTimes: [5000, 12000],
             dialogue: 'Wave 3: The bad matches are fighting back!'
         }
     ],
