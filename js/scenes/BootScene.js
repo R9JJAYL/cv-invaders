@@ -34,8 +34,12 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         this.registry.set('maxCombo', 0);
         this.registry.set('bossTime', 0);
 
-        // Wait for Google Font to load before showing menu
-        document.fonts.load('16px "Press Start 2P"').then(() => {
+        // Wait for ALL Google Fonts to load before showing menu
+        Promise.all([
+            document.fonts.load('16px "Press Start 2P"'),
+            document.fonts.load('16px "Roboto"'),
+            document.fonts.load('700 16px "Orbitron"')
+        ]).then(() => {
             this.scene.start('MenuScene');
         }).catch(() => {
             // Fallback — start anyway after timeout
@@ -212,15 +216,17 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
 
     generateEnemyTexture(CFG) {
         const g = this.add.graphics();
-        // Ghost ship — "ghosted candidates" theme
+        // Ghost candidate — bright white sad ghost (ghosted candidates)
         // Canvas: 40x38
 
-        // Outer glow
-        g.fillStyle(0xFF4444, 0.08);
+        // Outer ethereal glow — makes it pop against dark bg
+        g.fillStyle(0xCCCCFF, 0.15);
+        g.fillCircle(20, 16, 19);
+        g.fillStyle(0xDDDDFF, 0.1);
         g.fillCircle(20, 16, 17);
 
-        // Ghost body — rounded top, wavy bottom
-        g.fillStyle(0xCC3333, 0.75);
+        // Ghost body — bright white, solid enough to read at small size
+        g.fillStyle(0xEEEEFF, 0.9);
         g.beginPath();
         g.arc(20, 14, 14, Math.PI, 0, false);  // rounded head
         g.lineTo(34, 28);
@@ -236,37 +242,36 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.closePath();
         g.fillPath();
 
-        // Inner lighter highlight
-        g.fillStyle(0xFF6666, 0.3);
-        g.fillEllipse(20, 12, 16, 12);
+        // Inner brighter highlight on head area
+        g.fillStyle(0xFFFFFF, 0.4);
+        g.fillEllipse(20, 12, 14, 10);
 
-        // Eyes — hollow white with dark pupils (angry ghost look)
-        g.fillStyle(0xFFFFFF, 0.95);
+        // Eyes — sad droopy eyes (large & dark so they read at small scale)
+        g.fillStyle(0xFFFFFF, 1);
         g.fillCircle(15, 13, 4);
         g.fillCircle(25, 13, 4);
-        // Pupils — angry, looking down
-        g.fillStyle(0x000000, 1);
-        g.fillCircle(15.5, 14, 2);
-        g.fillCircle(25.5, 14, 2);
+        // Pupils — looking down (sad)
+        g.fillStyle(0x2a1a4e, 1);
+        g.fillCircle(15, 14.5, 2.5);
+        g.fillCircle(25, 14.5, 2.5);
 
-        // Angry eyebrows
-        g.lineStyle(1.5, 0x880000, 0.9);
+        // Sad eyebrows (raised inner = worried/dejected)
+        g.lineStyle(1.5, 0x9999BB, 0.9);
         g.beginPath();
-        g.moveTo(11, 9);
-        g.lineTo(17, 8);
+        g.moveTo(11, 8);
+        g.lineTo(17, 10);
         g.strokePath();
         g.beginPath();
-        g.moveTo(29, 9);
-        g.lineTo(23, 8);
+        g.moveTo(29, 8);
+        g.lineTo(23, 10);
         g.strokePath();
 
-        // Mouth — annoyed frown
-        g.lineStyle(1.5, 0x880000, 0.8);
+        // Mouth — sad frown
+        g.lineStyle(1.5, 0x9999BB, 0.8);
         g.beginPath();
-        g.moveTo(15, 21);
-        g.lineTo(18, 19);
-        g.lineTo(22, 19);
-        g.lineTo(25, 21);
+        g.moveTo(16, 22);
+        g.lineTo(20, 20);
+        g.lineTo(24, 22);
         g.strokePath();
 
         g.generateTexture('enemy', 40, 38);
