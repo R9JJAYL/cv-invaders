@@ -535,7 +535,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const btnSpacing = CFG.WIDTH / 4; // divide screen into 4 equal parts
 
         // Watch Demo (left)
-        const demoBtn = this.add.text(btnSpacing, btnY, '[ WATCH DEMO ]', {
+        const demoBtn = this.add.text(btnSpacing, btnY, '[ 6 MIN DEMO OF FIRST ]', {
             ...btnStyle,
             color: '#FFFFFF'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
