@@ -526,7 +526,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         }
 
-        // Buttons — evenly spaced row: Demo | Share | Play Again
+        // Buttons — evenly spaced row: Share | Demo | Play Again
         const btnY = yOff + 560;
         const btnStyle = {
             fontFamily: 'Courier New',
@@ -536,20 +536,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         };
         const btnSpacing = CFG.WIDTH / 4; // divide screen into 4 equal parts
 
-        // Watch Demo (left)
-        const demoBtn = this.add.text(btnSpacing, btnY, '[ 6 MIN DEMO OF FIRST ]', {
-            ...btnStyle,
-            color: '#FFFFFF'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
-        demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
-        demoBtn.on('pointerdown', () => {
-            window.open('https://www.linkedin.com/posts/jamiejaylyons_6-min-demo-of-what-were-building-at-first-ugcPost-7407025017613463552-kVH7?utm_source=share&utm_medium=member_desktop&rcm=ACoAACExlMMBJdkwxlrUBhMrFuzm9keT4k4_uhc', '_blank');
-        });
-
-        // Share to LinkedIn (center)
-        const shareBtn = this.add.text(btnSpacing * 2, btnY, '[ SHARE SCORE ]', {
+        // Share to LinkedIn (left)
+        const shareBtn = this.add.text(btnSpacing, btnY, '[ SHARE SCORE ]', {
             ...btnStyle,
             color: '#0A66C2'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
@@ -558,6 +546,18 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
         shareBtn.on('pointerdown', () => {
             this.shareToLinkedIn(name, score, grade, playerType);
+        });
+
+        // 6 Min Demo (center)
+        const demoBtn = this.add.text(btnSpacing * 2, btnY, '[ 6 MIN DEMO OF FIRST ]', {
+            ...btnStyle,
+            color: '#FFFFFF'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
+        demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
+        demoBtn.on('pointerdown', () => {
+            window.open('https://www.linkedin.com/posts/jamiejaylyons_6-min-demo-of-what-were-building-at-first-ugcPost-7407025017613463552-kVH7?utm_source=share&utm_medium=member_desktop&rcm=ACoAACExlMMBJdkwxlrUBhMrFuzm9keT4k4_uhc', '_blank');
         });
 
         // Play Again (right)
@@ -761,7 +761,13 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             this._leaderboardDom = null;
         }
 
+        // Kill all running tweens (infinite logo/CTA pulses)
+        this.tweens.killAll();
+
+        // Reset camera scroll so fade works from visible position
+        this.cameras.main.setScroll(0, 0);
         this.cameras.main.fadeOut(400);
+
         this.time.delayedCall(400, () => {
             // Reset game state but keep player info
             this.registry.set('score', 0);
@@ -776,6 +782,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             this.registry.set('bossDefeated', false);
             // Skip straight to countdown (no cinematic, no menu)
             this.registry.set('skipToCountdown', true);
+            // Stop any lingering scenes before starting fresh
+            this.scene.stop('HUD');
+            this.scene.stop('GameScene');
             this.scene.start('TutorialScene');
         });
     }

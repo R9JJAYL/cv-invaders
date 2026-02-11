@@ -4,7 +4,7 @@ window.CVInvaders.Dialogue = {
     CINEMATIC: [
         { text: '[ ALERT ]\n\nINCOMING THREAT DETECTED', duration: 1800 },
         { text: 'The bots are attacking\nour ATS!', duration: 2000 },
-        { text: 'Take control of the ship\nand protect it!', duration: 1000 },
+        { text: 'Take control of the ship\nand protect it!', duration: 2000 },
         { text: 'Shoot the RED CVs\nCapture the GREEN ones', duration: 2200 }
     ],
 
@@ -15,7 +15,7 @@ window.CVInvaders.Dialogue = {
     ],
 
     ENEMIES: {
-        ENTRANCE: 'The ghosted candidates are back!\nDestroy them to close the feedback loop!'
+        ENTRANCE: 'The candidates you ghosted are back!\nDestroy them to close the feedback loop!'
     },
 
     HIRING_MANAGER: {
