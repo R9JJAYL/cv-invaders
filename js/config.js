@@ -7,7 +7,7 @@ window.CVInvaders.Config = {
     // Player
     PLAYER_SPEED: 330,
     PLAYER_HEALTH: 5,
-    FIRE_RATE: 250,
+    FIRE_RATE: 212,
     BULLET_SPEED: 400,
     CATCH_ZONE_WIDTH: 60,
     CATCH_ZONE_UNICORN: 120,
