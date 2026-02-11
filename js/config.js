@@ -16,10 +16,10 @@ window.CVInvaders.Config = {
     // CVs
     CV_GOOD_RATIO: 0.3,
 
-    // Waves (40s + 5s tutorial = 45s total before boss)
+    // Waves (38s + 7s tutorial = 45s total before boss)
     WAVES: [
         {
-            duration: 9000,
+            duration: 8000,
             spawnRate: 1200,
             fallSpeed: 180,
             maxOnScreen: 6,
@@ -29,7 +29,7 @@ window.CVInvaders.Config = {
             dialogue: 'Wave 1: The CVs are coming in!'
         },
         {
-            duration: 13000,
+            duration: 12000,
             spawnRate: 900,
             fallSpeed: 210,
             maxOnScreen: 7,

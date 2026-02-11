@@ -18,7 +18,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Countdown covers all gameplay before boss (tutorial + waves)
         const CFG = window.CVInvaders.Config;
         const waveDuration = CFG.WAVES.reduce((sum, w) => sum + w.duration, 0);
-        this.gameTimeRemaining = waveDuration + 5000; // waves + 5s tutorial practice
+        this.gameTimeRemaining = waveDuration + 7000; // waves + 7s tutorial practice
         this.gameCountdownActive = false;
     }
 
@@ -210,7 +210,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
 
         // After brief practice, transition to Wave 1
-        this.time.delayedCall(5000, () => {
+        this.time.delayedCall(7000, () => {
             this.endTutorial();
         });
     }
