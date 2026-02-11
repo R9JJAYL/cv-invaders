@@ -172,9 +172,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             // Move narrative text higher so it doesn't overlap the demo CVs below
             this.narrativeText.setY(CFG.HEIGHT / 2 - 120);
             this.narrativeText.setColor('#FFFFFF');
-            var isMobile = !this.sys.game.device.os.desktop;
-            var controlsText = isMobile ? 'Press < > to move\nTap left side to shoot' : DLG[2].text;
-            this.showNarrative(controlsText, DLG[2].duration);
+            this.showNarrative(DLG[2].text, DLG[2].duration);
 
             // Play animated demo after "Take control" text has faded out
             this.time.delayedCall(2600, () => {
