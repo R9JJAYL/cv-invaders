@@ -575,7 +575,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
         demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
         demoBtn.on('pointerdown', () => {
-            window.open('https://www.linkedin.com/posts/jamiejaylyons_6-min-demo-of-what-were-building-at-first-ugcPost-7407025017613463552-kVH7?utm_source=share&utm_medium=member_desktop&rcm=ACoAACExlMMBJdkwxlrUBhMrFuzm9keT4k4_uhc', '_blank');
+            this._openURL('https://www.linkedin.com/posts/jamiejaylyons_6-min-demo-of-what-were-building-at-first-ugcPost-7407025017613463552-kVH7?utm_source=share&utm_medium=member_desktop&rcm=ACoAACExlMMBJdkwxlrUBhMrFuzm9keT4k4_uhc');
         });
 
         // Play Again (right)
@@ -747,10 +747,20 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     shareToLinkedIn(name, score, grade, playerType) {
         var url = encodeURIComponent(window.location.href);
-        window.open(
-            'https://www.linkedin.com/sharing/share-offsite/?url=' + url,
-            '_blank'
-        );
+        this._openURL('https://www.linkedin.com/sharing/share-offsite/?url=' + url);
+    }
+
+    _openURL(url) {
+        // Use a hidden anchor element to open URLs — mobile browsers
+        // block window.open() if it's not from a trusted user gesture,
+        // but anchor clicks are always trusted
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
     playAgain(CFG) {
