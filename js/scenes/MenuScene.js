@@ -55,7 +55,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.TEXT_SECONDARY,
-            fontStyle: 'normal'
+            fontStyle: 'bold'
         }).setOrigin(1, 0.5).setAlpha(0.4);
 
         // Form inputs — name & company side by side, type below
