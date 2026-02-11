@@ -9,6 +9,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         this.active = false;
         this.unicornsSpawned = 0;
         this.enemiesSpawned = false;
+        this.enemiesSpawnedAt = 0;
     }
 
     startWave(index) {
@@ -18,6 +19,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         this.active = true;
         this.unicornsSpawned = 0;
         this.enemiesSpawned = false;
+        this.enemiesSpawnedAt = 0;
 
         this.scene.registry.set('wave', index + 1);
 
@@ -61,6 +63,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         this.waveTimer = 0;
         this.unicornsSpawned = 0;
         this.enemiesSpawned = false;
+        this.enemiesSpawnedAt = 0;
 
         this.scene.registry.set('wave', nextWave + 1);
 
@@ -81,13 +84,14 @@ window.CVInvaders.WaveManager = class WaveManager {
         const isFrenzy = isLastWave && timeRemaining <= 7000 && timeRemaining > 0;
         const effectiveSpawnRate = isFrenzy ? Math.round(wave.spawnRate / 2) : wave.spawnRate;
 
-        // Slow CVs when enemies are on screen, speed up for frenzy
+        // Slow CVs for the first 8s after ghosts spawn, speed up for frenzy
         const enemiesAlive = this.scene.enemies ? this.scene.enemies.getChildren().filter(e => e.active && e.isAlive).length : 0;
+        const enemySlowWindow = this.enemiesSpawnedAt > 0 && (this.waveTimer - this.enemiesSpawnedAt) < 8000;
         let effectiveFallSpeed = wave.fallSpeed;
         if (isFrenzy) {
-            effectiveFallSpeed = wave.fallSpeed + 70; // faster during frenzy
-        } else if (enemiesAlive > 0) {
-            effectiveFallSpeed = 165; // slower while fighting ghosts
+            effectiveFallSpeed = 270; // faster during frenzy
+        } else if (enemiesAlive > 0 && enemySlowWindow) {
+            effectiveFallSpeed = 165; // slower while fighting ghosts (first 8s only)
         }
 
         // Spawn CVs at rate
@@ -112,6 +116,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         // Enemy spawn (Wave 3)
         if (wave.hasEnemies && !this.enemiesSpawned) {
             this.enemiesSpawned = true;
+            this.enemiesSpawnedAt = this.waveTimer;
             this.scene.spawnEnemies(wave.enemyCount);
         }
 
