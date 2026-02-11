@@ -757,14 +757,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     shareToLinkedIn(name, score, grade, playerType) {
         var teamName = playerType === 'agency' ? 'Agency' : playerType === 'internal' ? 'Internal' : '';
-        var teamLine = teamName ? 'I played for Team ' + teamName + ' and scored ' : 'I scored ';
-        var rivalLine = teamName ? (playerType === 'agency'
-            ? '\n\nTeam Agency or Team Internal? Back your side!'
-            : '\n\nTeam Internal or Team Agency? Back your side!') : '';
+        var teamPart = teamName ? ' as Team ' + teamName : '';
+        var rivalLine = teamName ? '\n\nAre you Team Agency or Team Internal? Play now and back your side \uD83D\uDC47' : '\n\nCan you beat my score? Play now \uD83D\uDC47';
 
-        var shareText = teamLine + score +
-            ' on CV Invaders, earning the rank "' + grade.title +
-            '"! Can you beat the bots?' + rivalLine +
+        var shareText = 'I scored ' + score.toLocaleString() + ' defending the ATS on CV Invaders' + teamPart + ' \uD83C\uDFC6' +
+            rivalLine +
             '\n\n' + window.location.href +
             '\n\n#CVInvaders #Recruiting #TalentAcquisition';
 
