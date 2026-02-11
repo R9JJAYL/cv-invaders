@@ -89,18 +89,20 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button
-        this.leftArrowBg = this.add.circle(rightCenter - arrowSize - arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
-            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '\u25C0', {
-            fontFamily: 'Roboto', fontSize: '26px', color: '#FFFFFF', fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(201);
+        var leftX = rightCenter - arrowSize - arrowGap / 2;
+        this.leftArrowBg = this.add.circle(leftX, arrowY, arrowSize, 0x111111, 0.5)
+            .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
+        var leftArrow = this.add.graphics().setDepth(201);
+        leftArrow.fillStyle(0xFFFFFF, 0.8);
+        leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
 
         // Right arrow button
-        this.rightArrowBg = this.add.circle(rightCenter + arrowSize + arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
-            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '\u25B6', {
-            fontFamily: 'Roboto', fontSize: '26px', color: '#FFFFFF', fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(201);
+        var rightX = rightCenter + arrowSize + arrowGap / 2;
+        this.rightArrowBg = this.add.circle(rightX, arrowY, arrowSize, 0x111111, 0.5)
+            .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
+        var rightArrow = this.add.graphics().setDepth(201);
+        rightArrow.fillStyle(0xFFFFFF, 0.8);
+        rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);
 
         // ========== STATE ==========
         this._shootHeld = false;
