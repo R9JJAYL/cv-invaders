@@ -544,7 +544,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
         demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
         demoBtn.on('pointerdown', () => {
-            window.open('https://www.first.cx/demo', '_blank');
+            window.open('https://www.linkedin.com/posts/jamiejaylyons_6-min-demo-of-what-were-building-at-first-ugcPost-7407025017613463552-kVH7?utm_source=share&utm_medium=member_desktop&rcm=ACoAACExlMMBJdkwxlrUBhMrFuzm9keT4k4_uhc', '_blank');
         });
 
         // Share to LinkedIn (center)
