@@ -20,8 +20,8 @@ window.CVInvaders.Config = {
     WAVES: [
         {
             duration: 10000,
-            spawnRate: 1000,
-            fallSpeed: 190,
+            spawnRate: 1200,
+            fallSpeed: 180,
             maxOnScreen: 6,
             hasEnemies: false,
             hasUnicorn: false,
