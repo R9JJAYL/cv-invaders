@@ -99,7 +99,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
         // Announcement text
         this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '22px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             fontStyle: 'bold',

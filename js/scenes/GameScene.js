@@ -111,7 +111,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Announcement text — fixed to screen (scroll-independent)
         this.announcementBg = this.add.graphics().setDepth(49).setAlpha(0).setScrollFactor(0);
         this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '24px',
             color: '#FFFFFF',
             fontStyle: 'bold',
@@ -185,7 +185,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // "Press S to skip" hint (desktop only)
         if (!isMobile) {
             this.skipHint = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT - 20, 'Press S to skip intro', {
-                fontFamily: 'Courier New',
+                fontFamily: 'Roboto',
                 fontSize: '12px',
                 color: '#666666'
             }).setOrigin(0.5).setDepth(50).setAlpha(0);
@@ -765,7 +765,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Show ATS lock icon
         const lock = this.add.image(x, y, 'ats-lock').setDepth(15);
         const lockText = this.add.text(x, y + 15, 'ATS\'d', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '10px',
             color: '#888888'
         }).setOrigin(0.5).setDepth(15);

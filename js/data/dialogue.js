@@ -19,7 +19,7 @@ window.CVInvaders.Dialogue = {
     },
 
     HIRING_MANAGER: {
-        THREW_OUT: 'Uh oh.... the hiring manager\nthrew out all the CVs!'
+        THREW_OUT: 'The hiring manager\nthrew out all the CVs!'
     },
 
     BOSS: {

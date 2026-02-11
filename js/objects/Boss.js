@@ -59,12 +59,27 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     updatePhase1(time, delta, CFG) {
-        // Calm side-to-side drift using sine wave
-        this.moveTimer += delta * 0.001;
-        this.x = CFG.WIDTH / 2 + Math.sin(this.moveTimer * 0.4) * 180;
+        // Randomised left-right movement — picks random target positions
+        // so the player can't predict when it will change direction
+        if (!this._p1TargetX) {
+            this._p1TargetX = Phaser.Math.Between(100, CFG.WIDTH - 100);
+            this._p1Speed = Phaser.Math.Between(130, 220);
+        }
+
+        var dx = this._p1TargetX - this.x;
+        var dist = Math.abs(dx);
+        if (dist < 8) {
+            // Reached target — pick a new random one
+            this._p1TargetX = Phaser.Math.Between(80, CFG.WIDTH - 80);
+            this._p1Speed = Phaser.Math.Between(130, 220);
+        } else {
+            var step = this._p1Speed * delta / 1000;
+            this.x += (dx > 0 ? 1 : -1) * Math.min(step, dist);
+        }
 
         // Gentle vertical bob
-        this.y = 80 + Math.sin(this.moveTimer * 0.8) * 8;
+        this.moveTimer += delta * 0.001;
+        this.y = 80 + Math.sin(this.moveTimer * 0.9) * 10;
 
         // Spam CVs
         this.spamTimer += delta;

@@ -10,7 +10,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // Score
         this.scoreText = this.add.text(CFG.WIDTH - 20, 15, 'SCORE: 0', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '18px',
             color: CFG.COLORS.TEXT_PRIMARY,
             fontStyle: 'bold'
@@ -18,7 +18,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // Boss countdown timer
         this.countdownText = this.add.text(CFG.WIDTH / 2, 15, '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '16px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             fontStyle: 'bold'
@@ -26,7 +26,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // Combo counter
         this.comboText = this.add.text(20, 20, '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '14px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
@@ -34,7 +34,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // Mute indicator
         this.muteText = this.add.text(CFG.WIDTH - 20, CFG.HEIGHT - 20, '[M] Sound: ON', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '12px',
             color: CFG.COLORS.TEXT_SECONDARY
         }).setOrigin(1, 1).setDepth(100);
@@ -79,7 +79,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 10, 0x00E5FF, 0.25)
             .setDepth(200);
         this.shootButtonLabel = this.add.text(shootX, shootY, 'FIRE', {
-            fontFamily: 'Courier New', fontSize: '14px', color: '#00E5FF', fontStyle: 'bold'
+            fontFamily: 'Roboto', fontSize: '14px', color: '#00E5FF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
@@ -92,14 +92,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this.leftArrowBg = this.add.circle(rightCenter - arrowSize - arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
         this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '◀', {
-            fontFamily: 'Courier New', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+            fontFamily: 'Roboto', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // Right arrow button
         this.rightArrowBg = this.add.circle(rightCenter + arrowSize + arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
         this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '▶', {
-            fontFamily: 'Courier New', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+            fontFamily: 'Roboto', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // ========== STATE ==========
@@ -204,7 +204,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         const color = points > 0 ? '#00FF00' : '#FF4444';
         const text = (points > 0 ? '+' : '') + points;
         const floater = this.add.text(x, y, text, {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: '16px',
             color: color,
             fontStyle: 'bold'
@@ -251,7 +251,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     showBossHealth(visible) {
         if (visible && !this.bossHealthBar) {
             this.bossLabel = this.add.text(window.CVInvaders.Config.WIDTH / 2, 45, 'AI BOT 9000', {
-                fontFamily: 'Courier New',
+                fontFamily: 'Roboto',
                 fontSize: '12px',
                 color: '#FF4444',
                 fontStyle: 'bold'

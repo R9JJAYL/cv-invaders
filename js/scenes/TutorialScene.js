@@ -332,6 +332,15 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         var goodCV = this.add.image(goodX, cvY, 'cv-good')
             .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
 
+        // "RULES:" header above the CVs
+        var rulesLabel = this.add.text(cx, cvY - 50, 'RULES:', {
+            fontFamily: 'Courier New',
+            fontSize: '16px',
+            color: '#FFFFFF',
+            fontStyle: 'bold',
+            letterSpacing: 2
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+
         // Labels visible from the start alongside the CVs
         var shootLabel = this.add.text(badX, cvY + 40, 'SHOOT', {
             fontFamily: 'Courier New',
@@ -348,11 +357,11 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
         // Track surviving elements for countdown fade-out cleanup
-        this.cvExamples = [shootLabel, catchLabel];
+        this.cvExamples = [rulesLabel, shootLabel, catchLabel];
 
         // 0ms — Fade in CVs and labels together
         this.tweens.add({
-            targets: [badCV, goodCV, shootLabel, catchLabel],
+            targets: [badCV, goodCV, rulesLabel, shootLabel, catchLabel],
             alpha: 1,
             duration: 300
         });
