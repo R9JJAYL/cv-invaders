@@ -51,13 +51,9 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         if (!this.isAlive) return;
 
         if (this.isMobile) {
-            // Mobile: velocity driven by joystick in HUD
+            // Mobile: velocity driven by arrow buttons in HUD (-1, 0, or 1)
             var mv = this._mobileVelocityX || 0;
-            if (Math.abs(mv) > 0.1) {
-                this.setVelocityX(mv * this.speed);
-            } else {
-                this.setVelocityX(0);
-            }
+            this.setVelocityX(mv * this.speed);
             // shootPressed is set externally by HUD shoot button
         } else {
             // Desktop: keyboard movement

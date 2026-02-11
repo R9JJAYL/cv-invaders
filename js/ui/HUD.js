@@ -82,26 +82,32 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             fontFamily: 'Courier New', fontSize: '14px', color: '#00E5FF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
-        // ========== VISUAL: JOYSTICK (RIGHT SIDE) ==========
-        var joyX = CFG.WIDTH - 90;
-        var joyY = CFG.HEIGHT - 90;
-        var baseRadius = 40;
-        var thumbRadius = 18;
+        // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
+        var arrowY = CFG.HEIGHT - 90;
+        var arrowSize = 50;
+        var arrowGap = 30;
+        var rightCenter = CFG.WIDTH - 90;
 
-        this.joystickBase = this.add.circle(joyX, joyY, baseRadius, 0x333333, 0.3)
-            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.3);
-        this.joystickThumb = this.add.circle(joyX, joyY, thumbRadius, 0xFFFFFF, 0.4)
-            .setDepth(201);
+        // Left arrow button
+        this.leftArrowBg = this.add.circle(rightCenter - arrowSize - arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
+            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
+        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '◀', {
+            fontFamily: 'Courier New', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(201);
+
+        // Right arrow button
+        this.rightArrowBg = this.add.circle(rightCenter + arrowSize + arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
+            .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
+        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '▶', {
+            fontFamily: 'Courier New', fontSize: '28px', color: '#FFFFFF', fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(201);
 
         // ========== STATE ==========
         this._shootHeld = false;
-        this._joystickNormX = 0;
-        this._smoothedNormX = 0;          // Smoothed output for less erratic movement
-        this._joystickBaseX = joyX;
-        this._joystickBaseY = joyY;
-        this._joystickBaseRadius = baseRadius;
-        this._joystickRange = 50;         // Tighter input range for snappier feel
-        this._joystickDeadZone = 0.18;    // Ignore small inputs below 18%
+        this._leftArrowX = rightCenter - arrowSize - arrowGap / 2;
+        this._rightArrowX = rightCenter + arrowSize + arrowGap / 2;
+        this._arrowY = arrowY;
+        this._arrowRadius = arrowSize;
         this._halfW = CFG.WIDTH / 2;
     }
 
@@ -113,43 +119,40 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
         // Poll touch pointer objects directly from the global InputManager.
-        // pointers[0] = mouse (skip), pointers[1] = first touch, pointers[2] = second touch.
-        // This bypasses scene-level event dispatch entirely, which avoids
-        // multi-scene input propagation issues that block simultaneous touches.
-        var pointer1 = this.input.manager.pointers[1];  // First finger
-        var pointer2 = this.input.manager.pointers[2];  // Second finger
+        var pointer1 = this.input.manager.pointers[1];
+        var pointer2 = this.input.manager.pointers[2];
         var shootHeld = false;
-        var joystickX = 0;
-        var joystickActive = false;
+        var moveDir = 0; // -1 left, 0 none, 1 right
 
-        // Check first finger
-        if (pointer1 && pointer1.isDown) {
-            if (pointer1.x < this._halfW) {
+        // Helper: check if pointer is within an arrow button
+        var self = this;
+        function checkPointer(ptr) {
+            if (!ptr || !ptr.isDown) return;
+
+            // Left half = shoot
+            if (ptr.x < self._halfW) {
                 shootHeld = true;
-            } else {
-                joystickActive = true;
-                var dx1 = pointer1.x - this._joystickBaseX;
-                var cd1 = Phaser.Math.Clamp(dx1, -this._joystickRange, this._joystickRange);
-                joystickX = cd1 / this._joystickRange;
+                return;
+            }
+
+            // Right half = check arrow buttons
+            var dxL = ptr.x - self._leftArrowX;
+            var dyL = ptr.y - self._arrowY;
+            if (dxL * dxL + dyL * dyL <= self._arrowRadius * self._arrowRadius) {
+                moveDir = -1;
+                return;
+            }
+
+            var dxR = ptr.x - self._rightArrowX;
+            var dyR = ptr.y - self._arrowY;
+            if (dxR * dxR + dyR * dyR <= self._arrowRadius * self._arrowRadius) {
+                moveDir = 1;
+                return;
             }
         }
 
-        // Check second finger
-        if (pointer2 && pointer2.isDown) {
-            if (pointer2.x < this._halfW) {
-                shootHeld = true;
-            } else {
-                joystickActive = true;
-                var dx2 = pointer2.x - this._joystickBaseX;
-                var cd2 = Phaser.Math.Clamp(dx2, -this._joystickRange, this._joystickRange);
-                joystickX = cd2 / this._joystickRange;
-            }
-        }
-
-        // Apply dead zone — ignore tiny movements near center
-        if (Math.abs(joystickX) < this._joystickDeadZone) {
-            joystickX = 0;
-        }
+        checkPointer(pointer1);
+        checkPointer(pointer2);
 
         // Update shoot visual feedback
         if (shootHeld !== this._shootHeld) {
@@ -157,25 +160,12 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             this.shootButtonInner.setFillStyle(0x00E5FF, shootHeld ? 0.6 : 0.25);
         }
 
-        // Smooth the joystick output (lerp towards target to reduce jitter)
-        var lerpSpeed = 0.55;
-        if (joystickActive) {
-            this._joystickNormX = joystickX;
-            this._smoothedNormX += (joystickX - this._smoothedNormX) * lerpSpeed;
-            // Clamp visual thumb to the smaller base circle
-            var thumbClamp = Phaser.Math.Clamp(joystickX, -1, 1);
-            this.joystickThumb.setPosition(
-                this._joystickBaseX + thumbClamp * this._joystickBaseRadius,
-                this._joystickBaseY
-            );
-        } else {
-            this._joystickNormX = 0;
-            this._smoothedNormX += (0 - this._smoothedNormX) * lerpSpeed;
-            this.joystickThumb.setPosition(this._joystickBaseX, this._joystickBaseY);
-        }
+        // Update arrow visual feedback
+        this.leftArrowBg.setFillStyle(0x333333, moveDir === -1 ? 0.7 : 0.4);
+        this.rightArrowBg.setFillStyle(0x333333, moveDir === 1 ? 0.7 : 0.4);
 
-        // Relay smoothed value to ship
-        gameScene.ship.setMobileMovement(this._smoothedNormX);
+        // Relay to ship — full speed in the pressed direction
+        gameScene.ship.setMobileMovement(moveDir);
         gameScene.ship.setMobileShootPressed(this._shootHeld);
     }
 
