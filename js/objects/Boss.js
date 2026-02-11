@@ -59,18 +59,12 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     updatePhase1(time, delta, CFG) {
-        // Horizontal drift — pick a new target every 2s, lerp towards it
-        this.moveTimer += delta;
-        if (this.moveTimer > 2000) {
-            this.moveTimer = 0;
-            this.moveTargetX = Phaser.Math.Between(80, CFG.WIDTH - 80);
-        }
-        // Smooth lerp instead of constant speed (avoids jitter on variable frame rates)
-        const lerpSpeed = 1 - Math.pow(0.03, delta / 1000);
-        this.x += (this.moveTargetX - this.x) * lerpSpeed;
+        // Calm side-to-side drift using sine wave
+        this.moveTimer += delta * 0.001;
+        this.x = CFG.WIDTH / 2 + Math.sin(this.moveTimer * 0.4) * 180;
 
         // Gentle vertical bob
-        this.y = 80 + Math.sin(time * 0.001) * 8;
+        this.y = 80 + Math.sin(this.moveTimer * 0.8) * 8;
 
         // Spam CVs
         this.spamTimer += delta;
