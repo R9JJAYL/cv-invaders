@@ -746,24 +746,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     shareToLinkedIn(name, score, grade, playerType) {
-        var teamName = playerType === 'agency' ? 'Agency' : playerType === 'internal' ? 'Internal' : '';
-        var teamPart = teamName ? ' as Team ' + teamName : '';
-        var rivalLine = teamName ? '\n\nAre you Team Agency or Team Internal? Play now and back your side \uD83D\uDC47' : '\n\nCan you beat my score? Play now \uD83D\uDC47';
-
-        var shareText = 'I scored ' + score.toLocaleString() + ' defending the ATS on CV Invaders' + teamPart + ' \uD83C\uDFC6' +
-            rivalLine +
-            '\n\n' + window.location.href +
-            '\n\n#CVInvaders #Recruiting #TalentAcquisition';
-
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(shareText).then(() => {
-                this.showCopiedMessage();
-            });
-        }
-
-        var text = encodeURIComponent(shareText);
+        var url = encodeURIComponent(window.location.href);
         window.open(
-            'https://www.linkedin.com/feed/?shareActive=true&text=' + text,
+            'https://www.linkedin.com/sharing/share-offsite/?url=' + url,
             '_blank'
         );
     }
@@ -807,24 +792,4 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
     }
 
-    showCopiedMessage() {
-        const msg = this.add.text(
-            window.CVInvaders.Config.WIDTH / 2,
-            window.CVInvaders.Config.HEIGHT - 45,
-            'Score copied to clipboard!',
-            {
-                fontFamily: 'Courier New',
-                fontSize: '12px',
-                color: '#00FF00'
-            }
-        ).setOrigin(0.5);
-
-        this.tweens.add({
-            targets: msg,
-            alpha: 0,
-            duration: 2000,
-            delay: 1500,
-            onComplete: () => msg.destroy()
-        });
-    }
 };
