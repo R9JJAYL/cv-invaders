@@ -163,8 +163,8 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         });
     }
 
-    startEntry(targetY) {
-        this.y = -60;
+    startEntry(targetY, duration) {
+        var entryDuration = duration || 2000;
 
         // Pulsing alpha during entry to show invulnerability
         this._entryPulse = this.scene.tweens.add({
@@ -175,10 +175,12 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
             repeat: -1
         });
 
+        // Tween from current position (wherever boss was placed) down to gameplay y
+        // When called with a camera pan, this keeps boss and camera in sync
         this.scene.tweens.add({
             targets: this,
             y: targetY,
-            duration: 2000,
+            duration: entryDuration,
             ease: 'Power2',
             onComplete: () => {
                 // Grace period after landing before taking damage

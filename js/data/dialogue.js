@@ -4,7 +4,7 @@ window.CVInvaders.Dialogue = {
     CINEMATIC: [
         { text: '[ ALERT ]\n\nINCOMING THREAT DETECTED', duration: 1800 },
         { text: 'The bots are attacking\nour ATS!', duration: 2000 },
-        { text: 'We need you to take the helm\nand protect it.', duration: 2200 },
+        { text: 'We need you to take the helm\nand protect it.', duration: 1000 },
         { text: 'Shoot the RED CVs\nCapture the GREEN ones', duration: 2200 }
     ],
 

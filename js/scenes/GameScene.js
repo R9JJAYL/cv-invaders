@@ -596,23 +596,26 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.showAnnouncement(DLG.BOSS.ENTRANCE, 2500);
         });
 
-        // 3. After showing text, pan camera back down + boss follows
+        // 3. After showing text, pan camera back down WITH the boss
         this.time.delayedCall(4000, () => {
+            const panDuration = 2000;
+
             // Pan camera back to normal
             this.cameras.main.pan(
                 CFG.WIDTH / 2,
                 CFG.HEIGHT / 2,
-                1500,
+                panDuration,
                 'Power2'
             );
 
-            // Boss flies down into play area
-            this.boss.startEntry(80);
+            // Boss moves down in sync with camera — from its current position
+            // to gameplay y, matching the pan duration so they travel together
+            this.boss.startEntry(80, panDuration);
 
-            // Show health bar after boss has landed
+            // Show health bar after boss has landed + grace period
             const hud = this.scene.get('HUD');
             if (hud) {
-                this.time.delayedCall(2000, () => {
+                this.time.delayedCall(panDuration + 1500, () => {
                     if (hud && hud.showBossHealth) hud.showBossHealth(true);
                 });
             }
