@@ -639,7 +639,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             '<thead>' +
             '<tr>' +
             '<th class="lb-head lb-rank">#</th>' +
-            '<th class="lb-head lb-name">NAME</th>' +
+            '<th class="lb-head lb-name">PLAYER</th>' +
             '<th class="lb-head lb-company">COMPANY</th>' +
             '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
