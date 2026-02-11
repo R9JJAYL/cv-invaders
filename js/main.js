@@ -40,9 +40,26 @@ window.addEventListener('load', function () {
     window.CVInvaders.game = new Phaser.Game(config);
 
     // Force Phaser to recalculate scale on orientation change
-    window.addEventListener('resize', function () {
+    // Multiple refreshes with delays to handle mobile address bar retracting
+    function refreshScale() {
         if (window.CVInvaders.game && window.CVInvaders.game.scale) {
             window.CVInvaders.game.scale.refresh();
         }
+    }
+
+    window.addEventListener('resize', function () {
+        refreshScale();
+        setTimeout(refreshScale, 100);
+        setTimeout(refreshScale, 300);
+        setTimeout(refreshScale, 500);
+    });
+
+    // orientationchange fires on actual device rotation
+    window.addEventListener('orientationchange', function () {
+        // Scroll to top to hide mobile address bar
+        setTimeout(function () { window.scrollTo(0, 1); }, 50);
+        setTimeout(refreshScale, 100);
+        setTimeout(refreshScale, 300);
+        setTimeout(refreshScale, 500);
     });
 });
