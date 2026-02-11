@@ -618,12 +618,14 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Wait for boss entry to complete before enabling combat
         this.bossStartTime = this.time.now;
+        this._bossOverlapAdded = false;
 
         const waitForEntry = this.time.addEvent({
             delay: 100,
             loop: true,
             callback: () => {
-                if (this.boss && this.boss.entryComplete) {
+                if (this.boss && this.boss.entryComplete && !this._bossOverlapAdded) {
+                    this._bossOverlapAdded = true;
                     waitForEntry.remove();
 
                     // NOW the fight begins — start timer and background CVs
@@ -689,6 +691,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.gameOver = true;
         this.registry.set('bossDefeated', false);
 
+        this.tweens.killAll();
         this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 
@@ -718,6 +721,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.registry.set('bossTime', bossTime);
         this.registry.set('bossDefeated', true);
 
+        this.tweens.killAll();
         this.sound_engine.stopMusic();
         this.scoreManager.bossKill(bossTime);
         this.sound_engine.bossDefeated();
@@ -796,6 +800,11 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     spawnHitMarker(x, y, isBoss) {
+        // Throttle: max one hit marker every 80ms to prevent graphics accumulation
+        var now = this.time.now;
+        if (this._lastHitMarkerTime && now - this._lastHitMarkerTime < 80) return;
+        this._lastHitMarkerTime = now;
+
         const len = isBoss ? 14 : 10;
         const gap = isBoss ? 5 : 4;
         const thick = 2;
@@ -874,6 +883,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
     onPlayerDeath() {
         this.gameOver = true;
+        this.tweens.killAll();
         this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 

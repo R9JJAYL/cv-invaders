@@ -169,6 +169,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
     startMusic() {
         if (!this.ctx || this.musicPlaying) return;
         this.musicPlaying = true;
+        this._arpStopped = false;
         this.musicTempo = 1.0; // 1.0 = normal, higher = faster
 
         // Ambient drone pad
@@ -179,6 +180,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
 
     stopMusic() {
         this.musicPlaying = false;
+        this._arpStopped = true;
         if (this._droneGain) {
             try {
                 this._droneGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.5);
@@ -230,7 +232,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
     }
 
     _startArpeggio() {
-        if (!this.ctx || !this.musicPlaying) return;
+        if (!this.ctx || !this.musicPlaying || this._arpStopped) return;
 
         // Spacey pentatonic notes in different octaves
         const patterns = [

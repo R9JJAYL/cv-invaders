@@ -190,12 +190,14 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
         // Player bullets hit boss — delay collider until entry animation finishes
         this.bossStartTime = this.time.now;
+        this._bossOverlapAdded = false;
 
         const waitForEntry = this.time.addEvent({
             delay: 100,
             loop: true,
             callback: () => {
-                if (this.boss && this.boss.entryComplete) {
+                if (this.boss && this.boss.entryComplete && !this._bossOverlapAdded) {
+                    this._bossOverlapAdded = true;
                     waitForEntry.remove();
                     this.physics.add.overlap(this.bullets, this.boss, (bullet, boss) => {
                         if (!bullet.active || !boss.active || !boss.isAlive) return;
@@ -230,6 +232,11 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
     }
 
     spawnHitMarker(x, y, isBoss) {
+        // Throttle: max one hit marker every 80ms to prevent graphics accumulation
+        var now = this.time.now;
+        if (this._lastHitMarkerTime && now - this._lastHitMarkerTime < 80) return;
+        this._lastHitMarkerTime = now;
+
         const len = isBoss ? 14 : 10;
         const gap = isBoss ? 5 : 4;
         const thick = 2;
@@ -291,6 +298,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
     onBossDefeated() {
         this.gameOver = true;
+        this.tweens.killAll();
         const bossTime = this.time.now - this.bossStartTime;
         this.registry.set('bossTime', bossTime);
         this.registry.set('bossDefeated', true);
@@ -328,6 +336,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
     onPlayerDeath() {
         this.gameOver = true;
+        this.tweens.killAll();
         this.sound_engine.stopMusic();
         this.sound_engine.gameOver();
 
