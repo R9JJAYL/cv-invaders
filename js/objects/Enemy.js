@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+// Shared formation state — all enemies move as one unit
+window.CVInvaders._enemyFormation = {
+    direction: 1,
+    stepDown: 30,       // pixels to drop on each wall hit
+    edgePadding: 30,    // wall margin
+    maxY: 400           // stop descending past this y
+};
+
 window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
     constructor(scene, x, y) {
         super(scene, x, y, 'enemy');
@@ -14,7 +22,6 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
         this.speed = window.CVInvaders.Config.ENEMY_SPEED;
         this.fireRate = window.CVInvaders.Config.ENEMY_FIRE_RATE;
         this.lastFired = 0;
-        this.direction = 1;
         this.isAlive = true;
 
         // Manual update since Image doesn't auto-call preUpdate
@@ -27,12 +34,29 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
     _onUpdate(time, delta) {
         if (!this.isAlive || !this.active) return;
 
-        // Horizontal movement with bounce
-        this.x += this.speed * this.direction * (delta / 1000);
-        if (this.x > window.CVInvaders.Config.WIDTH - 30) {
-            this.direction = -1;
-        } else if (this.x < 30) {
-            this.direction = 1;
+        const CFG = window.CVInvaders.Config;
+        const form = window.CVInvaders._enemyFormation;
+
+        // Move horizontally with formation direction
+        this.x += this.speed * form.direction * (delta / 1000);
+
+        // Check if ANY enemy hit the wall — if so, all step down and reverse
+        if (this.x > CFG.WIDTH - form.edgePadding || this.x < form.edgePadding) {
+            // Clamp this enemy to the edge
+            this.x = Phaser.Math.Clamp(this.x, form.edgePadding, CFG.WIDTH - form.edgePadding);
+
+            // Reverse direction for all enemies
+            form.direction *= -1;
+
+            // Step ALL living enemies down
+            const enemies = this.scene.enemies;
+            if (enemies) {
+                enemies.getChildren().forEach(e => {
+                    if (e.isAlive && e.active && e.y < form.maxY) {
+                        e.y += form.stepDown;
+                    }
+                });
+            }
         }
 
         // Firing

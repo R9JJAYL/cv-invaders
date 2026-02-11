@@ -431,7 +431,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     spawnEnemies(count) {
         const CFG = window.CVInvaders.Config;
 
-        // Spawn enemies first
+        // Reset formation direction for fresh wave
+        window.CVInvaders._enemyFormation.direction = 1;
+
+        // Spawn enemies in a row
         for (let i = 0; i < count; i++) {
             const x = 100 + (i * (CFG.WIDTH - 200) / (count - 1));
             const y = 60 + (i % 2) * 30;
