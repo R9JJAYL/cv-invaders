@@ -5,7 +5,7 @@ window.CVInvaders.Config = {
     HEIGHT: 600,
 
     // Player
-    PLAYER_SPEED: 400,
+    PLAYER_SPEED: 350,
     PLAYER_HEALTH: 5,
     FIRE_RATE: 250,
     BULLET_SPEED: 400,
