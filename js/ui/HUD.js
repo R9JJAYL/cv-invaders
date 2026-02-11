@@ -69,18 +69,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
 
-        // ========== VISUAL: SHOOT BUTTON (LEFT SIDE) ==========
-        var shootX = 90;
-        var shootY = CFG.HEIGHT - 90;
-        var shootRadius = 50;
-
-        this.shootButtonBg = this.add.circle(shootX, shootY, shootRadius, 0x333333, 0.4)
-            .setDepth(200).setStrokeStyle(3, 0x00E5FF, 0.6);
-        this.shootButtonInner = this.add.circle(shootX, shootY, shootRadius - 10, 0x00E5FF, 0.25)
-            .setDepth(200);
-        this.shootButtonLabel = this.add.text(shootX, shootY, 'FIRE', {
-            fontFamily: 'Roboto', fontSize: '14px', color: '#00E5FF', fontStyle: 'bold'
-        }).setOrigin(0.5).setDepth(201);
+        // ========== LEFT SIDE: TAP TO FIRE (no button, just hint) ==========
+        this.add.text(CFG.WIDTH / 4, CFG.HEIGHT - 50, 'TAP TO FIRE', {
+            fontFamily: 'Courier New', fontSize: '11px', color: '#00E5FF', fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(200).setAlpha(0.3);
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE) ==========
         var arrowY = CFG.HEIGHT - 90;
@@ -156,11 +148,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         checkPointer(pointer1);
         checkPointer(pointer2);
 
-        // Update shoot visual feedback
-        if (shootHeld !== this._shootHeld) {
-            this._shootHeld = shootHeld;
-            this.shootButtonInner.setFillStyle(0x00E5FF, shootHeld ? 0.6 : 0.25);
-        }
+        // Update shoot state
+        this._shootHeld = shootHeld;
 
         // Update arrow visual feedback
         this.leftArrowBg.setFillStyle(0x333333, moveDir === -1 ? 0.7 : 0.4);
