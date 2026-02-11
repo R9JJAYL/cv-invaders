@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ghost Preview - Bright White</title>
+<style>
+body { background: #1a0a2e; color: white; font-family: Courier New; text-align: center; padding: 20px; }
+h1 { color: #9B59B6; }
+p.sub { color: #888; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+</head>
+<body>
+<h1>New Ghost (Bright White + Headset)</h1>
+<p class="sub">Left: game scale (1x) — Right: zoomed (4x)</p>
+<div id="game-container"></div>
+<script>
+var config = {
+    type: Phaser.CANVAS,
+    width: 500,
+    height: 250,
+    parent: 'game-container',
+    backgroundColor: '#1a0a2e',
+    scene: {
+        create: function() {
+            var scene = this;
+
+            // Draw at 1x (game scale)
+            var g1 = scene.add.graphics();
+            g1.setPosition(100, 40);
+            g1.setScale(1);
+            drawNewGhost(g1);
+            scene.add.text(120, 90, '1x (in-game)', {
+                fontFamily: 'Courier New', fontSize: '11px', color: '#888'
+            }).setOrigin(0.5);
+
+            // Draw at 4x (zoomed)
+            var g2 = scene.add.graphics();
+            g2.setPosition(220, 10);
+            g2.setScale(4);
+            drawNewGhost(g2);
+            scene.add.text(300, 180, '4x (zoomed)', {
+                fontFamily: 'Courier New', fontSize: '11px', color: '#888'
+            }).setOrigin(0.5);
+        }
+    }
+};
+
+function drawNewGhost(g) {
+    // Outer ethereal glow
+    g.fillStyle(0xCCCCFF, 0.15); g.fillCircle(20, 16, 19);
+    g.fillStyle(0xDDDDFF, 0.1); g.fillCircle(20, 16, 17);
+
+    // Ghost body — bright white
+    g.fillStyle(0xEEEEFF, 0.9);
+    g.beginPath(); g.arc(20, 14, 14, Math.PI, 0, false); g.lineTo(34, 28);
+    g.lineTo(31,24); g.lineTo(27,30); g.lineTo(23,24); g.lineTo(20,30); g.lineTo(17,24); g.lineTo(13,30); g.lineTo(9,24); g.lineTo(6,28);
+    g.closePath(); g.fillPath();
+
+    // Inner brighter highlight
+    g.fillStyle(0xFFFFFF, 0.4); g.fillEllipse(20, 12, 14, 10);
+
+    // Eyes — large & dark
+    g.fillStyle(0xFFFFFF, 1); g.fillCircle(15, 13, 4); g.fillCircle(25, 13, 4);
+    g.fillStyle(0x2a1a4e, 1); g.fillCircle(15, 14.5, 2.5); g.fillCircle(25, 14.5, 2.5);
+
+    // Sad eyebrows
+    g.lineStyle(1.5, 0x9999BB, 0.9);
+    g.beginPath(); g.moveTo(11, 8); g.lineTo(17, 10); g.strokePath();
+    g.beginPath(); g.moveTo(29, 8); g.lineTo(23, 10); g.strokePath();
+
+    // Sad frown
+    g.lineStyle(1.5, 0x9999BB, 0.8);
+    g.beginPath(); g.moveTo(16,22); g.lineTo(20,20); g.lineTo(24,22); g.strokePath();
+
+    // Headset band
+    g.lineStyle(2, 0x666666, 0.95);
+    g.beginPath(); g.arc(20, 10, 16, Math.PI + 0.3, -0.3, false); g.strokePath();
+    // Ear cups
+    g.fillStyle(0x444444, 0.95);
+    g.fillRect(3, 10, 5, 8); g.fillRect(32, 10, 5, 8);
+    g.fillStyle(0x666666, 0.6);
+    g.fillRect(4, 11, 3, 2); g.fillRect(33, 11, 3, 2);
+    // Mic boom
+    g.lineStyle(1.5, 0x666666, 0.9);
+    g.beginPath(); g.moveTo(5, 18); g.lineTo(5, 24); g.lineTo(12, 24); g.strokePath();
+    g.fillStyle(0x444444, 0.95); g.fillCircle(12, 24, 2);
+}
+
+new Phaser.Game(config);
+</script>
+</body>
+</html>

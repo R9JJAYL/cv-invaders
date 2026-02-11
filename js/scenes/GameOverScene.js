@@ -516,6 +516,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         if (!window.CVInvaders._remoteScores && this._leaderboardPromise) {
             const self = this;
             this._leaderboardPromise.then(function() {
+                // Guard: don't re-render if scene was already shut down (Play Again)
+                if (!self.scene || !self.scene.isActive()) return;
                 if (self._leaderboardDom) {
                     self._leaderboardDom.destroy();
                 }
@@ -567,42 +569,12 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         playBtn.on('pointerover', () => playBtn.setColor('#FFFFFF'));
         playBtn.on('pointerout', () => playBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
         playBtn.on('pointerdown', () => {
-            this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => {
-                // Reset game state but keep player info
-                this.registry.set('score', 0);
-                this.registry.set('health', CFG.PLAYER_HEALTH);
-                this.registry.set('goodCVsCaught', 0);
-                this.registry.set('goodCVsMissed', 0);
-                this.registry.set('badCVsShot', 0);
-                this.registry.set('badCVsMissed', 0);
-                this.registry.set('enemiesDefeated', 0);
-                this.registry.set('maxCombo', 0);
-                this.registry.set('bossTime', 0);
-                this.registry.set('bossDefeated', false);
-                // Skip straight to countdown (no cinematic, no menu)
-                this.registry.set('skipToCountdown', true);
-                this.scene.start('TutorialScene');
-            });
+            this.playAgain(CFG);
         });
 
         // Keyboard shortcut — same as Play Again
         this.input.keyboard.on('keydown-ENTER', () => {
-            this.cameras.main.fadeOut(400);
-            this.time.delayedCall(400, () => {
-                this.registry.set('score', 0);
-                this.registry.set('health', CFG.PLAYER_HEALTH);
-                this.registry.set('goodCVsCaught', 0);
-                this.registry.set('goodCVsMissed', 0);
-                this.registry.set('badCVsShot', 0);
-                this.registry.set('badCVsMissed', 0);
-                this.registry.set('enemiesDefeated', 0);
-                this.registry.set('maxCombo', 0);
-                this.registry.set('bossTime', 0);
-                this.registry.set('bossDefeated', false);
-                this.registry.set('skipToCountdown', true);
-                this.scene.start('TutorialScene');
-            });
+            this.playAgain(CFG);
         });
 
     }
@@ -776,6 +748,36 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             'https://www.linkedin.com/feed/?shareActive=true&text=' + text,
             '_blank'
         );
+    }
+
+    playAgain(CFG) {
+        // Prevent double-tap
+        if (this._restarting) return;
+        this._restarting = true;
+
+        // Destroy DOM leaderboard BEFORE fade so it doesn't persist on screen
+        if (this._leaderboardDom) {
+            this._leaderboardDom.destroy();
+            this._leaderboardDom = null;
+        }
+
+        this.cameras.main.fadeOut(400);
+        this.time.delayedCall(400, () => {
+            // Reset game state but keep player info
+            this.registry.set('score', 0);
+            this.registry.set('health', CFG.PLAYER_HEALTH);
+            this.registry.set('goodCVsCaught', 0);
+            this.registry.set('goodCVsMissed', 0);
+            this.registry.set('badCVsShot', 0);
+            this.registry.set('badCVsMissed', 0);
+            this.registry.set('enemiesDefeated', 0);
+            this.registry.set('maxCombo', 0);
+            this.registry.set('bossTime', 0);
+            this.registry.set('bossDefeated', false);
+            // Skip straight to countdown (no cinematic, no menu)
+            this.registry.set('skipToCountdown', true);
+            this.scene.start('TutorialScene');
+        });
     }
 
     showCopiedMessage() {

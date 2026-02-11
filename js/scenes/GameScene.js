@@ -612,6 +612,15 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             // to gameplay y, matching the pan duration so they travel together
             this.boss.startEntry(80, panDuration);
 
+            // Slide ship to center so it looks clean when camera returns
+            this.ship.setVelocityX(0);
+            this.tweens.add({
+                targets: this.ship,
+                x: CFG.WIDTH / 2,
+                duration: panDuration,
+                ease: 'Power2'
+            });
+
             // Show health bar after boss has landed + grace period
             const hud = this.scene.get('HUD');
             if (hud) {

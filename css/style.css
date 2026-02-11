@@ -307,3 +307,14 @@ body {
 .lb-highlight .lb-cell { color: #FFFFFF; font-weight: bold; opacity: 1; }
 .lb-highlight .lb-cell.lb-rank { color: #BB8FCE; }
 .lb-highlight .lb-cell.lb-score { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
+
+/* Spinning cog for loading state */
+@keyframes spin-cog {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.loading-cog {
+    display: inline-block;
+    animation: spin-cog 1.5s linear infinite;
+    margin-right: 6px;
+}
