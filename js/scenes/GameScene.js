@@ -47,6 +47,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0)');
         this.cameras.main.transparent = true;
 
+        // Allow camera to pan upward for boss reveal
+        this.cameras.main.setBounds(0, -300, CFG.WIDTH, CFG.HEIGHT + 300);
+
         // Player ship
         this.ship = new window.CVInvaders.PlayerShip(this, CFG.WIDTH / 2, CFG.HEIGHT - 50);
 
@@ -105,8 +108,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Launch HUD
         this.scene.launch('HUD');
 
-        // Announcement text
-        this.announcementBg = this.add.graphics().setDepth(49).setAlpha(0);
+        // Announcement text — fixed to screen (scroll-independent)
+        this.announcementBg = this.add.graphics().setDepth(49).setAlpha(0).setScrollFactor(0);
         this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
             fontFamily: 'Courier New',
             fontSize: '24px',
@@ -114,7 +117,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             fontStyle: 'bold',
             align: 'center',
             wordWrap: { width: 600 }
-        }).setOrigin(0.5).setDepth(50).setAlpha(0);
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
         // Press S to skip tutorial intro and jump to Wave 1
         this.input.keyboard.on('keydown-S', () => {
@@ -568,24 +571,53 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
     spawnBoss() {
         const CFG = window.CVInvaders.Config;
+        const DLG = window.CVInvaders.Dialogue;
 
-        this.boss = new window.CVInvaders.Boss(this, CFG.WIDTH / 2, -60);
+        // Place boss above screen in the camera's extended bounds
+        this.boss = new window.CVInvaders.Boss(this, CFG.WIDTH / 2, -180);
         this.bossGroup.add(this.boss);
-        this.boss.startEntry(80);
+        this.boss.setAlpha(1);
 
         this.sound_engine.bossEntrance();
-        this.showAnnouncement(window.CVInvaders.Dialogue.BOSS.ENTRANCE, 2500);
 
-        // Show health bar after boss has landed (2s entry)
-        const hud = this.scene.get('HUD');
-        if (hud) {
-            this.time.delayedCall(2000, () => {
-                if (hud && hud.showBossHealth) hud.showBossHealth(true);
-            });
-        }
+        // --- Camera pan reveal (similar to tutorial ATS reveal) ---
+
+        // 1. Pan camera UP to reveal the boss
+        this.cameras.main.pan(
+            CFG.WIDTH / 2,
+            -150,
+            1200,
+            'Power2'
+        );
+
+        // 2. Show boss entrance text while camera is up
+        this.time.delayedCall(1200, () => {
+            this.showAnnouncement(DLG.BOSS.ENTRANCE, 2500);
+        });
+
+        // 3. After showing text, pan camera back down + boss follows
+        this.time.delayedCall(4000, () => {
+            // Pan camera back to normal
+            this.cameras.main.pan(
+                CFG.WIDTH / 2,
+                CFG.HEIGHT / 2,
+                1500,
+                'Power2'
+            );
+
+            // Boss flies down into play area
+            this.boss.startEntry(80);
+
+            // Show health bar after boss has landed
+            const hud = this.scene.get('HUD');
+            if (hud) {
+                this.time.delayedCall(2000, () => {
+                    if (hud && hud.showBossHealth) hud.showBossHealth(true);
+                });
+            }
+        });
 
         // Wait for boss entry to complete before enabling combat
-        // Boss timer and background CVs only start once boss is vulnerable
         this.bossStartTime = this.time.now;
 
         const waitForEntry = this.time.addEvent({
@@ -810,14 +842,14 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const CFG = window.CVInvaders.Config;
         this.announcementText.setText(text);
 
-        // Measure text and draw background pill
-        const bounds = this.announcementText.getBounds();
+        // Measure text and draw background pill (use text dimensions directly
+        // since both text and bg have scrollFactor=0, i.e. screen-fixed)
         const padX = 24;
         const padY = 14;
-        const bgW = bounds.width + padX * 2;
-        const bgH = bounds.height + padY * 2;
+        const bgW = this.announcementText.width + padX * 2;
+        const bgH = this.announcementText.height + padY * 2;
         const bgX = CFG.WIDTH / 2 - bgW / 2;
-        const bgY = bounds.y - padY;
+        const bgY = this.announcementText.y - this.announcementText.height * 0.5 - padY;
 
         this.announcementBg.clear();
         this.announcementBg.fillStyle(0x000000, 0.65);
