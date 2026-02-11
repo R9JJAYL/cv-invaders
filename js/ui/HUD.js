@@ -91,15 +91,15 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         // Left arrow button
         this.leftArrowBg = this.add.circle(rightCenter - arrowSize - arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '<-', {
-            fontFamily: 'Roboto', fontSize: '22px', color: '#FFFFFF', fontStyle: 'bold'
+        this.leftArrowLabel = this.add.text(rightCenter - arrowSize - arrowGap / 2, arrowY, '\u25C0', {
+            fontFamily: 'Roboto', fontSize: '26px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // Right arrow button
         this.rightArrowBg = this.add.circle(rightCenter + arrowSize + arrowGap / 2, arrowY, arrowSize, 0x333333, 0.4)
             .setDepth(200).setStrokeStyle(3, 0xFFFFFF, 0.4);
-        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '->', {
-            fontFamily: 'Roboto', fontSize: '22px', color: '#FFFFFF', fontStyle: 'bold'
+        this.rightArrowLabel = this.add.text(rightCenter + arrowSize + arrowGap / 2, arrowY, '\u25B6', {
+            fontFamily: 'Roboto', fontSize: '26px', color: '#FFFFFF', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(201);
 
         // ========== STATE ==========
