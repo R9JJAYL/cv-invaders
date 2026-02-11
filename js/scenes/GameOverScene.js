@@ -510,18 +510,17 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Leaderboard — show local+fake data immediately
         // Remote data may already be cached from the early saveScoreAndFetch call
         const allScores = this.getLeaderboard();
-        this.renderTables(CFG, allScores, name, score, yOff);
+        this._leaderboardDom = this.renderTables(CFG, allScores, name, score, yOff);
 
         // If remote data hasn't arrived yet, re-render when it does
         if (!window.CVInvaders._remoteScores && this._leaderboardPromise) {
             const self = this;
             this._leaderboardPromise.then(function() {
-                const oldDom = self.children.list.filter(function(c) { return c.type === 'DOMElement'; });
-                if (oldDom.length > 0) {
-                    oldDom[oldDom.length - 1].destroy();
+                if (self._leaderboardDom) {
+                    self._leaderboardDom.destroy();
                 }
                 const updated = self.getLeaderboard();
-                self.renderTables(CFG, updated, name, score, yOff);
+                self._leaderboardDom = self.renderTables(CFG, updated, name, score, yOff);
             });
         }
 
@@ -662,9 +661,10 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
                 const podiumRow = i < 3 ? ' lb-podium' : '';
                 const rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
+                const displayName = isPlayer ? '▸ ' + entry.name : entry.name;
                 return '<tr class="' + rowClass + '">' +
                     '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
-                    '<td class="lb-cell lb-name">' + entry.name + '</td>' +
+                    '<td class="lb-cell lb-name">' + displayName + '</td>' +
                     '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
                     '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
                     '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
@@ -672,7 +672,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
+        return this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
     }
 
     _showRank() {

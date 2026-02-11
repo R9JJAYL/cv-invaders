@@ -303,5 +303,7 @@ body {
 .lb-podium .lb-cell.lb-score { text-shadow: 0 0 6px rgba(155, 89, 182, 0.5); }
 
 /* Player highlight row */
-.lb-highlight .lb-cell { color: #9B59B6; font-weight: bold; opacity: 1; }
-.lb-highlight .lb-cell.lb-score { color: #FFFFFF; }
+.lb-highlight { background: rgba(155, 89, 182, 0.2) !important; }
+.lb-highlight .lb-cell { color: #FFFFFF; font-weight: bold; opacity: 1; }
+.lb-highlight .lb-cell.lb-rank { color: #BB8FCE; }
+.lb-highlight .lb-cell.lb-score { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
