@@ -72,7 +72,7 @@ window.CVInvaders.Config = {
         MISS_GOOD: -75,
         BAD_REACHES_BOTTOM: -50,
         BAD_HITS_PLAYER: -100,
-        ENEMY_KILL: 200,
+        ENEMY_KILL: 350,
         BOSS_HIT: 50,
         BOSS_KILL_MAX: 2500,
         BOSS_KILL_MIN: 1000,
