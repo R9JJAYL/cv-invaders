@@ -71,9 +71,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, MID-SCREEN) ==========
         var arrowY = CFG.HEIGHT / 2;
-        var arrowSize = 60;
-        var arrowGap = 25;
-        var rightCenter = CFG.WIDTH - 110;
+        var arrowSize = 55;
+        var arrowGap = 20;
+        var rightCenter = CFG.WIDTH - 130;
 
         // Left arrow button
         var leftX = rightCenter - arrowSize - arrowGap / 2;
