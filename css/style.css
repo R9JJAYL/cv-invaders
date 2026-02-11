@@ -33,6 +33,42 @@ body {
     }
 }
 
+/* Rotate phone overlay — portrait mobile only */
+.rotate-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: #0f0a1e;
+    z-index: 99999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    color: #FFFFFF;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+.rotate-overlay .rotate-icon {
+    font-size: 48px;
+    color: #9B59B6;
+}
+
+.rotate-overlay .rotate-text {
+    font-size: 16px;
+    color: #9B59B6;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 900px) and (pointer: coarse) and (orientation: portrait) {
+    .rotate-overlay {
+        display: flex;
+    }
+}
+
 .menu-form {
     display: flex;
     flex-direction: column;
