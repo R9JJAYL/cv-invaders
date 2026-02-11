@@ -441,10 +441,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Show text after enemies have appeared
         this.time.delayedCall(500, () => {
-            this.showAnnouncement(window.CVInvaders.Dialogue.ENEMIES.ENTRANCE, 3000);
-        });
-        this.time.delayedCall(4500, () => {
-            this.showAnnouncement(window.CVInvaders.Dialogue.ENEMIES.DEFEATED, 3000);
+            this.showAnnouncement(window.CVInvaders.Dialogue.ENEMIES.ENTRANCE, 3500);
         });
     }
 

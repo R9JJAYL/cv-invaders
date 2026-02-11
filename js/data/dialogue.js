@@ -15,8 +15,7 @@ window.CVInvaders.Dialogue = {
     ],
 
     ENEMIES: {
-        ENTRANCE: 'The ghosted candidates\nare back for revenge!',
-        DEFEATED: 'Destroy their ships to\nclose the feedback loop!'
+        ENTRANCE: 'The ghosted candidates are back!\nDestroy them to close the feedback loop!'
     },
 
     HIRING_MANAGER: {
