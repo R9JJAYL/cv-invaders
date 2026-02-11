@@ -84,14 +84,16 @@ window.CVInvaders.WaveManager = class WaveManager {
         const isFrenzy = isLastWave && timeRemaining <= 7000 && timeRemaining > 0;
         const effectiveSpawnRate = isFrenzy ? Math.round(wave.spawnRate / 2) : wave.spawnRate;
 
-        // Slow CVs for the first 8s after ghosts spawn, speed up for frenzy
+        // Slow CVs for 8s after ghosts spawn (4s at 165, 4s at 180), speed up for frenzy
         const enemiesAlive = this.scene.enemies ? this.scene.enemies.getChildren().filter(e => e.active && e.isAlive).length : 0;
-        const enemySlowWindow = this.enemiesSpawnedAt > 0 && (this.waveTimer - this.enemiesSpawnedAt) < 8000;
+        const timeSinceEnemies = this.enemiesSpawnedAt > 0 ? this.waveTimer - this.enemiesSpawnedAt : -1;
         let effectiveFallSpeed = wave.fallSpeed;
         if (isFrenzy) {
             effectiveFallSpeed = 270; // faster during frenzy
-        } else if (enemiesAlive > 0 && enemySlowWindow) {
-            effectiveFallSpeed = 165; // slower while fighting ghosts (first 8s only)
+        } else if (enemiesAlive > 0 && timeSinceEnemies >= 0 && timeSinceEnemies < 4000) {
+            effectiveFallSpeed = 165; // slowest phase (first 4s)
+        } else if (enemiesAlive > 0 && timeSinceEnemies >= 4000 && timeSinceEnemies < 8000) {
+            effectiveFallSpeed = 180; // ramp up (next 4s)
         }
 
         // Spawn CVs at rate
