@@ -54,9 +54,9 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.poweredByText = this.add.text(this.firstLogo.x - this.firstLogo.displayWidth - 4, subtitleY, 'by', {
             fontFamily: 'Roboto',
             fontSize: '13px',
-            color: CFG.COLORS.TEXT_SECONDARY,
+            color: '#FFFFFF',
             fontStyle: 'bold'
-        }).setOrigin(1, 0.5).setAlpha(0.4);
+        }).setOrigin(1, 0.5).setAlpha(0.5);
 
         // Form inputs — name & company side by side, type below
         const formHTML = '<div class="menu-form">' +
