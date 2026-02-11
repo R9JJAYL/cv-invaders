@@ -558,7 +558,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const shareBtn = this.add.text(btnSpacing, btnY, '[ SHARE SCORE ]', {
             ...btnStyle,
             color: '#0A66C2'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0.5).setDepth(100).setInteractive({ useHandCursor: true });
 
         shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
         shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
@@ -570,7 +570,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const demoBtn = this.add.text(btnSpacing * 2, btnY, '[ 6 MIN DEMO OF FIRST ]', {
             ...btnStyle,
             color: '#FFFFFF'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0.5).setDepth(100).setInteractive({ useHandCursor: true });
 
         demoBtn.on('pointerover', () => demoBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
         demoBtn.on('pointerout', () => demoBtn.setColor('#FFFFFF'));
@@ -582,7 +582,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const playBtn = this.add.text(btnSpacing * 3, btnY, '[ PLAY AGAIN ]', {
             ...btnStyle,
             color: CFG.COLORS.PURPLE_ACCENT_HEX
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        }).setOrigin(0.5).setDepth(100).setInteractive({ useHandCursor: true });
 
         playBtn.on('pointerover', () => playBtn.setColor('#FFFFFF'));
         playBtn.on('pointerout', () => playBtn.setColor(CFG.COLORS.PURPLE_ACCENT_HEX));
@@ -613,7 +613,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const crown = '<span class="stat-crown">👑</span>';
         const noCrown = '<span class="stat-crown" style="visibility:hidden">👑</span>';
 
-        const statsHTML = '<div class="menu-tables">' +
+        const statsHTML = '<div class="menu-tables" style="pointer-events: none;">' +
             '<div class="glass-pill combined-pill">' +
             '<div class="lb-title">LEADERBOARD</div>' +
             '<div class="stats-section">' +
