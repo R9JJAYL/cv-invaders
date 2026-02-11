@@ -182,20 +182,6 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             : 'Use ← → to move, SPACE to shoot';
         this.showAnnouncement(moveHint, 3000);
 
-        // "Press S to skip" hint (desktop only)
-        if (!isMobile) {
-            this.skipHint = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT - 20, 'Press S to skip intro', {
-                fontFamily: 'Roboto',
-                fontSize: '12px',
-                color: '#666666'
-            }).setOrigin(0.5).setDepth(50).setAlpha(0);
-            this.tweens.add({
-                targets: this.skipHint,
-                alpha: 0.6,
-                duration: 500,
-                delay: 1500
-            });
-        }
 
         // Start countdown immediately
         this.gameCountdownActive = true;
