@@ -106,6 +106,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.scene.launch('HUD');
 
         // Announcement text
+        this.announcementBg = this.add.graphics().setDepth(49).setAlpha(0);
         this.announcementText = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.75, '', {
             fontFamily: 'Courier New',
             fontSize: '24px',
@@ -802,15 +803,32 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     showAnnouncement(text, duration) {
+        const CFG = window.CVInvaders.Config;
         this.announcementText.setText(text);
+
+        // Measure text and draw background pill
+        const bounds = this.announcementText.getBounds();
+        const padX = 24;
+        const padY = 14;
+        const bgW = bounds.width + padX * 2;
+        const bgH = bounds.height + padY * 2;
+        const bgX = CFG.WIDTH / 2 - bgW / 2;
+        const bgY = bounds.y - padY;
+
+        this.announcementBg.clear();
+        this.announcementBg.fillStyle(0x000000, 0.65);
+        this.announcementBg.fillRoundedRect(bgX, bgY, bgW, bgH, 12);
+        this.announcementBg.lineStyle(1, 0x6B3FA0, 0.5);
+        this.announcementBg.strokeRoundedRect(bgX, bgY, bgW, bgH, 12);
+
         this.tweens.add({
-            targets: this.announcementText,
+            targets: [this.announcementText, this.announcementBg],
             alpha: 1,
             duration: 300,
             onComplete: () => {
                 this.time.delayedCall(duration, () => {
                     this.tweens.add({
-                        targets: this.announcementText,
+                        targets: [this.announcementText, this.announcementBg],
                         alpha: 0,
                         duration: 300
                     });
