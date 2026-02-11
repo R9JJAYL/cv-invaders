@@ -71,33 +71,33 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, MID-SCREEN) ==========
         var arrowY = CFG.HEIGHT / 2;
-        var arrowSize = 55;
+        var arrowSize = 40;
         var arrowGap = 20;
-        var rightCenter = CFG.WIDTH - 130;
+        var rightCenter = CFG.WIDTH - 110;
 
-        // Left arrow button
+        // Left arrow button (visual only — hitbox is full-height zone)
         var leftX = rightCenter - arrowSize - arrowGap / 2;
         this.leftArrowBg = this.add.circle(leftX, arrowY, arrowSize, 0x111111, 0.5)
             .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
-        leftArrow.fillTriangle(leftX - 18, arrowY, leftX + 12, arrowY - 18, leftX + 12, arrowY + 18);
+        leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
 
-        // Right arrow button
+        // Right arrow button (visual only — hitbox is full-height zone)
         var rightX = rightCenter + arrowSize + arrowGap / 2;
         this.rightArrowBg = this.add.circle(rightX, arrowY, arrowSize, 0x111111, 0.5)
             .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
-        rightArrow.fillTriangle(rightX + 18, arrowY, rightX - 12, arrowY - 18, rightX - 12, arrowY + 18);
+        rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);
 
         // ========== STATE ==========
+        // Hitbox: full-height rectangular zones on right half of screen
+        // Left zone: from _halfW to _splitX (full height)
+        // Right zone: from _splitX to screen edge (full height)
         this._shootHeld = false;
-        this._leftArrowX = rightCenter - arrowSize - arrowGap / 2;
-        this._rightArrowX = rightCenter + arrowSize + arrowGap / 2;
-        this._arrowY = arrowY;
-        this._arrowRadius = arrowSize;
         this._halfW = CFG.WIDTH / 2;
+        this._splitX = (leftX + rightX) / 2;
     }
 
     // ===== UPDATE — poll pointers directly & relay to ship =====
@@ -113,30 +113,22 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var shootHeld = false;
         var moveDir = 0; // -1 left, 0 none, 1 right
 
-        // Helper: check if pointer is within an arrow button
+        // Helper: check pointer zone — full-height hitboxes
         var self = this;
         function checkPointer(ptr) {
             if (!ptr || !ptr.isDown) return;
 
-            // Left half = shoot
+            // Left half of screen = shoot
             if (ptr.x < self._halfW) {
                 shootHeld = true;
                 return;
             }
 
-            // Right half = check arrow buttons
-            var dxL = ptr.x - self._leftArrowX;
-            var dyL = ptr.y - self._arrowY;
-            if (dxL * dxL + dyL * dyL <= self._arrowRadius * self._arrowRadius) {
+            // Right half — split into left-arrow zone and right-arrow zone
+            if (ptr.x < self._splitX) {
                 moveDir = -1;
-                return;
-            }
-
-            var dxR = ptr.x - self._rightArrowX;
-            var dyR = ptr.y - self._arrowY;
-            if (dxR * dxR + dyR * dyR <= self._arrowRadius * self._arrowRadius) {
+            } else {
                 moveDir = 1;
-                return;
             }
         }
 
