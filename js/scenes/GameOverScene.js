@@ -555,7 +555,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
         shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
         shareBtn.on('pointerdown', () => {
-            this.shareToLinkedIn(name, score, grade);
+            this.shareToLinkedIn(name, score, grade, playerType);
         });
 
         // Play Again (right)
@@ -755,11 +755,18 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return (window.CVInvaders._remoteScores || []).slice();
     }
 
-    shareToLinkedIn(name, score, grade) {
-        const shareText = name + ' scored ' + score +
-            ' points in CV Invaders and earned "' + grade.title +
-            '"! Can you beat the AI?\n\n' +
-            '#CVInvaders #Recruiting #TalentAcquisition';
+    shareToLinkedIn(name, score, grade, playerType) {
+        var teamName = playerType === 'agency' ? 'Agency' : playerType === 'internal' ? 'Internal' : '';
+        var teamLine = teamName ? 'I played for Team ' + teamName + ' and scored ' : 'I scored ';
+        var rivalLine = teamName ? (playerType === 'agency'
+            ? '\n\nTeam Agency or Team Internal? Back your side!'
+            : '\n\nTeam Internal or Team Agency? Back your side!') : '';
+
+        var shareText = teamLine + score +
+            ' on CV Invaders, earning the rank "' + grade.title +
+            '"! Can you beat the bots?' + rivalLine +
+            '\n\n' + window.location.href +
+            '\n\n#CVInvaders #Recruiting #TalentAcquisition';
 
         if (navigator.clipboard) {
             navigator.clipboard.writeText(shareText).then(() => {
@@ -767,9 +774,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         }
 
-        const url = encodeURIComponent(window.location.href);
+        var text = encodeURIComponent(shareText);
         window.open(
-            'https://www.linkedin.com/sharing/share-offsite/?url=' + url,
+            'https://www.linkedin.com/feed/?shareActive=true&text=' + text,
             '_blank'
         );
     }
