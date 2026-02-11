@@ -179,7 +179,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const isMobile = !this.sys.game.device.os.desktop;
         const moveHint = isMobile
             ? 'Press < > to move\nTap left side to shoot'
-            : 'Use ← → to move, SPACE to shoot';
+            : '← → to move, and SPACE to shoot';
         this.showAnnouncement(moveHint, 6000);
 
 

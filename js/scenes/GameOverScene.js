@@ -82,7 +82,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Stat pills — key product highlights
         const stats = [
             { val: '90%', label: 'less CV sift' },
-            { val: '3x', label: 'more roles handled' },
+            { val: '3x', label: 'role capacity' },
             { val: '4.6/5', label: 'candidate rating' }
         ];
         const statTexts = [];
@@ -662,7 +662,15 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        return this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
+        var domElement = this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
+        // Ensure the Phaser DOM wrapper doesn't block touch events on mobile
+        if (domElement.node && domElement.node.style) {
+            domElement.node.style.pointerEvents = 'none';
+        }
+        if (domElement.node && domElement.node.parentElement) {
+            domElement.node.parentElement.style.pointerEvents = 'none';
+        }
+        return domElement;
     }
 
     _showRank() {
