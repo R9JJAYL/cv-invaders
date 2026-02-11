@@ -210,15 +210,13 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // Hide the narrative text so it doesn't overlap
         this.narrativeText.setAlpha(0);
 
-        // Fade out SHOOT/CATCH examples when "1" appears
+        // Fade out SHOOT/CATCH labels immediately as "3" appears
         if (this.cvExamples) {
-            this.time.delayedCall(1800, () => {
-                this.tweens.add({
-                    targets: this.cvExamples,
-                    alpha: 0,
-                    duration: 500,
-                    ease: 'Power2'
-                });
+            this.tweens.add({
+                targets: this.cvExamples,
+                alpha: 0,
+                duration: 400,
+                ease: 'Power2'
             });
         }
 
