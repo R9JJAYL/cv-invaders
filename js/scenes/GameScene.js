@@ -178,7 +178,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Show movement hint — detect touch/mobile vs desktop
         const isMobile = !this.sys.game.device.os.desktop;
         const moveHint = isMobile
-            ? 'Use the joystick to move\nTap FIRE to shoot!'
+            ? 'Press < > to move\nTap left side to shoot'
             : 'Use ← → to move, SPACE to shoot';
         this.showAnnouncement(moveHint, 3000);
 
