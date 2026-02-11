@@ -44,14 +44,14 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         titleCV.setPosition(CFG.WIDTH / 2 - totalW / 2, 50 - titleCV.height / 2);
         titleInvaders.setPosition(titleCV.x + titleCV.width + gap, 50 - titleInvaders.height / 2);
 
-        // Subtitle — "brought to you by" + First logo + tagline
+        // Subtitle — "by" + First logo + tagline
         const subtitleY = 50 + titleCV.height / 2 + 8;
         const rightEdge = titleCV.x + totalW - 7;
         this.firstLogo = this.add.image(rightEdge, subtitleY, 'first-logo-small')
             .setOrigin(1, 0.5)
             .setScale(0.34)
             .setAlpha(0.5);
-        this.poweredByText = this.add.text(this.firstLogo.x - this.firstLogo.displayWidth - 4, subtitleY, 'brought to you by', {
+        this.poweredByText = this.add.text(this.firstLogo.x - this.firstLogo.displayWidth - 4, subtitleY, 'by', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: CFG.COLORS.TEXT_SECONDARY,
