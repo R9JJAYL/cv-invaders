@@ -24,7 +24,7 @@ window.CVInvaders.Dialogue = {
 
     BOSS: {
         ENTRANCE: 'We readvertised the job but\nwe\'re being attacked by bots. Stop them!',
-        PHASE2: 'You haven\'t even seen\nmy cover letters yet!',
+        PHASE2: 'ERROR 404: You haven\'t seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
 
