@@ -8,6 +8,7 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
         scene.physics.add.existing(this);
 
         this.setDepth(8);
+        this.setScale(1.75);
         this.body.setSize(26, 28);
         this.body.setOffset(7, 4);
         this.health = window.CVInvaders.Config.ENEMY_HEALTH;
@@ -97,7 +98,7 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
         this.health = window.CVInvaders.Config.ENEMY_HEALTH;
         this.isAlive = true;
         this.alpha = 1;
-        this.setScale(1);
+        this.setScale(1.75);
         this.direction = Math.random() > 0.5 ? 1 : -1;
         this.lastFired = 0;
     }

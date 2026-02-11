@@ -110,7 +110,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(divider);
 
         // Integrations label
-        const intLabel = this.add.text(cx, cy + 5, 'Plug into', {
+        const intLabel = this.add.text(cx, cy + 5, 'Plugs into', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: CFG.COLORS.TEXT_SECONDARY,

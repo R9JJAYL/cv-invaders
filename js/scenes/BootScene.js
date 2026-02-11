@@ -138,7 +138,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         ctx.drawImage(baseImg, 0, 0);
         const logoW = 30;
         const logoH = logoW * (logoImg.height / logoImg.width);
-        const logoY = 28;
+        const logoY = 24;
         ctx.globalAlpha = 0.55;
         ctx.drawImage(logoImg, cx - logoW / 2, logoY - logoH / 2, logoW, logoH);
         ctx.globalAlpha = 1;
@@ -218,12 +218,6 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         const g = this.add.graphics();
         // Ghost candidate — bright white sad ghost (ghosted candidates)
         // Canvas: 40x38
-
-        // Outer ethereal glow — makes it pop against dark bg
-        g.fillStyle(0xCCCCFF, 0.15);
-        g.fillCircle(20, 16, 19);
-        g.fillStyle(0xDDDDFF, 0.1);
-        g.fillCircle(20, 16, 17);
 
         // Ghost body — bright white, solid enough to read at small size
         g.fillStyle(0xEEEEFF, 0.9);

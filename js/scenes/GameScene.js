@@ -404,7 +404,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     // ===== CV SPAWNING =====
-    spawnCV(wave) {
+    spawnCV(wave, overrideFallSpeed) {
         const cv = this.cvs.getFirstDead(false);
         if (!cv) return;
 
@@ -412,7 +412,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(40, CFG.WIDTH - 40);
         const isGood = Math.random() < CFG.CV_GOOD_RATIO;
 
-        cv.spawn(x, -30, isGood, wave.fallSpeed, false);
+        cv.spawn(x, -30, isGood, overrideFallSpeed || wave.fallSpeed, false);
     }
 
     spawnUnicorn() {

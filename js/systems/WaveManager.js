@@ -81,6 +81,15 @@ window.CVInvaders.WaveManager = class WaveManager {
         const isFrenzy = isLastWave && timeRemaining <= 7000 && timeRemaining > 0;
         const effectiveSpawnRate = isFrenzy ? Math.round(wave.spawnRate / 2) : wave.spawnRate;
 
+        // Slow CVs when enemies are on screen, speed up for frenzy
+        const enemiesAlive = this.scene.enemies ? this.scene.enemies.getChildren().filter(e => e.active && e.isAlive).length : 0;
+        let effectiveFallSpeed = wave.fallSpeed;
+        if (isFrenzy) {
+            effectiveFallSpeed = wave.fallSpeed + 70; // faster during frenzy
+        } else if (enemiesAlive > 0) {
+            effectiveFallSpeed = 165; // slower while fighting ghosts
+        }
+
         // Spawn CVs at rate
         if (this.spawnTimer >= effectiveSpawnRate) {
             this.spawnTimer = 0;
@@ -88,7 +97,7 @@ window.CVInvaders.WaveManager = class WaveManager {
             const activeCVs = this.scene.cvs ? this.scene.cvs.countActive(true) : 0;
             const maxOnScreen = isFrenzy ? wave.maxOnScreen + 3 : wave.maxOnScreen;
             if (activeCVs < maxOnScreen) {
-                this.scene.spawnCV(wave);
+                this.scene.spawnCV(wave, effectiveFallSpeed);
             }
         }
 
