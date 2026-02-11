@@ -19,11 +19,11 @@ window.CVInvaders.Dialogue = {
     },
 
     HIRING_MANAGER: {
-        THREW_OUT: 'The hiring manager\nthrew out all the CVs!'
+        THREW_OUT: 'The damn hiring manager\nthrew out all the CVs!'
     },
 
     BOSS: {
-        ENTRANCE: 'The bots are attacking\nour job ad, stop them!',
+        ENTRANCE: 'The role\'s back online...\nthe bots are attacking it, stop them!',
         PHASE2: 'ERROR 404: You haven\'t seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
