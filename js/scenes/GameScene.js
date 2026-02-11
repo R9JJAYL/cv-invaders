@@ -344,8 +344,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     update(time, delta) {
         if (this.gameOver) return;
 
-        // Fire when shoot is pressed (spacebar on desktop, FIRE button on mobile)
-        if (this.ship.shootPressed && this.ship.fireBullet(time)) {
+        // Fire when shoot is pressed — blocked during boss entry/grace period
+        const canShoot = !(this.bossPhase && !this.bossSpawned);
+        if (canShoot && this.ship.shootPressed && this.ship.fireBullet(time)) {
             const bullet = this.bullets.getFirstDead(false);
             if (bullet) {
                 bullet.fire(this.ship.x, this.ship.y - 30);
