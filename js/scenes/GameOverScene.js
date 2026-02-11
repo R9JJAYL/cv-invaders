@@ -409,6 +409,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Stats — nested pill layout: outer container per CV type, inner capsules stacked
+        // Built hidden (alpha 0), faded in after the grade appears
         const goodHit = this.registry.get('goodCVsCaught') || 0;
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
@@ -426,7 +427,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const outerR = 12;
         const outerGap = 12;
 
-        const pillGfx = this.add.graphics();
+        const pillGfx = this.add.graphics().setAlpha(0);
+        const statElements = [pillGfx]; // track all elements for fade-in
 
         const cvGroups = [
             {
@@ -481,7 +483,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             pillGfx.strokeRoundedRect(ox + 1, outerTop + 1, gw.outerW - 2, outerH - 2, outerR - 1);
 
             // CV icon inside outer pill, vertically centred
-            this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(0.6).setAlpha(0.8);
+            var icon = this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(0.6).setAlpha(0);
+            statElements.push(icon);
 
             // Inner capsules — stacked vertically
             const innerX = ox + iconSpace + outerPad;
@@ -495,16 +498,31 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 pillGfx.fillRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
                 pillGfx.strokeRoundedRect(innerX, iy - innerH / 2, iw, innerH, innerR);
 
-                this.add.text(innerX + iw / 2, iy, stat.label, {
+                var statText = this.add.text(innerX + iw / 2, iy, stat.label, {
                     fontFamily: 'Roboto',
                     fontSize: '10px',
                     fontStyle: 'bold',
                     color: stat.hex,
                     resolution: 2
-                }).setOrigin(0.5);
+                }).setOrigin(0.5).setAlpha(0);
+                statElements.push(statText);
             });
 
             ox += gw.outerW + outerGap;
+        });
+
+        // Fade in CV stats after grade appears
+        this.time.delayedCall(scoreDelay + 2800, () => {
+            this.tweens.add({
+                targets: statElements,
+                alpha: function(target) {
+                    // Icons get 0.8, graphics get 1, text gets 1
+                    if (target.type === 'Image') return 0.8;
+                    return 1;
+                },
+                duration: 500,
+                ease: 'Power2'
+            });
         });
 
         // Leaderboard — show local+fake data immediately
