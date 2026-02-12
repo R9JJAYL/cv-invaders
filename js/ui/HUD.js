@@ -76,17 +76,25 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button (visual only — hitbox is full-height zone)
+        var btnSize = arrowSize * 2; // width & height of rounded square
+        var btnR = 12; // corner radius
         var leftX = rightCenter - arrowSize - arrowGap / 2;
-        this.leftArrowBg = this.add.circle(leftX, arrowY, arrowSize, 0x111111, 0.5)
-            .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
+        var leftBg = this.add.graphics().setDepth(200);
+        leftBg.fillStyle(0x111111, 0.5);
+        leftBg.fillRoundedRect(leftX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
+        leftBg.lineStyle(2, 0x00E5FF, 0.5);
+        leftBg.strokeRoundedRect(leftX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
         leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
 
         // Right arrow button (visual only — hitbox is full-height zone)
         var rightX = rightCenter + arrowSize + arrowGap / 2;
-        this.rightArrowBg = this.add.circle(rightX, arrowY, arrowSize, 0x111111, 0.5)
-            .setDepth(200).setStrokeStyle(2, 0x00E5FF, 0.5);
+        var rightBg = this.add.graphics().setDepth(200);
+        rightBg.fillStyle(0x111111, 0.5);
+        rightBg.fillRoundedRect(rightX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
+        rightBg.lineStyle(2, 0x00E5FF, 0.5);
+        rightBg.strokeRoundedRect(rightX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
         rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);

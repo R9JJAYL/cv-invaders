@@ -3,9 +3,8 @@
     "short_name": "CV Invaders",
     "start_url": "/",
     "display": "fullscreen",
-    "orientation": "landscape",
-    "background_color": "#0f0a1e",
-    "theme_color": "#0f0a1e",
+    "background_color": "#1a0a2e",
+    "theme_color": "#1a0a2e",
     "icons": [
         {
             "src": "assets/first-icon.png",
