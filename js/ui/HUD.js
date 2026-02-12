@@ -79,22 +79,18 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var btnSize = arrowSize * 2; // width & height of rounded square
         var btnR = 12; // corner radius
         var leftX = rightCenter - arrowSize - arrowGap / 2;
-        var leftBg = this.add.graphics().setDepth(200);
-        leftBg.fillStyle(0x111111, 0.5);
-        leftBg.fillRoundedRect(leftX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
-        leftBg.lineStyle(2, 0x00E5FF, 0.5);
-        leftBg.strokeRoundedRect(leftX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
+        this._leftBg = this.add.graphics().setDepth(200);
+        this._leftRect = { x: leftX - btnSize / 2, y: arrowY - btnSize / 2, w: btnSize, h: btnSize, r: btnR };
+        this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
         leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
 
         // Right arrow button (visual only — hitbox is full-height zone)
         var rightX = rightCenter + arrowSize + arrowGap / 2;
-        var rightBg = this.add.graphics().setDepth(200);
-        rightBg.fillStyle(0x111111, 0.5);
-        rightBg.fillRoundedRect(rightX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
-        rightBg.lineStyle(2, 0x00E5FF, 0.5);
-        rightBg.strokeRoundedRect(rightX - btnSize / 2, arrowY - btnSize / 2, btnSize, btnSize, btnR);
+        this._rightBg = this.add.graphics().setDepth(200);
+        this._rightRect = { x: rightX - btnSize / 2, y: arrowY - btnSize / 2, w: btnSize, h: btnSize, r: btnR };
+        this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
         rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);
@@ -146,13 +142,22 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         // Update shoot state
         this._shootHeld = shootHeld;
 
-        // Update arrow visual feedback
-        this.leftArrowBg.setFillStyle(0x333333, moveDir === -1 ? 0.7 : 0.4);
-        this.rightArrowBg.setFillStyle(0x333333, moveDir === 1 ? 0.7 : 0.4);
+        // Update arrow visual feedback (redraw graphics with highlight alpha)
+        this._drawBtnBg(this._leftBg, this._leftRect, moveDir === -1 ? 0.8 : 0.5);
+        this._drawBtnBg(this._rightBg, this._rightRect, moveDir === 1 ? 0.8 : 0.5);
 
         // Relay to ship — full speed in the pressed direction
         gameScene.ship.setMobileMovement(moveDir);
         gameScene.ship.setMobileShootPressed(this._shootHeld);
+    }
+
+    // ===== HELPER: redraw rounded-rect button background =====
+    _drawBtnBg(gfx, rect, fillAlpha) {
+        gfx.clear();
+        gfx.fillStyle(0x111111, fillAlpha);
+        gfx.fillRoundedRect(rect.x, rect.y, rect.w, rect.h, rect.r);
+        gfx.lineStyle(2, 0x00E5FF, 0.5);
+        gfx.strokeRoundedRect(rect.x, rect.y, rect.w, rect.h, rect.r);
     }
 
     // ===== EXISTING HUD METHODS =====
