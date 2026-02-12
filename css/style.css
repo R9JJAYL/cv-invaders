@@ -30,8 +30,11 @@ body {
     box-shadow: 0 0 40px rgba(107, 63, 160, 0.3);
 }
 
-/* Mobile landscape: fill viewport (game aspect ratio now matches device) */
+/* Mobile landscape: align to top so address bar doesn't clip the game */
 @media (max-width: 900px) and (pointer: coarse) and (orientation: landscape) {
+    body {
+        align-items: flex-start;
+    }
     #game {
         width: 100vw !important;
         height: 100dvh !important;

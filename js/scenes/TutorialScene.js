@@ -350,7 +350,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var catchLabel = this.add.text(goodX, cvY + 40, 'CATCH', {
+        var catchLabel = this.add.text(goodX, cvY + 40, 'PICK UP', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_GOOD_HEX,
