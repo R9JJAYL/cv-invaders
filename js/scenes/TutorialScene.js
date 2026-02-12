@@ -13,6 +13,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         // Normal viewport: 0 to CFG.HEIGHT (600)
         // ATS zone: CFG.HEIGHT to CFG.HEIGHT + 200
         const worldH = CFG.HEIGHT + 250;
+        this._wrapBuffer = CFG.HEIGHT + 20; // for starfield wrap in update()
 
         // Scrolling starfield — fill both normal + extended area
         this.stars = [];
@@ -525,7 +526,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
 
     update(time, delta) {
         if (this.stars) {
-            const wrapY = this.cameras.main.scrollY + 620;
+            const wrapY = this.cameras.main.scrollY + this._wrapBuffer;
             this.stars.forEach(s => {
                 s.sprite.y += s.speed * delta / 1000;
                 if (s.sprite.y > wrapY) s.sprite.y = this.cameras.main.scrollY - 10;

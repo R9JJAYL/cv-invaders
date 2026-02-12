@@ -10,10 +10,18 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh;
     overflow: hidden;
     font-family: 'Courier New', monospace;
     overscroll-behavior: none;
     touch-action: none;
+}
+
+/* Mobile: make body slightly taller so browser can scroll address bar away */
+@media (pointer: coarse) {
+    body {
+        min-height: calc(100vh + 1px);
+    }
 }
 
 #game {
@@ -22,12 +30,11 @@ body {
     box-shadow: 0 0 40px rgba(107, 63, 160, 0.3);
 }
 
-/* Mobile landscape: fit to viewport height, auto width */
+/* Mobile landscape: fill viewport (game aspect ratio now matches device) */
 @media (max-width: 900px) and (pointer: coarse) and (orientation: landscape) {
     #game {
-        height: 100vh !important;
+        width: 100vw !important;
         height: 100dvh !important;
-        width: auto !important;
         border-radius: 0;
         box-shadow: none;
     }

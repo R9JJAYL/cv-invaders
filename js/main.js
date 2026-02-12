@@ -3,6 +3,19 @@ window.CVInvaders = window.CVInvaders || {};
 window.addEventListener('load', function () {
     const CFG = window.CVInvaders.Config;
 
+    // Mobile: override HEIGHT to match device aspect ratio (wider & shorter)
+    // Desktop stays at 800x600. Phones get e.g. 800x370 for 16:9 screens.
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    if (isMobile) {
+        const minDim = Math.min(screen.width, screen.height);
+        const maxDim = Math.max(screen.width, screen.height);
+        const mobileHeight = Math.round(CFG.WIDTH * (minDim / maxDim));
+        // Only override if meaningfully different (skip near-4:3 tablets)
+        if (mobileHeight < CFG.HEIGHT - 20) {
+            CFG.HEIGHT = mobileHeight;
+        }
+    }
+
     const config = {
         type: Phaser.AUTO,
         width: CFG.WIDTH,
@@ -38,6 +51,15 @@ window.addEventListener('load', function () {
     };
 
     window.CVInvaders.game = new Phaser.Game(config);
+
+    // Hide mobile address bar on load and first touch
+    if (isMobile) {
+        setTimeout(function () { window.scrollTo(0, 1); }, 50);
+        document.addEventListener('touchstart', function hideBar() {
+            window.scrollTo(0, 1);
+            document.removeEventListener('touchstart', hideBar);
+        }, { once: true });
+    }
 
     // Force Phaser to recalculate scale on orientation change
     // Multiple refreshes with delays to handle mobile address bar retracting

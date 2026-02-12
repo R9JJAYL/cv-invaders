@@ -32,6 +32,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
         // Starfield
         this.stars = [];
+        this._wrapY = CFG.HEIGHT + 20; // for starfield wrap in update()
         for (let i = 0; i < 60; i++) {
             const star = this.add.image(
                 Phaser.Math.Between(0, CFG.WIDTH),
@@ -363,7 +364,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         // Starfield
         this.stars.forEach(s => {
             s.sprite.y += s.speed * delta / 1000;
-            if (s.sprite.y > 620) s.sprite.y = -10;
+            if (s.sprite.y > this._wrapY) s.sprite.y = -10;
         });
 
         // Auto-fire

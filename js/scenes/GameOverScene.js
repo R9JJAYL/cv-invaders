@@ -28,6 +28,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const adElements = [];
         const cx = CFG.WIDTH / 2;
         const cy = CFG.HEIGHT / 2;
+        const vScale = CFG.HEIGHT / 600; // vertical compression for mobile
 
         // Starfield
         for (let i = 0; i < 40; i++) {
@@ -60,7 +61,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Headline — the game tie-in
-        const headline = this.add.text(cx, cy - 200, 'Fighting off CVs feel familiar?', {
+        const headline = this.add.text(cx, cy - 200 * vScale, 'Fighting off CVs feel familiar?', {
             fontFamily: 'Orbitron',
             fontSize: '20px',
             color: '#FFFFFF',
@@ -70,7 +71,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(headline);
 
         // Tagline from First
-        const tagline = this.add.text(cx, cy - 155, 'Maybe it\'s time to swap CV sifting for candidate calls.', {
+        const tagline = this.add.text(cx, cy - 155 * vScale, 'Maybe it\'s time to swap CV sifting for candidate calls.', {
             fontFamily: 'Roboto',
             fontSize: '15px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
@@ -88,14 +89,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const statTexts = [];
         stats.forEach((stat, i) => {
             const sx = cx - 160 + i * 160;
-            const valText = this.add.text(sx, cy - 90, stat.val, {
+            const valText = this.add.text(sx, cy - 90 * vScale, stat.val, {
                 fontFamily: 'Orbitron',
                 fontSize: '24px',
                 color: '#FFFFFF',
                 fontStyle: 'bold',
                 resolution: 2
             }).setOrigin(0.5).setAlpha(0);
-            const labelText = this.add.text(sx, cy - 65, stat.label, {
+            const labelText = this.add.text(sx, cy - 65 * vScale, stat.label, {
                 fontFamily: 'Roboto',
                 fontSize: '11px',
                 color: CFG.COLORS.TEXT_SECONDARY,
@@ -106,11 +107,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Divider line
-        const divider = this.add.rectangle(cx, cy - 25, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
+        const divider = this.add.rectangle(cx, cy - 25 * vScale, 300, 1, 0x9B59B6, 0.3).setAlpha(0);
         adElements.push(divider);
 
         // Integrations label
-        const intLabel = this.add.text(cx, cy + 5, 'Plugs into', {
+        const intLabel = this.add.text(cx, cy + 5 * vScale, 'Plugs into', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: CFG.COLORS.TEXT_SECONDARY,
@@ -133,7 +134,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         adElements.push(intGfx);
 
         intNames.forEach((row, ri) => {
-            const rowY = cy + 32 + ri * 30;
+            const rowY = cy + (32 + ri * 30) * vScale;
             // Measure pill widths using a temp text to get width
             const tempTexts = row.map(name => {
                 const t = this.add.text(0, -100, name, {
@@ -181,7 +182,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
         const morePW = moreTmp.width + intPillPad * 2;
         moreTmp.destroy();
-        const moreY = cy + 32 + intNames.length * 30; // same row spacing as above
+        const moreY = cy + (32 + intNames.length * 30) * vScale; // same row spacing as above
         const morePillH = intPillH;
         const morePillR = morePillH / 2;
         // Shadow
@@ -203,14 +204,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         intPills.push(moreText);
 
         // First logo
-        const firstLogo = this.add.image(cx, cy + 180, 'first-logo')
+        const firstLogo = this.add.image(cx, cy + 180 * vScale, 'first-logo')
             .setOrigin(0.5)
             .setScale(0.03)
             .setAlpha(0);
         adElements.push(firstLogo);
 
         // CTA
-        const cta = this.add.text(cx, cy + 225, 'Where AI speed meets candidate experience.', {
+        const cta = this.add.text(cx, cy + 225 * vScale, 'Where AI speed meets candidate experience.', {
             fontFamily: 'Roboto',
             fontSize: '16px',
             fontStyle: 'italic',
@@ -225,7 +226,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.tweens.add({
             targets: headline,
             alpha: 1,
-            y: cy - 190,
+            y: cy - 190 * vScale,
             duration: 500,
             delay: 200,
             ease: 'Back.easeOut'
@@ -342,6 +343,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     showResults(CFG, yOff) {
         yOff = yOff || 0;
+        const vScale = CFG.HEIGHT / 600; // vertical compression for mobile
         const bossDefeated = this.registry.get('bossDefeated');
         const score = this.registry.get('score') || 0;
         const name = this.registry.get('playerName') || 'Recruiter';
@@ -414,7 +416,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = yOff + 110;
+        const statsY = yOff + Math.round(110 * vScale);
         const cx = CFG.WIDTH / 2;
 
         const innerH = 18;
@@ -545,7 +547,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Buttons — evenly spaced row: Share | Demo | Play Again
-        const btnY = yOff + 560;
+        const btnY = yOff + CFG.HEIGHT - 40;
         const btnStyle = {
             fontFamily: 'Courier New',
             fontSize: '13px',
@@ -662,7 +664,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        var domElement = this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
+        var vScale = CFG.HEIGHT / 600;
+        var domElement = this.add.dom(CFG.WIDTH / 2, yOff + Math.round(335 * vScale)).createFromHTML(statsHTML);
         // Ensure the Phaser DOM wrapper doesn't block touch events on mobile
         if (domElement.node && domElement.node.style) {
             domElement.node.style.pointerEvents = 'none';
