@@ -3,18 +3,7 @@ window.CVInvaders = window.CVInvaders || {};
 window.addEventListener('load', function () {
     const CFG = window.CVInvaders.Config;
 
-    // Mobile: override HEIGHT to match device aspect ratio (wider & shorter)
-    // Desktop stays at 800x600. Phones get e.g. 800x370 for 16:9 screens.
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
-    if (isMobile) {
-        const minDim = Math.min(screen.width, screen.height);
-        const maxDim = Math.max(screen.width, screen.height);
-        const mobileHeight = Math.round(CFG.WIDTH * (minDim / maxDim));
-        // Only override if meaningfully different (skip near-4:3 tablets)
-        if (mobileHeight < CFG.HEIGHT - 20) {
-            CFG.HEIGHT = mobileHeight;
-        }
-    }
 
     const config = {
         type: Phaser.AUTO,

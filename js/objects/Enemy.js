@@ -19,7 +19,7 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
         this.isAlive = true;
         this._stepDown = 30;    // pixels to drop on each wall hit
         this._edgePad = 30;     // wall margin
-        this._maxY = Math.round(window.CVInvaders.Config.HEIGHT * 0.667); // stop descending past this y
+        this._maxY = 400;       // stop descending past this y
 
         // Manual update since Image doesn't auto-call preUpdate
         scene.events.on('update', this._onUpdate, this);

@@ -71,10 +71,10 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<option value="other">Other</option>' +
             '</select>' +
             '</div>';
-        this.formInput = this.add.dom(CFG.WIDTH / 2, CFG.HEIGHT * 0.24).createFromHTML(formHTML);
+        this.formInput = this.add.dom(CFG.WIDTH / 2, 145).createFromHTML(formHTML);
 
         // Start button
-        this.startBtn = this.add.text(CFG.WIDTH / 2, CFG.HEIGHT * 0.355, '[ CLICK TO START MISSION ]', {
+        this.startBtn = this.add.text(CFG.WIDTH / 2, 213, '[ CLICK TO START MISSION ]', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
@@ -174,7 +174,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             }).join('') +
             '</tbody></table></div></div>';
 
-        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, CFG.HEIGHT * 0.7).createFromHTML(statsHTML);
+        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
     }
 
     renderLoadingState(CFG) {
@@ -183,7 +183,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<div class="lb-title">LEADERBOARD</div>' +
             '<div style="text-align:center;padding:30px 0;color:#AAAAAA;font-family:Courier New;font-size:14px;">Loading scores<span class="loading-spinner"></span></div>' +
             '</div></div>';
-        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, CFG.HEIGHT * 0.7).createFromHTML(loadingHTML);
+        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(loadingHTML);
     }
 
     fetchRemoteScores(CFG) {
