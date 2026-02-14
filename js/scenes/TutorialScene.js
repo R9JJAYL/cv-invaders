@@ -356,7 +356,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         var shootLabel = this.add.text(badX, cvY + 35, 'SHOOT', {
             fontFamily: 'Courier New',
             fontSize: '14px',
-            color: '#FFFFFF',
+            color: CFG.COLORS.CV_BAD_HEX,
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
@@ -370,7 +370,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         var catchLabel = this.add.text(goodX, cvY + 35, 'COLLECT', {
             fontFamily: 'Courier New',
             fontSize: '14px',
-            color: '#FFFFFF',
+            color: CFG.COLORS.CV_GOOD_HEX,
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
