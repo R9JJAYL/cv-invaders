@@ -203,7 +203,7 @@ body {
 }
 
 .agency-label { color: #9B59B6; }
-.internal-label { color: #00E5FF; opacity: 0.7; }
+.internal-label { color: #7EC8E3; }
 
 .stat-pills {
     display: flex;
@@ -232,7 +232,7 @@ body {
 }
 
 .stat-pill.internal-pill .stat-val {
-    color: #00E5FF;
+    color: #7EC8E3;
 }
 
 .stat-val {
@@ -309,7 +309,7 @@ body {
 .lb-cell.lb-company { opacity: 0.6; }
 .lb-cell.lb-type { opacity: 0.7; }
 .lb-cell.lb-type.type-agency { color: #9B59B6; }
-.lb-cell.lb-type.type-internal { color: #00E5FF; }
+.lb-cell.lb-type.type-internal { color: #7EC8E3; }
 .lb-cell.lb-type.type-other { color: #999999; }
 .lb-cell.lb-score { text-align: right; color: #FFFFFF; font-size: 12px; font-weight: 500; }
 
