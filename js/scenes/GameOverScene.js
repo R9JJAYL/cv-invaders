@@ -705,18 +705,25 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
      */
     shareScore(name, score, grade, playerType) {
         var gameUrl = window.location.href;
-        var shareText = 'I scored ' + score.toLocaleString() + ' on CV Invaders! Grade: ' + grade.grade + ' — ' + grade.title + '. Can you beat my score?';
+        var linkedInUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(gameUrl);
+        var self = this;
 
-        if (navigator.share) {
+        // Mobile: use the native share sheet if available
+        // Desktop: go straight to LinkedIn (navigator.share exists on desktop
+        // Chrome but often fails from non-standard gesture contexts like Phaser)
+        var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isMobile && navigator.share) {
+            var shareText = 'I scored ' + score.toLocaleString() + ' on CV Invaders! Grade: ' + grade.grade + ' — ' + grade.title + '. Can you beat my score?';
             navigator.share({
                 title: 'CV Invaders',
                 text: shareText,
                 url: gameUrl
             }).catch(function() {
-                // User cancelled or share failed — no action needed
+                // User cancelled or share failed — fall back to LinkedIn
+                self._openURL(linkedInUrl);
             });
         } else {
-            var linkedInUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(gameUrl);
             this._openURL(linkedInUrl);
         }
     }
