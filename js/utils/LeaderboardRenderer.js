@@ -52,7 +52,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-section">' +
             '<div class="stats-columns">' +
             '<div class="stats-team">' +
-            '<div class="team-label agency-label">AGENCY</div>' +
+            '<div class="team-label agency-label">AGENCY RECRUITERS</div>' +
             '<div class="stat-pills">' +
             '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
             '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
@@ -60,7 +60,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '</div></div>' +
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
-            '<div class="team-label internal-label">INTERNAL</div>' +
+            '<div class="team-label internal-label">INTERNAL RECRUITERS</div>' +
             '<div class="stat-pills">' +
             '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
             '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
