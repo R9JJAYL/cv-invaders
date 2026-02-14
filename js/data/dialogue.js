@@ -35,7 +35,7 @@ window.CVInvaders.Dialogue = {
     },
 
     BOSS: {
-        ENTRANCE: 'Uh oh...the bots are\nattacking our ad, stop them!',
+        ENTRANCE: 'Uh oh...a bot is\nattacking our ad, stop it!',
         PHASE2: 'ERROR 404: You haven\'t seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
