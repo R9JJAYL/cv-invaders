@@ -81,7 +81,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.formInput = this.add.dom(CFG.WIDTH / 2, 145).createFromHTML(formHTML);
 
         // Start button
-        this.startBtn = this.add.text(CFG.WIDTH / 2, 213, '[ CLICK TO START MISSION ]', {
+        this.startBtn = this.add.text(CFG.WIDTH / 2, 209, '[ CLICK TO START MISSION ]', {
             fontFamily: 'Courier New',
             fontSize: '22px',
             color: '#FFFFFF',
@@ -131,7 +131,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     /** Build leaderboard HTML tables (all-time + today) and inject into the DOM container. */
     renderTables(CFG, allScores) {
         this.leaderboardDom = window.CVInvaders.LeaderboardRenderer.renderTables(this, CFG, allScores, {
-            yPosition: 420
+            yPosition: 416
         });
     }
 
@@ -142,7 +142,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '<div class="lb-title">LEADERBOARD</div>' +
             '<div style="text-align:center;padding:30px 0;color:#AAAAAA;font-family:Courier New;font-size:14px;">Loading scores<span class="loading-spinner"></span></div>' +
             '</div></div>';
-        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(loadingHTML);
+        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 416).createFromHTML(loadingHTML);
     }
 
     /** Fetch leaderboard data from the remote API. Falls back to empty on error. */
