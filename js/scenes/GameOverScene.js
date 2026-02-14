@@ -757,11 +757,10 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Kill all running tweens (infinite logo/CTA pulses)
         this.tweens.killAll();
 
-        // Reset camera scroll so fade works from visible position
-        this.cameras.main.setScroll(0, 0);
-        this.cameras.main.fadeOut(400);
+        // Fade out from current position (don't scroll back to ad page)
+        this.cameras.main.fadeOut(600);
 
-        this.time.delayedCall(400, () => {
+        this.time.delayedCall(600, () => {
             // Reset game state but keep player info
             this.registry.set('score', 0);
             this.registry.set('health', CFG.PLAYER_HEALTH);
