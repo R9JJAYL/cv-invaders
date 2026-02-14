@@ -1,3 +1,14 @@
+/**
+ * Boss (AI Bot 9000) — Final encounter with two combat phases.
+ *
+ * Phase 1: Tracks the player horizontally with random offsets, spamming
+ *          CVs downward at BOSS_SPAM_RATE.
+ * Phase 2: Figure-8 movement pattern, fires direct bullets, and spawns
+ *          CVs. Lerps into the figure-8 to avoid a jarring snap.
+ *
+ * Entry animation: flies down from off-screen over `entryDuration` ms,
+ * then waits 1.5 s (grace period) before becoming damageable.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
@@ -85,7 +96,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         this.spamTimer += delta;
         if (this.spamTimer >= CFG.BOSS_SPAM_RATE) {
             this.spamTimer = 0;
-            this.scene.bossSpawnCV(this.x, this.y + 30, false);
+            this.scene.bossSpawnCV(this.x, this.y + 30);
         }
     }
 
@@ -99,12 +110,11 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         this.x += (targetX - this.x) * this._phase2Blend;
         this.y += (targetY - this.y) * this._phase2Blend;
 
-        // Spam disguised CVs
+        // Spam CVs
         this.spamTimer += delta;
         if (this.spamTimer >= CFG.BOSS_SPAM_RATE * 1.5) {
             this.spamTimer = 0;
-            const isDisguised = Math.random() < CFG.BOSS_DISGUISE_CHANCE;
-            this.scene.bossSpawnCV(this.x, this.y + 30, isDisguised);
+            this.scene.bossSpawnCV(this.x, this.y + 30);
         }
 
         // Direct bullet fire

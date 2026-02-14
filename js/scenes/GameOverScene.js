@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * GameOverScene — Two-screen results scene: ad page → score/leaderboard.
+ *
+ * After gameplay ends (win or lose), this scene first shows a branded ad
+ * page with animated stats, then scrolls to the results screen showing
+ * final score, grade, stats breakdown, and the leaderboard.
+ * Scores are saved to a remote Google Sheets API during the ad page.
+ */
 window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameOverScene' });
@@ -23,6 +31,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this.showResults(CFG, CFG.HEIGHT); // offset results one screen below
     }
 
+    /** Display the branded ad page with animated stat counters and integration pills. */
     showFirstAd(CFG) {
         this.cameras.main.setBackgroundColor(CFG.COLORS.BG_HEX);
         const adElements = [];
@@ -340,6 +349,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
     }
 
+    /** Build and animate the results screen: score, rank, grade, stats, and leaderboard. */
     showResults(CFG, yOff) {
         yOff = yOff || 0;
         const bossDefeated = this.registry.get('bossDefeated');
@@ -554,7 +564,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         };
         const btnSpacing = CFG.WIDTH / 4; // divide screen into 4 equal parts
 
-        // Share to LinkedIn (left)
+        // Share score (left)
         const shareBtn = this.add.text(btnSpacing, btnY, '[ SHARE SCORE ]', {
             ...btnStyle,
             color: '#0A66C2'
@@ -563,7 +573,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
         shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
         shareBtn.on('pointerdown', () => {
-            this.shareToLinkedIn(name, score, grade, playerType);
+            this.shareScore(name, score, grade, playerType);
         });
 
         // 6 Min Demo (center)
@@ -597,80 +607,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     }
 
+    /** Generate the leaderboard HTML tables (all-time and today) from the fetched scores. */
     renderTables(CFG, allScores, playerName, playerScore, yOff) {
-        yOff = yOff || 0;
-        const agency = allScores.filter(e => e.type === 'agency');
-        const internal = allScores.filter(e => e.type === 'internal');
-        const agencyTotal = agency.reduce((s, e) => s + e.score, 0);
-        const internalTotal = internal.reduce((s, e) => s + e.score, 0);
-        const agencyAvg = agency.length > 0 ? Math.round(agencyTotal / agency.length) : 0;
-        const internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
-        const fmt = (n) => n.toLocaleString();
-
-        const gamesWin = agency.length > internal.length ? 'agency' : internal.length > agency.length ? 'internal' : 'tie';
-        const totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
-        const avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
-        const crown = '<span class="stat-crown">👑</span>';
-        const noCrown = '<span class="stat-crown" style="visibility:hidden">👑</span>';
-
-        const statsHTML = '<div class="menu-tables" style="pointer-events: none;">' +
-            '<div class="glass-pill combined-pill">' +
-            '<div class="lb-title">LEADERBOARD</div>' +
-            '<div class="stats-section">' +
-            '<div class="stats-columns">' +
-            '<div class="stats-team">' +
-            '<div class="team-label agency-label">AGENCY</div>' +
-            '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
-            '</div></div>' +
-            '<div class="stats-vs">VS</div>' +
-            '<div class="stats-team">' +
-            '<div class="team-label internal-label">INTERNAL</div>' +
-            '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
-            '</div></div>' +
-            '</div></div>' +
-            '<div class="lb-divider"></div>' +
-            '<table class="leaderboard-table">' +
-            '<thead>' +
-            '<tr>' +
-            '<th class="lb-head lb-rank">#</th>' +
-            '<th class="lb-head lb-name">PLAYER</th>' +
-            '<th class="lb-head lb-company">COMPANY</th>' +
-            '<th class="lb-head lb-type">TEAM</th>' +
-            '<th class="lb-head lb-score">SCORE</th>' +
-            '</tr></thead><tbody>' +
-            allScores.slice(0, 10).map((entry, i) => {
-                const isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
-                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
-                const typeClass = entry.type === 'agency' ? 'type-agency' : '';
-                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
-                const podiumRow = i < 3 ? ' lb-podium' : '';
-                const rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
-                const displayName = isPlayer ? '▸ ' + entry.name : entry.name;
-                return '<tr class="' + rowClass + '">' +
-                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
-                    '<td class="lb-cell lb-name">' + displayName + '</td>' +
-                    '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
-                    '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
-                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
-                    '</tr>';
-            }).join('') +
-            '</tbody></table></div></div>';
-
-        var domElement = this.add.dom(CFG.WIDTH / 2, yOff + 335).createFromHTML(statsHTML);
-        // Ensure the Phaser DOM wrapper doesn't block touch events on mobile
-        if (domElement.node && domElement.node.style) {
-            domElement.node.style.pointerEvents = 'none';
-        }
-        if (domElement.node && domElement.node.parentElement) {
-            domElement.node.parentElement.style.pointerEvents = 'none';
-        }
-        return domElement;
+        return window.CVInvaders.LeaderboardRenderer.renderTables(this, CFG, allScores, {
+            playerName: playerName,
+            playerScore: playerScore,
+            yPosition: (yOff || 0) + 335,
+            disablePointerEvents: true
+        });
     }
 
     _showRank() {
@@ -710,6 +654,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return grades[grades.length - 1];
     }
 
+    /** POST the player's score to the remote leaderboard API, then fetch updated rankings. */
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
         // POST to Google Sheets API — response includes updated leaderboard
         if (CFG.LEADERBOARD_URL) {
@@ -753,11 +698,30 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return (window.CVInvaders._remoteScores || []).slice();
     }
 
-    shareToLinkedIn(name, score, grade, playerType) {
-        var url = encodeURIComponent(window.location.href);
-        this._openURL('https://www.linkedin.com/sharing/share-offsite/?url=' + url);
+    /**
+     * Share the player's score. On mobile, uses the native Web Share API
+     * (opens the OS share sheet — LinkedIn, WhatsApp, Messages, etc.).
+     * On desktop, falls back to LinkedIn's share-offsite URL.
+     */
+    shareScore(name, score, grade, playerType) {
+        var gameUrl = window.location.href;
+        var shareText = 'I scored ' + score.toLocaleString() + ' on CV Invaders! Grade: ' + grade.grade + ' — ' + grade.title + '. Can you beat my score?';
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'CV Invaders',
+                text: shareText,
+                url: gameUrl
+            }).catch(function() {
+                // User cancelled or share failed — no action needed
+            });
+        } else {
+            var linkedInUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(gameUrl);
+            this._openURL(linkedInUrl);
+        }
     }
 
+    /** Open a URL, using window.open with _blank. Works around mobile popup blockers. */
     _openURL(url) {
         // Use a hidden anchor element to open URLs — mobile browsers
         // block window.open() if it's not from a trusted user gesture,

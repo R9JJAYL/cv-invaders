@@ -1,15 +1,32 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * BootScene — Generates all game textures procedurally and preloads fonts.
+ *
+ * No external sprite sheets or image assets (apart from the First logo);
+ * every texture (ship, CVs, bullets, enemies, boss, unicorn, particles, UI)
+ * is drawn at runtime via the Phaser Graphics / Canvas API. This keeps the
+ * download tiny and avoids cross-origin / caching issues on mobile.
+ *
+ * After textures are ready the scene waits for Google Fonts to load, then
+ * transitions to MenuScene. A 3-second safety timeout prevents hanging if
+ * the font API stalls.
+ */
 window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
     constructor() {
         super({ key: 'BootScene' });
     }
 
+    /** Load the only external image assets (First company logos). */
     preload() {
         this.load.image('first-logo', 'assets/first-logo-white.png');
         this.load.image('first-logo-small', 'assets/first-logo-small.png');
     }
 
+    /**
+     * Generate every game texture, initialise the shared registry with
+     * default values, then wait for fonts before moving to the menu.
+     */
     create() {
         const CFG = window.CVInvaders.Config;
 
@@ -23,6 +40,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         this.generateUITextures(CFG);
         this.generateATSTexture(CFG);
 
+        // Shared registry — other scenes read/write these values
         this.registry.set('playerName', '');
         this.registry.set('score', 0);
         this.registry.set('health', CFG.PLAYER_HEALTH);
@@ -34,7 +52,9 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         this.registry.set('maxCombo', 0);
         this.registry.set('bossTime', 0);
 
-        // Wait for ALL Google Fonts to load before showing menu
+        // Wait for ALL Google Fonts to load before showing menu.
+        // The catch() fallback and 3s safety timeout both ensure we never
+        // get stuck if the font API hangs or rejects.
         Promise.all([
             document.fonts.load('16px "Press Start 2P"'),
             document.fonts.load('16px "Roboto"'),
@@ -42,10 +62,8 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         ]).then(() => {
             this.scene.start('MenuScene');
         }).catch(() => {
-            // Fallback — start anyway after timeout
             this.scene.start('MenuScene');
         });
-        // Safety timeout in case fonts API hangs
         this.time.delayedCall(3000, () => {
             if (this.scene.isActive('BootScene')) {
                 this.scene.start('MenuScene');
@@ -53,6 +71,12 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         });
     }
 
+    /**
+     * Draw the player ship — a retro B-2 stealth bomber silhouette with
+     * engine glow, wing highlights, cockpit, and catch-tray bars.
+     * The First company logo is composited on via a Canvas overlay at 55%
+     * opacity so it sits subtly on the fuselage.
+     */
     generateShipTexture(CFG) {
         const W = 100;
         const H = 46;
@@ -127,7 +151,9 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.generateTexture('ship-base', W, H);
         g.destroy();
 
-        // Composite First logo onto the centre fuselage
+        // Composite the First logo onto the centre fuselage.
+        // We need a raw Canvas pass because Phaser Graphics can't draw
+        // an existing image onto a generated texture directly.
         const baseTex = this.textures.get('ship-base');
         const baseImg = baseTex.getSourceImage();
         const logoImg = this.textures.get('first-logo').getSourceImage();
@@ -145,6 +171,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         this.textures.addCanvas('ship', canvas);
     }
 
+    /** Draw good (green) and bad (red) CV document sprites with dog-ear fold and faux text lines. */
     generateCVTextures(CFG) {
         // Good CV
         const good = this.add.graphics();
@@ -187,6 +214,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         bad.destroy();
     }
 
+    /** Draw player, enemy, and boss bullet sprites (cyan, red, bright-red). */
     generateBulletTextures(CFG) {
         // Player bullet
         const b = this.add.graphics();
@@ -214,6 +242,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         bb.destroy();
     }
 
+    /** Draw the ghost-candidate enemy — a sad white ghost (the candidates you ghosted). */
     generateEnemyTexture(CFG) {
         const g = this.add.graphics();
         // Ghost candidate — bright white sad ghost (ghosted candidates)
@@ -272,6 +301,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.destroy();
     }
 
+    /** Draw the AI Bot 9000 boss — a robot with antenna, red eyes, and screen mouth. */
     generateBossTexture(CFG) {
         const g = this.add.graphics();
 
@@ -317,6 +347,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.destroy();
     }
 
+    /** Draw the purple unicorn power-up — side-profile unicorn with rainbow mane, golden horn, and sparkles. */
     generateUnicornTexture(CFG) {
         const g = this.add.graphics();
         // Canvas: 40x44 — side-profile unicorn facing right
@@ -437,6 +468,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         g.destroy();
     }
 
+    /** Generate small particle textures used for explosions, starfield, and unicorn effects. */
     generateParticleTextures() {
         // White particle
         const p = this.add.graphics();
@@ -460,6 +492,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         pp.destroy();
     }
 
+    /** Generate HUD icons — health heart and ATS lock icon. */
     generateUITextures(CFG) {
         // Heart for health display
         const h = this.add.graphics();
@@ -488,6 +521,7 @@ window.CVInvaders.BootScene = class BootScene extends Phaser.Scene {
         lock.destroy();
     }
 
+    /** Draw the ATS server-rack building used in the tutorial cinematic background. */
     generateATSTexture(CFG) {
         const g = this.add.graphics();
 

@@ -1,3 +1,9 @@
+/**
+ * EnemyBullet — Enemy / boss projectile, object-pooled.
+ *
+ * Same pool pattern as Bullet but travels downward. Used by both
+ * ghost-candidate enemies and the AI Bot 9000 boss.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.EnemyBullet = class EnemyBullet extends Phaser.Physics.Arcade.Image {
@@ -13,6 +19,7 @@ window.CVInvaders.EnemyBullet = class EnemyBullet extends Phaser.Physics.Arcade.
         });
     }
 
+    /** Activate and launch downward from (x, y) at the given speed. */
     fire(x, y, speed) {
         this.setPosition(x, y);
         this.setActive(true);

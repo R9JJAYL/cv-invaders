@@ -1,5 +1,17 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * Dialogue — All in-game text strings, organised by when they appear.
+ *
+ * CINEMATIC  — Shown sequentially during the opening tutorial cinematic
+ *              (duration = display time in ms before auto-advancing).
+ * WAVES      — Banner text shown at the start of each wave (index matches wave number).
+ * ENEMIES    — Displayed when ghost-candidate enemies first appear (Wave 3).
+ * HIRING_MANAGER — Shown when the hiring manager event clears all CVs.
+ * BOSS       — Entrance, phase-2, and defeated lines for the AI Bot 9000.
+ * UNICORN    — Shown when the player first catches a purple unicorn power-up.
+ * GAME_OVER  — Win/lose messages displayed on the results screen.
+ */
 window.CVInvaders.Dialogue = {
     CINEMATIC: [
         { text: '[ ALERT ]\n\nINCOMING THREAT DETECTED', duration: 1800 },
@@ -23,13 +35,13 @@ window.CVInvaders.Dialogue = {
     },
 
     BOSS: {
-        ENTRANCE: 'The role\'s back online...\nbut the bots are attacking it, stop them!',
+        ENTRANCE: 'Uh oh...the bots are\nattacking our ad, stop them!',
         PHASE2: 'ERROR 404: You haven\'t seen\nmy cover letters yet!',
         DEFEATED: 'System... shutting... down...'
     },
 
     UNICORN: {
-        CAUGHT: 'Catch the unicorns,\nthey\'re worth 2x!'
+        CAUGHT: 'Collect purple unicorns,\nthey\'re worth 2x!'
     },
 
     GAME_OVER: {

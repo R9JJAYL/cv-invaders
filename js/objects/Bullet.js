@@ -1,3 +1,10 @@
+/**
+ * Bullet — Player projectile, object-pooled.
+ *
+ * Bullets are pre-created in a Phaser physics group and recycled via
+ * fire() / recycle() to avoid runtime allocation. They travel upward
+ * at BULLET_SPEED and auto-recycle when they leave the top of the screen.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.Bullet = class Bullet extends Phaser.Physics.Arcade.Image {
@@ -13,6 +20,7 @@ window.CVInvaders.Bullet = class Bullet extends Phaser.Physics.Arcade.Image {
         });
     }
 
+    /** Activate and launch upward from (x, y). */
     fire(x, y) {
         this.setPosition(x, y);
         this.setActive(true);
@@ -27,6 +35,7 @@ window.CVInvaders.Bullet = class Bullet extends Phaser.Physics.Arcade.Image {
         }
     }
 
+    /** Deactivate and return to the pool. */
     recycle() {
         this.setActive(false);
         this.setVisible(false);

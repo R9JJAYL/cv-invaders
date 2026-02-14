@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * SoundEngine — Procedural audio via the Web Audio API (no sound files).
+ *
+ * Every sound effect is synthesised at runtime using oscillators (sine,
+ * square, triangle, sawtooth) with frequency sweeps and volume envelopes.
+ * Background music is a layered drone + pentatonic arpeggio that shifts
+ * tempo to match gameplay intensity.
+ */
 window.CVInvaders.SoundEngine = class SoundEngine {
     constructor() {
         this.ctx = null;
@@ -31,6 +39,14 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         return this.muted;
     }
 
+    /**
+     * Play a single oscillator tone with an optional frequency sweep.
+     * @param {string} type - Oscillator waveform ('sine', 'square', 'triangle', 'sawtooth').
+     * @param {number} freq - Starting frequency in Hz.
+     * @param {number} duration - Length of the tone in seconds.
+     * @param {number} volume - Peak gain (0–1).
+     * @param {number} [freqEnd] - If provided, frequency sweeps linearly to this value in Hz.
+     */
     _play(type, freq, duration, volume, freqEnd) {
         if (this.muted || !this.ctx) return;
         try {
@@ -166,6 +182,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
     }
 
     // ===== BACKGROUND MUSIC =====
+    /** Start the background music layers (drone + arpeggio). */
     startMusic() {
         if (!this.ctx || this.musicPlaying) return;
         this.musicPlaying = true;
@@ -192,11 +209,13 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         }
     }
 
+    /** Adjust arpeggio tempo. 1.0 = normal, 1.3 = wave tension, 1.6 = boss fight. */
     setMusicTempo(tempo) {
         // tempo: 1.0 = normal, 1.3 = slightly faster, 1.6 = intense
         this.musicTempo = tempo;
     }
 
+    /** Start two slightly detuned sine oscillators for a warm ambient pad. */
     _startDrone() {
         if (!this.ctx) return;
         try {
@@ -231,6 +250,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         } catch (e) {}
     }
 
+    /** Schedule looping pentatonic note pattern. Uses E3 pentatonic scale for a spacey feel. */
     _startArpeggio() {
         if (!this.ctx || !this.musicPlaying || this._arpStopped) return;
 

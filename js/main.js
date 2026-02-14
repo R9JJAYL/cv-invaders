@@ -1,3 +1,10 @@
+/**
+ * main.js — Entry point: creates the Phaser game instance and handles
+ * mobile address-bar hiding.
+ *
+ * On mobile, three staggered scale-refresh timeouts (100/300/500 ms) work
+ * around browser layout timing quirks where the viewport isn't final at DOMContentLoaded.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.addEventListener('load', function () {

@@ -1,5 +1,17 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * BossScene — Standalone boss-fight scene.
+ *
+ * An alternative entry point for the boss encounter, separate from GameScene.
+ * Used when the boss fight is launched independently (e.g. from the debug
+ * shortcut). Contains its own starfield, object pools, collision setup, and
+ * score manager (restored from the registry so scores carry over).
+ *
+ * Much of the collision and pool logic mirrors GameScene; they are kept
+ * separate because BossScene omits waves/tutorial and uses different pool
+ * sizes tuned for the boss fight only.
+ */
 window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
     constructor() {
         super({ key: 'BossScene' });
@@ -117,14 +129,16 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.time.delayedCall(1000, () => this.spawnBoss());
     }
 
+    /**
+     * Register physics overlaps for bullets, CVs, and boss projectiles.
+     * Boss bullet-vs-boss overlap is added later in spawnBoss() once
+     * the entry animation completes.
+     */
     setupCollisions() {
-        // Player bullets hit boss
-        // (setup after boss spawns)
-
         // Player bullets hit boss CVs
         this.physics.add.overlap(this.bullets, this.cvs, (bullet, cv) => {
             if (!cv.active || !bullet.active) return;
-            if (cv.isGood && !cv.isDisguised) return;
+            if (cv.isGood) return;
 
             bullet.recycle();
             this.scoreManager.shootBadCV();
@@ -132,18 +146,13 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
             cv.recycle();
         }, null, this);
 
-        // Good/disguised CVs hit catch zone
+        // Good CVs caught by catch zone
         this.physics.add.overlap(this.ship.catchZone, this.cvs, (zone, cv) => {
             if (!cv.active) return;
 
-            if (cv.isGood && !cv.isDisguised) {
+            if (cv.isGood) {
                 this.scoreManager.catchGoodCV();
                 this.sound_engine.catchGoodCV();
-                cv.recycle();
-            } else if (cv.isDisguised) {
-                this.scoreManager.caughtDisguisedCV();
-                this.sound_engine.playerHit();
-                this.ship.takeDamage();
                 cv.recycle();
             }
         }, null, this);
@@ -151,7 +160,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         // Bad CVs hit ship
         this.physics.add.overlap(this.ship, this.cvs, (ship, cv) => {
             if (!cv.active || !this.ship.isAlive || this.ship.invincible) return;
-            if (cv.isGood && !cv.isDisguised) return;
+            if (cv.isGood) return;
 
             this.scoreManager.badCVHitsPlayer();
             this.sound_engine.playerHit();
@@ -171,6 +180,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         }, null, this);
     }
 
+    /** Create the boss, play entry animation, and enable combat once entry finishes. */
     spawnBoss() {
         const CFG = window.CVInvaders.Config;
 
@@ -215,13 +225,17 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         });
     }
 
-    bossSpawnCV(x, y, isDisguised) {
+    /**
+     * Spawn a CV from the boss's position (called by Boss during spam attacks).
+     * Always spawns red (bad) CVs — boss round is combat-only.
+     */
+    bossSpawnCV(x, y) {
         if (this.gameOver) return;
         const cv = this.cvs.getFirstDead(false);
         if (!cv) return;
 
         const spreadX = x + Phaser.Math.Between(-60, 60);
-        cv.spawn(spreadX, y, isDisguised, 160 + Phaser.Math.Between(0, 30), isDisguised);
+        cv.spawn(spreadX, y, false, 160 + Phaser.Math.Between(0, 30));
     }
 
     bossFire(x, y) {
@@ -233,43 +247,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
     }
 
     spawnHitMarker(x, y, isBoss) {
-        // Throttle: max one hit marker every 80ms to prevent graphics accumulation
-        var now = this.time.now;
-        if (this._lastHitMarkerTime && now - this._lastHitMarkerTime < 80) return;
-        this._lastHitMarkerTime = now;
-
-        const len = isBoss ? 14 : 10;
-        const gap = isBoss ? 5 : 4;
-        const thick = 2;
-        const color = 0xFFFFFF;
-        const lines = [];
-
-        // 4 lines forming an X centred on the hit target (CoD style)
-        const offsets = [
-            { x1: -gap, y1: -gap, x2: -gap - len, y2: -gap - len },
-            { x1: gap, y1: -gap, x2: gap + len, y2: -gap - len },
-            { x1: -gap, y1: gap, x2: -gap - len, y2: gap + len },
-            { x1: gap, y1: gap, x2: gap + len, y2: gap + len }
-        ];
-
-        for (const o of offsets) {
-            const g = this.add.graphics().setDepth(100);
-            g.lineStyle(thick, color, 1);
-            g.beginPath();
-            g.moveTo(x + o.x1, y + o.y1);
-            g.lineTo(x + o.x2, y + o.y2);
-            g.strokePath();
-            lines.push(g);
-        }
-
-        // Flash and fade out
-        this.tweens.add({
-            targets: lines,
-            alpha: 0,
-            duration: 150,
-            delay: 50,
-            onComplete: () => lines.forEach(l => l.destroy())
-        });
+        window.CVInvaders.CombatUtils.spawnHitMarker(this, x, y, isBoss);
     }
 
     showBossDialogue(text) {
@@ -291,10 +269,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
     }
 
     updateBossHealthBar(health, maxHealth) {
-        const hud = this.scene.get('HUD');
-        if (hud && hud.updateBossHealth) {
-            hud.updateBossHealth(health / maxHealth);
-        }
+        window.CVInvaders.CombatUtils.updateBossHealthBar(this, health, maxHealth);
     }
 
     onBossDefeated() {

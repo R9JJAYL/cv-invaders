@@ -1,3 +1,10 @@
+/**
+ * Config — Global runtime configuration for CV Invaders.
+ *
+ * All game constants (dimensions, speeds, scoring, colours, etc.) live here.
+ * Scenes read these values during create() so changes propagate everywhere.
+ * Wave durations sum to ~38 s; add the 7 s tutorial = 45 s before the boss.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.Config = {
@@ -7,7 +14,7 @@ window.CVInvaders.Config = {
     // Player
     PLAYER_SPEED: 330,
     PLAYER_HEALTH: 5,
-    FIRE_RATE: 212,
+    FIRE_RATE: 212, // ms between shots (lower = faster)
     BULLET_SPEED: 400,
     CATCH_ZONE_WIDTH: 60,
     CATCH_ZONE_UNICORN: 120,
@@ -58,7 +65,6 @@ window.CVInvaders.Config = {
     BOSS_PHASE2_THRESHOLD: 0.5,
     BOSS_SPAM_RATE: 1200,
     BOSS_BULLET_SPEED: 200,
-    BOSS_DISGUISE_CHANCE: 0.4,
 
     // Enemies
     ENEMY_HEALTH: 2,
@@ -76,7 +82,6 @@ window.CVInvaders.Config = {
         BOSS_HIT: 50,
         BOSS_KILL_MAX: 2500,
         BOSS_KILL_MIN: 1000,
-        CAUGHT_DISGUISED: -150,
         COMBO_THRESHOLDS: [
             { min: 30, multiplier: 4.0 },
             { min: 15, multiplier: 2.5 },

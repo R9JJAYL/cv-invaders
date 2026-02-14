@@ -1,10 +1,24 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * HUD — Persistent overlay scene for score, combo, countdown, and mobile controls.
+ *
+ * Launched alongside GameScene/BossScene and rendered on top of gameplay.
+ * On desktop it shows score, combo counter, countdown timer, and mute hint.
+ * On mobile it additionally draws touch controls: two rounded-square arrow
+ * buttons on the right half of the screen, with the left half acting as a
+ * shoot zone.
+ *
+ * Mobile input uses direct pointer polling (reading InputManager.pointers[]
+ * every frame) rather than scene input events, because Phaser's event
+ * propagation across parallel scenes prevents reliable two-finger input.
+ */
 window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     constructor() {
         super({ key: 'HUD', active: false });
     }
 
+    /** Set up all HUD text elements and, on mobile, the virtual touch controls. */
     create() {
         const CFG = window.CVInvaders.Config;
 
@@ -51,6 +65,12 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
                     yoyo: true
                 });
             }
+        });
+
+        // Clean up the global registry listener when this scene shuts down,
+        // otherwise it accumulates on each Play Again restart
+        this.events.once('shutdown', () => {
+            this.registry.events.off('changedata-score');
         });
 
         // Mobile virtual controls
@@ -151,7 +171,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         gameScene.ship.setMobileShootPressed(this._shootHeld);
     }
 
-    // ===== HELPER: redraw rounded-rect button background =====
+    /**
+     * Redraw a rounded-rect button background. Graphics objects must be
+     * cleared and redrawn each frame (unlike Phaser GameObjects which
+     * support setFillStyle).
+     * @param {Phaser.GameObjects.Graphics} gfx - The graphics object to draw into
+     * @param {Object} rect - { x, y, w, h, r } rectangle definition
+     * @param {number} fillAlpha - Fill opacity (0–1), raised when pressed
+     */
     _drawBtnBg(gfx, rect, fillAlpha) {
         gfx.clear();
         gfx.fillStyle(0x111111, fillAlpha);
@@ -160,7 +187,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         gfx.strokeRoundedRect(rect.x, rect.y, rect.w, rect.h, rect.r);
     }
 
-    // ===== EXISTING HUD METHODS =====
+    // ===== PUBLIC METHODS (called by GameScene / BossScene) =====
+
+    /** Update the combo display text with current multiplier. Animates on change. */
     updateCombo(combo) {
         if (combo > 1) {
             const multiplier = this.getMultiplierText(combo);
@@ -183,6 +212,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         }
     }
 
+    /** Look up the display multiplier string (e.g. "2x") for the current combo count. */
     getMultiplierText(combo) {
         const thresholds = window.CVInvaders.Config.SCORE.COMBO_THRESHOLDS;
         for (const t of thresholds) {
@@ -191,6 +221,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         return '1x';
     }
 
+    /** Show a floating +/- score number that drifts up and fades out. */
     showFloatingScore(x, y, points) {
         const color = points > 0 ? '#00FF00' : '#FF4444';
         const text = (points > 0 ? '+' : '') + points;
@@ -211,6 +242,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         });
     }
 
+    /** Update the countdown timer display. Colour shifts to yellow then red as time runs out. */
     updateCountdown(remainingMs) {
         if (remainingMs <= 0) {
             this.countdownText.setText('TIME REMAINING: 0s');
@@ -239,6 +271,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this.muteText.setText('[M] Sound: ' + (muted ? 'OFF' : 'ON'));
     }
 
+    /** Toggle the boss health bar (label + background + red fill bar). */
     showBossHealth(visible) {
         if (visible && !this.bossHealthBar) {
             this.bossLabel = this.add.text(window.CVInvaders.Config.WIDTH / 2, 45, 'AI BOT 9000', {
@@ -267,13 +300,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         }
     }
 
+    /** Resize the red health bar to reflect the boss's remaining HP (0–1). */
     updateBossHealth(ratio) {
         if (this.bossHealthBar) {
             this.bossHealthBar.setSize(300 * ratio, 10);
         }
     }
 
-    shutdown() {
-        this.registry.events.off('changedata-score');
-    }
 };

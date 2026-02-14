@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=35">
+    <link rel="stylesheet" href="css/style.css?v=36">
 </head>
 <body>
     <div id="game"></div>
@@ -28,35 +28,39 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 
     <!-- Config & Data -->
-    <script src="js/config.js?v=27"></script>
-    <script src="js/data/dialogue.js?v=27"></script>
+    <script src="js/config.js?v=29"></script>
+    <script src="js/data/dialogue.js?v=29"></script>
 
     <!-- Systems -->
-    <script src="js/systems/SoundEngine.js?v=5"></script>
-    <script src="js/systems/ScoreManager.js?v=6"></script>
-    <script src="js/systems/WaveManager.js?v=10"></script>
+    <script src="js/systems/SoundEngine.js?v=6"></script>
+    <script src="js/systems/ScoreManager.js?v=8"></script>
+    <script src="js/systems/WaveManager.js?v=12"></script>
 
     <!-- Objects -->
-    <script src="js/objects/Bullet.js?v=4"></script>
-    <script src="js/objects/EnemyBullet.js?v=4"></script>
-    <script src="js/objects/CV.js?v=5"></script>
-    <script src="js/objects/PlayerShip.js?v=11"></script>
-    <script src="js/objects/Enemy.js?v=10"></script>
-    <script src="js/objects/Boss.js?v=20"></script>
-    <script src="js/objects/PurpleUnicorn.js?v=3"></script>
+    <script src="js/objects/Bullet.js?v=5"></script>
+    <script src="js/objects/EnemyBullet.js?v=5"></script>
+    <script src="js/objects/CV.js?v=7"></script>
+    <script src="js/objects/PlayerShip.js?v=12"></script>
+    <script src="js/objects/Enemy.js?v=12"></script>
+    <script src="js/objects/Boss.js?v=23"></script>
+    <script src="js/objects/PurpleUnicorn.js?v=4"></script>
 
     <!-- UI -->
-    <script src="js/ui/HUD.js?v=29"></script>
+    <script src="js/ui/HUD.js?v=31"></script>
+
+    <!-- Utils (shared helpers, must load before scenes) -->
+    <script src="js/utils/CombatUtils.js?v=1"></script>
+    <script src="js/utils/LeaderboardRenderer.js?v=1"></script>
 
     <!-- Scenes -->
-    <script src="js/scenes/BootScene.js?v=25"></script>
-    <script src="js/scenes/MenuScene.js?v=70"></script>
-    <script src="js/scenes/TutorialScene.js?v=18"></script>
-    <script src="js/scenes/GameScene.js?v=73"></script>
-    <script src="js/scenes/BossScene.js?v=17"></script>
-    <script src="js/scenes/GameOverScene.js?v=87"></script>
+    <script src="js/scenes/BootScene.js?v=26"></script>
+    <script src="js/scenes/MenuScene.js?v=73"></script>
+    <script src="js/scenes/TutorialScene.js?v=19"></script>
+    <script src="js/scenes/GameScene.js?v=80"></script>
+    <script src="js/scenes/BossScene.js?v=22"></script>
+    <script src="js/scenes/GameOverScene.js?v=90"></script>
 
     <!-- Main (must be last) -->
-    <script src="js/main.js?v=10"></script>
+    <script src="js/main.js?v=11"></script>
 </body>
 </html>

@@ -1,3 +1,14 @@
+/**
+ * PlayerShip — Player-controlled ship with catch zone and dual-input support.
+ *
+ * On desktop: arrow keys to move, spacebar to shoot (one shot per press).
+ * On mobile: HUD scene polls touch pointers and calls setMobileMovement()
+ * and setMobileShootPressed() each frame.
+ *
+ * The catch zone is a narrow invisible rectangle above the ship that detects
+ * overlap with good CVs and unicorns. Catching a unicorn doubles its width
+ * temporarily.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Image {

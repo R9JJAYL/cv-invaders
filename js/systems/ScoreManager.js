@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * ScoreManager — Scoring, combo tracking, and grade calculation.
+ *
+ * Tracks all gameplay stats (CVs caught/shot/missed, enemies killed, combos)
+ * and applies score multipliers based on combo thresholds. The combo resets
+ * on any miss or bad-CV-hits-player event. Final grade is determined by
+ * total score against the GRADES thresholds in Config.
+ */
 window.CVInvaders.ScoreManager = class ScoreManager {
     constructor(scene) {
         this.scene = scene;
@@ -14,6 +22,7 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         this.enemiesDefeated = 0;
     }
 
+    /** Look up the score multiplier for the current combo count. */
     getMultiplier() {
         const thresholds = window.CVInvaders.Config.SCORE.COMBO_THRESHOLDS;
         for (const t of thresholds) {
@@ -22,6 +31,7 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         return 1.0;
     }
 
+    /** Add points (positive scores get the combo multiplier, negatives don't). */
     addScore(base) {
         const multiplier = base > 0 ? this.getMultiplier() : 1;
         const points = Math.round(base * multiplier);
@@ -101,6 +111,7 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         return this.addScore(window.CVInvaders.Config.SCORE.BOSS_HIT);
     }
 
+    /** Award boss kill bonus, scaled by how quickly the boss was defeated (instant = max, 30 s+ = min). */
     bossKill(bossTime) {
         // Scale boss bonus from 2500 (instant) to 1000 (30s+)
         // Linear interpolation based on boss fight duration
@@ -112,11 +123,6 @@ window.CVInvaders.ScoreManager = class ScoreManager {
         this.score += points;
         this.scene.registry.set('score', this.score);
         return points;
-    }
-
-    caughtDisguisedCV() {
-        this.trackMiss();
-        return this.addScore(window.CVInvaders.Config.SCORE.CAUGHT_DISGUISED);
     }
 
     getGrade() {

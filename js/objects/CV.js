@@ -1,10 +1,15 @@
+/**
+ * CV — Falling job application (CV / résumé), object-pooled.
+ *
+ * Can be good (green, should be caught) or bad (red, should be shot).
+ * Falls at a configurable speed with slight random drift and rotation.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
     constructor(scene, x, y) {
         super(scene, x, y, 'cv-good');
         this.isGood = true;
-        this.isDisguised = false;
         this.setActive(false);
         this.setVisible(false);
 
@@ -15,7 +20,14 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
         });
     }
 
-    spawn(x, y, isGood, fallSpeed, isDisguised) {
+    /**
+     * Activate a CV from the pool and send it falling.
+     * @param {number} x - Horizontal spawn position.
+     * @param {number} y - Vertical spawn position (usually just above the screen).
+     * @param {boolean} isGood - True for a good CV (should be caught).
+     * @param {number} fallSpeed - Downward velocity in px/s.
+     */
+    spawn(x, y, isGood, fallSpeed) {
         this.setPosition(x, y);
         this.setActive(true);
         this.setVisible(true);
@@ -23,26 +35,7 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
         this.alpha = 1;
 
         this.isGood = isGood;
-        this.isDisguised = isDisguised || false;
-
-        if (this.isDisguised) {
-            this.setTexture('cv-good');
-            // Shimmer effect as visual tell
-            if (this.shimmerTween) this.shimmerTween.remove();
-            this.shimmerTween = this.scene.tweens.add({
-                targets: this,
-                alpha: { from: 1, to: 0.6 },
-                duration: 300,
-                yoyo: true,
-                repeat: -1
-            });
-        } else {
-            this.setTexture(isGood ? 'cv-good' : 'cv-bad');
-            if (this.shimmerTween) {
-                this.shimmerTween.remove();
-                this.shimmerTween = null;
-            }
-        }
+        this.setTexture(isGood ? 'cv-good' : 'cv-bad');
 
         this.setVelocityY(fallSpeed);
         this.setVelocityX(Phaser.Math.Between(-15, 15));
@@ -57,22 +50,19 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
         }
     }
 
+    /** Handle a CV that fell off the bottom without being caught or shot. */
     handleMiss() {
         if (!this.active) return;
 
-        if (this.isGood && !this.isDisguised) {
+        if (this.isGood) {
             this.scene.onGoodCVMissed();
-        } else if (!this.isGood && !this.isDisguised) {
+        } else {
             this.scene.onBadCVReachedBottom();
         }
         this.recycle();
     }
 
     recycle() {
-        if (this.shimmerTween) {
-            this.shimmerTween.remove();
-            this.shimmerTween = null;
-        }
         this.setActive(false);
         this.setVisible(false);
         this.body.enable = false;

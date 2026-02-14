@@ -151,10 +151,6 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.glass-pill.stats-pill {
-    padding: 8px 24px;
-}
-
 .glass-pill.lb-pill {
     padding: 8px 16px 6px;
     width: 100%;

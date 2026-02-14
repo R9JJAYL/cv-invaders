@@ -1,5 +1,12 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * MenuScene — Title screen with player name/company input and leaderboard.
+ *
+ * Displays the game title, a name/company/type input form, a "START" button,
+ * and the top-10 leaderboard. Remote scores are fetched on load so the
+ * leaderboard is ready before the player finishes entering their details.
+ */
 window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MenuScene' });
@@ -109,74 +116,26 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         // Enter key to start
         this.input.keyboard.on('keydown-ENTER', () => this.startGame());
 
+        // Clean up DOM elements and timers when scene shuts down
+        this.events.once('shutdown', () => {
+            if (this._flashInterval) clearInterval(this._flashInterval);
+            if (this._flashTimeout) clearTimeout(this._flashTimeout);
+            if (this.leaderboardDom) {
+                this.leaderboardDom.destroy();
+                this.leaderboardDom = null;
+            }
+        });
+
     }
 
+    /** Build leaderboard HTML tables (all-time + today) and inject into the DOM container. */
     renderTables(CFG, allScores) {
-        const agency = allScores.filter(e => e.type === 'agency');
-        const internal = allScores.filter(e => e.type === 'internal');
-        const agencyTotal = agency.reduce((s, e) => s + e.score, 0);
-        const internalTotal = internal.reduce((s, e) => s + e.score, 0);
-        const agencyAvg = agency.length > 0 ? Math.round(agencyTotal / agency.length) : 0;
-        const internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
-        const fmt = (n) => n.toLocaleString();
-
-        // Determine crown winners for each stat
-        const gamesWin = agency.length > internal.length ? 'agency' : internal.length > agency.length ? 'internal' : 'tie';
-        const totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
-        const avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
-        const crown = '<span class="stat-crown">👑</span>';
-        const noCrown = '<span class="stat-crown" style="visibility:hidden">👑</span>';
-
-        // Combined stats + leaderboard (single glass pill)
-        const statsHTML = '<div class="menu-tables">' +
-            '<div class="glass-pill combined-pill">' +
-            '<div class="lb-title">LEADERBOARD</div>' +
-            '<div class="stats-section">' +
-            '<div class="stats-columns">' +
-            '<div class="stats-team">' +
-            '<div class="team-label agency-label">AGENCY</div>' +
-            '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Avg</div></div>' +
-            '</div></div>' +
-            '<div class="stats-vs">VS</div>' +
-            '<div class="stats-team">' +
-            '<div class="team-label internal-label">INTERNAL</div>' +
-            '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
-            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
-            '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Avg</div></div>' +
-            '</div></div>' +
-            '</div></div>' +
-            '<div class="lb-divider"></div>' +
-            '<table class="leaderboard-table">' +
-            '<thead>' +
-            '<tr>' +
-            '<th class="lb-head lb-rank">#</th>' +
-            '<th class="lb-head lb-name">PLAYER</th>' +
-            '<th class="lb-head lb-company">COMPANY</th>' +
-            '<th class="lb-head lb-type">TEAM</th>' +
-            '<th class="lb-head lb-score">SCORE</th>' +
-            '</tr></thead><tbody>' +
-            allScores.slice(0, 10).map((entry, i) => {
-                const typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
-                const typeClass = entry.type === 'agency' ? 'type-agency' : '';
-                const podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
-                const podiumRow = i < 3 ? ' lb-podium' : '';
-                return '<tr class="' + podiumRow + '">' +
-                    '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
-                    '<td class="lb-cell lb-name">' + entry.name + '</td>' +
-                    '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
-                    '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
-                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
-                    '</tr>';
-            }).join('') +
-            '</tbody></table></div></div>';
-
-        this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(statsHTML);
+        this.leaderboardDom = window.CVInvaders.LeaderboardRenderer.renderTables(this, CFG, allScores, {
+            yPosition: 420
+        });
     }
 
+    /** Show a loading spinner/text in the leaderboard container while scores are fetched. */
     renderLoadingState(CFG) {
         var loadingHTML = '<div class="menu-tables">' +
             '<div class="glass-pill combined-pill">' +
@@ -186,6 +145,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 420).createFromHTML(loadingHTML);
     }
 
+    /** Fetch leaderboard data from the remote API. Falls back to empty on error. */
     fetchRemoteScores(CFG) {
         if (!CFG.LEADERBOARD_URL) {
             // No API configured — show empty leaderboard
@@ -198,6 +158,8 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         fetch(url)
             .then(function(r) { return r.json(); })
             .then(function(data) {
+                // Guard: don't re-render if scene was shut down (player started game)
+                if (!self.scene || !self.scene.isActive()) return;
                 if (data && data.scores && data.scores.length > 0) {
                     window.CVInvaders._remoteScores = data.scores;
                 }
@@ -207,12 +169,15 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             })
             .catch(function(e) {
                 console.warn('Leaderboard fetch failed:', e);
+                // Guard: don't re-render if scene was shut down
+                if (!self.scene || !self.scene.isActive()) return;
                 // Fall back to fake data on error
                 if (self.leaderboardDom) self.leaderboardDom.destroy();
                 self.renderTables(CFG, self.getLeaderboard());
             });
     }
 
+    /** Validate form inputs and transition to TutorialScene if valid. */
     startGame() {
         const nameEl = this.formInput.getChildByID('playerName');
         const companyEl = this.formInput.getChildByID('companyName');

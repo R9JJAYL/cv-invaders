@@ -1,5 +1,24 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * GameScene — Main wave-based gameplay scene.
+ *
+ * Lifecycle: TutorialScene (cinematic) → GameScene (waves + boss)
+ *
+ * Runs a short tutorial practice period (7 s) then three timed waves of
+ * falling CVs and enemy spawns, managed by WaveManager. After all waves
+ * complete, transitions into a boss phase with a cinematic reveal.
+ *
+ * Uses object pools for bullets, CVs, and enemy bullets to avoid GC spikes.
+ * The HUD scene runs in parallel on top for score / combo / countdown UI.
+ *
+ * Key state flags:
+ *   tutorialPhase       — true during the 7 s tutorial practice
+ *   bossPhase           — true once all waves are done (boss cinematic + fight)
+ *   bossSpawned         — true once the boss entry animation finishes
+ *   gameCountdownActive — true while the wave countdown timer is ticking
+ *   gameOver            — true after win, lose, or time-up
+ */
 window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
@@ -119,48 +138,11 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        // Press S to skip tutorial intro and jump to Wave 1
-        this.input.keyboard.on('keydown-S', () => {
-            if (this.tutorialPhase && !this.gameOver) {
-                this.skipTutorial();
-            }
-        });
-
-        // Press B to skip straight to boss fight (debug)
-        this.input.keyboard.on('keydown-B', () => {
-            if (!this.bossPhase && !this.gameOver) {
-                // If still in tutorial, clean that up first
-                if (this.tutorialPhase) {
-                    if (this.tutorialSpawnTimer) {
-                        this.tutorialSpawnTimer.remove();
-                        this.tutorialSpawnTimer = null;
-                    }
-                    if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
-                    this.tutorialPhase = false;
-                    this.tutorialComplete = true;
-                }
-                // Cancel all pending timers (tutorial, wave announcements, etc.)
-                this.time.removeAllEvents();
-                // Clear any active CVs and enemies
-                this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
-                this.enemies.getChildren().forEach(e => { if (e.active) e.destroy(); });
-                // Clear announcement
-                this.announcementText.setAlpha(0);
-                this.waveManager.active = false;
-                // Reset score and go straight to boss
-                this.scoreManager.score = 0;
-                this.scoreManager.combo = 0;
-                this.scoreManager.maxCombo = 0;
-                this.scoreManager.goodCVsCaught = 0;
-                this.scoreManager.goodCVsMissed = 0;
-                this.scoreManager.badCVsShot = 0;
-                this.scoreManager.badCVsMissed = 0;
-                this.registry.set('score', 0);
-                this.bossPhase = true;
-                this.bossSpawned = true;
-                this.bossSpawnTimer = 0;
-                this.bossTimeRemaining = window.CVInvaders.Config.BOSS_TIMER;
-                this.spawnBoss();
+        // Clean up timers when this scene shuts down (Play Again restart)
+        this.events.once('shutdown', () => {
+            if (this.tutorialSpawnTimer) {
+                this.tutorialSpawnTimer.remove();
+                this.tutorialSpawnTimer = null;
             }
         });
 
@@ -201,35 +183,6 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
     }
 
-    skipTutorial() {
-        // Stop tutorial spawning
-        if (this.tutorialSpawnTimer) {
-            this.tutorialSpawnTimer.remove();
-            this.tutorialSpawnTimer = null;
-        }
-        // Cancel all pending tutorial timers
-        this.time.removeAllEvents();
-        // Clear any active CVs
-        this.cvs.getChildren().forEach(cv => { if (cv.active) cv.recycle(); });
-        // Clear announcement
-        this.announcementText.setAlpha(0);
-        // Remove skip hint
-        if (this.skipHint) { this.skipHint.destroy(); this.skipHint = null; }
-        // Reset score and start Wave 1
-        this.tutorialPhase = false;
-        this.tutorialComplete = true;
-        this.scoreManager.score = 0;
-        this.scoreManager.combo = 0;
-        this.scoreManager.maxCombo = 0;
-        this.scoreManager.goodCVsCaught = 0;
-        this.scoreManager.goodCVsMissed = 0;
-        this.scoreManager.badCVsShot = 0;
-        this.scoreManager.badCVsMissed = 0;
-        this.registry.set('score', 0);
-        this.waveManager.startWave(0);
-        this.gameCountdownActive = true;
-    }
-
     spawnTutorialCV() {
         const cv = this.cvs.getFirstDead(false);
         if (!cv) return;
@@ -238,7 +191,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(60, CFG.WIDTH - 60);
         const isGood = Math.random() < 0.4; // slightly more good CVs in tutorial
 
-        cv.spawn(x, -30, isGood, 130, false);
+        cv.spawn(x, -30, isGood, 130);
     }
 
     endTutorial() {
@@ -264,11 +217,15 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     // ===== COLLISIONS =====
+    /**
+     * Register all physics overlap handlers. Order matters — earlier overlaps
+     * are checked first, so bullet-vs-CV is tested before ship-vs-CV.
+     */
     setupCollisions() {
         // Player bullets hit bad CVs
         this.physics.add.overlap(this.bullets, this.cvs, (bullet, cv) => {
             if (!cv.active || !bullet.active) return;
-            if (cv.isGood && !cv.isDisguised) return; // bullets pass through good CVs
+            if (cv.isGood) return; // bullets pass through good CVs
 
             bullet.recycle();
             const points = this.scoreManager.shootBadCV();
@@ -281,16 +238,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.ship.catchZone, this.cvs, (zone, cv) => {
             if (!cv.active) return;
 
-            if (cv.isGood && !cv.isDisguised) {
+            if (cv.isGood) {
                 const points = this.scoreManager.catchGoodCV();
                 this.sound_engine.catchGoodCV();
                 this.showFloatingScore(cv.x, cv.y, points);
-                cv.recycle();
-            } else if (cv.isDisguised) {
-                const points = this.scoreManager.caughtDisguisedCV();
-                this.sound_engine.playerHit();
-                this.showFloatingScore(cv.x, cv.y, points);
-                this.ship.takeDamage();
                 cv.recycle();
             }
         }, null, this);
@@ -298,7 +249,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Bad CVs hit ship body
         this.physics.add.overlap(this.ship, this.cvs, (ship, cv) => {
             if (!cv.active || !this.ship.isAlive || this.ship.invincible) return;
-            if (cv.isGood && !cv.isDisguised) return; // good CVs don't damage ship
+            if (cv.isGood) return; // good CVs don't damage ship
 
             const points = this.scoreManager.badCVHitsPlayer();
             this.sound_engine.playerHit();
@@ -398,7 +349,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(40, CFG.WIDTH - 40);
         const isGood = Math.random() < CFG.CV_GOOD_RATIO;
 
-        cv.spawn(x, -30, isGood, overrideFallSpeed || wave.fallSpeed, false);
+        cv.spawn(x, -30, isGood, overrideFallSpeed || wave.fallSpeed);
     }
 
     spawnUnicorn() {
@@ -449,6 +400,13 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     // ===== BOSS PHASE =====
+    /**
+     * Kick off the boss-phase cinematic. Timeline:
+     *   0.5 s — CV burst animation (clear screen of enemies + CVs)
+     *   2.0 s — "Hiring manager threw out all the CVs!" dialogue
+     *   5.0 s — Boss entry starts (flies down, 2 s entry + 1.5 s grace period)
+     *   ~8.0 s — Boss vulnerable, timer + background CVs begin
+     */
     startBossPhase() {
         this.bossPhase = true;
         this.bossSpawned = false;
@@ -556,6 +514,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
     }
 
+    /** Instantiate the boss, play camera-pan reveal, and enable combat once entry completes. */
     spawnBoss() {
         const CFG = window.CVInvaders.Config;
         const DLG = window.CVInvaders.Dialogue;
@@ -648,6 +607,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
     }
 
+    /** Spawn ambient red CVs during the boss fight to keep the screen lively. */
     spawnBossBackgroundCV() {
         const cv = this.cvs.getFirstDead(false);
         if (!cv) return;
@@ -655,16 +615,20 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         const CFG = window.CVInvaders.Config;
         const x = Phaser.Math.Between(40, CFG.WIDTH - 40);
         // Boss phase only drops red (bad) CVs — the good ones were thrown out
-        cv.spawn(x, -30, false, 170, false);
+        cv.spawn(x, -30, false, 170);
     }
 
-    bossSpawnCV(x, y, isDisguised) {
+    /**
+     * Spawn a CV from the boss's position. Called by Boss during its spam
+     * attacks. Always spawns red (bad) CVs — boss round is combat-only.
+     */
+    bossSpawnCV(x, y) {
         if (this.gameOver) return;
         const cv = this.cvs.getFirstDead(false);
         if (!cv) return;
 
         const spreadX = x + Phaser.Math.Between(-60, 60);
-        cv.spawn(spreadX, y, isDisguised, 180 + Phaser.Math.Between(0, 80), isDisguised);
+        cv.spawn(spreadX, y, false, 180 + Phaser.Math.Between(0, 80));
     }
 
     bossFire(x, y) {
@@ -680,10 +644,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     }
 
     updateBossHealthBar(health, maxHealth) {
-        const hud = this.scene.get('HUD');
-        if (hud && hud.updateBossHealth) {
-            hud.updateBossHealth(health / maxHealth);
-        }
+        window.CVInvaders.CombatUtils.updateBossHealthBar(this, health, maxHealth);
     }
 
     onBossTimeUp() {
@@ -754,7 +715,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Show ATS lock icon
         const lock = this.add.image(x, y, 'ats-lock').setDepth(15);
-        const lockText = this.add.text(x, y + 15, 'ATS\'d', {
+        const lockText = this.add.text(x, y + 15, 'Replied', {
             fontFamily: 'Roboto',
             fontSize: '10px',
             color: '#888888'
@@ -799,44 +760,9 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         }
     }
 
+    /** Draw a brief CoD-style X hit-marker at the impact point. Throttled to one per 80 ms. */
     spawnHitMarker(x, y, isBoss) {
-        // Throttle: max one hit marker every 80ms to prevent graphics accumulation
-        var now = this.time.now;
-        if (this._lastHitMarkerTime && now - this._lastHitMarkerTime < 80) return;
-        this._lastHitMarkerTime = now;
-
-        const len = isBoss ? 14 : 10;
-        const gap = isBoss ? 5 : 4;
-        const thick = 2;
-        const color = 0xFFFFFF;
-        const lines = [];
-
-        // 4 lines forming an X centred on the hit target (CoD style)
-        const offsets = [
-            { x1: -gap, y1: -gap, x2: -gap - len, y2: -gap - len },
-            { x1: gap, y1: -gap, x2: gap + len, y2: -gap - len },
-            { x1: -gap, y1: gap, x2: -gap - len, y2: gap + len },
-            { x1: gap, y1: gap, x2: gap + len, y2: gap + len }
-        ];
-
-        for (const o of offsets) {
-            const g = this.add.graphics().setDepth(100);
-            g.lineStyle(thick, color, 1);
-            g.beginPath();
-            g.moveTo(x + o.x1, y + o.y1);
-            g.lineTo(x + o.x2, y + o.y2);
-            g.strokePath();
-            lines.push(g);
-        }
-
-        // Flash and fade out
-        this.tweens.add({
-            targets: lines,
-            alpha: 0,
-            duration: 150,
-            delay: 50,
-            onComplete: () => lines.forEach(l => l.destroy())
-        });
+        window.CVInvaders.CombatUtils.spawnHitMarker(this, x, y, isBoss);
     }
 
     showFloatingScore(x, y, points) {
@@ -846,6 +772,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         }
     }
 
+    /** Show a centred announcement banner with pill background. Auto-fades after `duration` ms. */
     showAnnouncement(text, duration) {
         const CFG = window.CVInvaders.Config;
         this.announcementText.setText(text);
@@ -905,14 +832,4 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
     }
 
-    shutdown() {
-        if (this.tutorialSpawnTimer) {
-            this.tutorialSpawnTimer.remove();
-            this.tutorialSpawnTimer = null;
-        }
-    }
-
-    stopStarfield() {
-        this.scene.stop('TutorialScene');
-    }
 };

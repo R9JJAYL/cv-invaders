@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * TutorialScene — Cinematic intro sequence and interactive controls demo.
+ *
+ * Plays an animated cinematic (starfield, ATS building reveal, ship launch)
+ * followed by an interactive demo that teaches the player how to move, shoot,
+ * catch good CVs, and avoid bad ones. Also serves as the persistent starfield
+ * background that runs behind GameScene during gameplay.
+ */
 window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
     constructor() {
         super({ key: 'TutorialScene' });
@@ -73,6 +81,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         this.runCinematic(DLG, CFG);
     }
 
+    /** Play the multi-beat intro animation: alert -> ATS reveal -> ship launch -> fade to demo. */
     runCinematic(DLG, CFG) {
         // Beat 1 (0.5s): [ ALERT ] in red, then INCOMING THREAT DETECTED in gold below
         this.time.delayedCall(500, () => {
@@ -314,6 +323,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         }
     }
 
+    /** Run the interactive demo: spawn labelled CVs, show control hints, then transition to GameScene. */
     playDemo(CFG) {
         var cx = CFG.WIDTH / 2;
         var shipY = CFG.HEIGHT - 50;
@@ -350,7 +360,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var catchLabel = this.add.text(goodX, cvY + 40, 'PICK UP', {
+        var catchLabel = this.add.text(goodX, cvY + 40, 'COLLECT', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_GOOD_HEX,
@@ -499,6 +509,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         });
     }
 
+    /** Fade out demo elements and launch GameScene on top of this (starfield continues). */
     transitionToGame() {
         if (this.threatText) {
             this.threatText.destroy();

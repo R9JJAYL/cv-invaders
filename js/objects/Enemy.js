@@ -1,3 +1,10 @@
+/**
+ * Enemy — Hostile ghost-candidate ship with Space Invaders-style patrol.
+ *
+ * Moves horizontally, bouncing off screen edges and stepping down each
+ * bounce. Fires enemy bullets at a configurable rate. Destroyed after
+ * taking ENEMY_HEALTH hits.
+ */
 window.CVInvaders = window.CVInvaders || {};
 
 window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
@@ -91,15 +98,5 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
                 this.destroy();
             }
         });
-    }
-
-    reset(x, y) {
-        this.setPosition(x, y);
-        this.health = window.CVInvaders.Config.ENEMY_HEALTH;
-        this.isAlive = true;
-        this.alpha = 1;
-        this.setScale(1.66);
-        this.direction = Math.random() > 0.5 ? 1 : -1;
-        this.lastFired = 0;
     }
 };

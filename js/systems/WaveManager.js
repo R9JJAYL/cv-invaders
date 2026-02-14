@@ -1,5 +1,13 @@
 window.CVInvaders = window.CVInvaders || {};
 
+/**
+ * WaveManager — Controls wave progression, CV spawn timing, and frenzy mode.
+ *
+ * Each wave has a duration, spawn rate, fall speed, and optional enemy/unicorn
+ * spawns. During the final seconds of a wave a "frenzy" kicks in with doubled
+ * spawn rate and faster fall speed. When all waves complete, signals GameScene
+ * to start the boss phase.
+ */
 window.CVInvaders.WaveManager = class WaveManager {
     constructor(scene) {
         this.scene = scene;
@@ -12,6 +20,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         this.enemiesSpawnedAt = 0;
     }
 
+    /** Begin the specified wave, spawning enemies and scheduling unicorns if configured. */
     startWave(index) {
         this.currentWave = index;
         this.waveTimer = 0;
@@ -31,22 +40,6 @@ window.CVInvaders.WaveManager = class WaveManager {
 
     getWaveConfig() {
         return window.CVInvaders.Config.WAVES[this.currentWave];
-    }
-
-    getTotalRemainingMs() {
-        const waves = window.CVInvaders.Config.WAVES;
-        if (!this.active) return 0;
-
-        // Remaining time in current wave
-        const currentWave = waves[this.currentWave];
-        let remaining = Math.max(0, currentWave.duration - this.waveTimer);
-
-        // Add full duration of all subsequent waves
-        for (let i = this.currentWave + 1; i < waves.length; i++) {
-            remaining += waves[i].duration;
-        }
-
-        return remaining;
     }
 
     advanceWave() {
@@ -70,6 +63,7 @@ window.CVInvaders.WaveManager = class WaveManager {
         return false;
     }
 
+    /** Tick the wave timer, spawn CVs at the configured rate, and detect wave/frenzy transitions. */
     update(delta) {
         if (!this.active) return null;
 
