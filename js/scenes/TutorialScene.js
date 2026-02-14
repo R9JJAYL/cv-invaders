@@ -352,15 +352,29 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             letterSpacing: 2
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        // Labels visible from the start alongside the CVs
-        var shootLabel = this.add.text(badX, cvY + 40, 'SHOOT RED', {
+        // Labels visible from the start alongside the CVs — action on top, colour below
+        var shootLabel = this.add.text(badX, cvY + 35, 'SHOOT', {
+            fontFamily: 'Courier New',
+            fontSize: '14px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+
+        var shootColor = this.add.text(badX, cvY + 53, 'RED', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_BAD_HEX,
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var catchLabel = this.add.text(goodX, cvY + 40, 'COLLECT GREEN', {
+        var catchLabel = this.add.text(goodX, cvY + 35, 'COLLECT', {
+            fontFamily: 'Courier New',
+            fontSize: '14px',
+            color: '#FFFFFF',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
+
+        var catchColor = this.add.text(goodX, cvY + 53, 'GREEN', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_GOOD_HEX,
@@ -368,11 +382,11 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
         // Track surviving elements for countdown fade-out cleanup
-        this.cvExamples = [rulesLabel, shootLabel, catchLabel];
+        this.cvExamples = [rulesLabel, shootLabel, shootColor, catchLabel, catchColor];
 
         // 0ms — Fade in CVs and labels together
         this.tweens.add({
-            targets: [badCV, goodCV, rulesLabel, shootLabel, catchLabel],
+            targets: [badCV, goodCV, rulesLabel, shootLabel, shootColor, catchLabel, catchColor],
             alpha: 1,
             duration: 300
         });
