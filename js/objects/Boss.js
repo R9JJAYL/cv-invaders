@@ -47,20 +47,20 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     _onUpdate(time, delta) {
-        if (this.isAlive && this.entryComplete) {
-            const CFG = window.CVInvaders.Config;
+        if (!this.isAlive || !this.entryComplete || this.scene.gameOver) return;
 
-            // Check phase transition (guard prevents re-entry)
-            if (this.phase === 1 && !this._enteringPhase2 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
-                this._enteringPhase2 = true;
-                this.enterPhase2();
-            }
+        const CFG = window.CVInvaders.Config;
 
-            if (this.phase === 1) {
-                this.updatePhase1(time, delta, CFG);
-            } else {
-                this.updatePhase2(time, delta, CFG);
-            }
+        // Check phase transition (guard prevents re-entry)
+        if (this.phase === 1 && !this._enteringPhase2 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
+            this._enteringPhase2 = true;
+            this.enterPhase2();
+        }
+
+        if (this.phase === 1) {
+            this.updatePhase1(time, delta, CFG);
+        } else {
+            this.updatePhase2(time, delta, CFG);
         }
 
         // Sync physics body to display position
@@ -142,7 +142,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     takeDamage() {
-        if (!this.isAlive || !this.entryComplete) return false;
+        if (!this.isAlive || !this.entryComplete || this.scene.gameOver) return false;
 
         this.health--;
 
@@ -166,6 +166,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     die() {
+        if (!this.isAlive) return; // prevent double-death from multiple bullets in same frame
         this.isAlive = false;
         this.body.enable = false;
 
