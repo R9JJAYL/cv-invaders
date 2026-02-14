@@ -80,7 +80,7 @@ window.CVInvaders.LeaderboardRenderer = {
             allScores.slice(0, 10).map(function(entry, i) {
                 var isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
                 var typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
-                var typeClass = entry.type === 'agency' ? 'type-agency' : '';
+                var typeClass = entry.type === 'agency' ? 'type-agency' : entry.type === 'internal' ? 'type-internal' : 'type-other';
                 var podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
                 var podiumRow = i < 3 ? ' lb-podium' : '';
                 var rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
