@@ -573,7 +573,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         shareBtn.on('pointerover', () => shareBtn.setColor('#FFFFFF'));
         shareBtn.on('pointerout', () => shareBtn.setColor('#0A66C2'));
         shareBtn.on('pointerdown', () => {
-            this.shareScore(name, score, grade, playerType);
+            var url = encodeURIComponent(window.location.href);
+            this._openURL('https://www.linkedin.com/sharing/share-offsite/?url=' + url);
         });
 
         // 6 Min Demo (center)
