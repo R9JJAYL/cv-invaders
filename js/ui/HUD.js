@@ -124,16 +124,16 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         rightPanel.lineStyle(1, 0x9B59B6, 0.15);
         rightPanel.lineBetween(rightPanelX, 0, rightPanelX, gameH);
 
-        // Arrow buttons inside right panel
-        var btnGap = 12;
-        var btnW = (sideW - btnGap * 3) / 2; // two buttons with gaps
-        btnW = Math.min(btnW, 100);           // cap button width
-        var btnH = gameH * 0.6;               // tall buttons for easy tapping
+        // Arrow buttons — fill as much of the panel as possible
+        var btnPad = 8;                        // padding from panel edges
+        var btnGap = 8;                        // gap between the two buttons
+        var btnW = (sideW - btnPad * 2 - btnGap) / 2;  // fill width minus padding & gap
+        var btnH = gameH - btnPad * 2;         // full height minus top/bottom padding
         var btnR = 10;
-        var btnY = gameH / 2;                 // vertically centred
+        var btnY = gameH / 2;                  // vertically centred
 
         // Left arrow button
-        var leftBtnX = rightPanelX + sideW / 2 - btnGap / 2 - btnW / 2;
+        var leftBtnX = rightPanelX + btnPad + btnW / 2;
         this._leftBg = this.add.graphics().setDepth(200);
         this._leftRect = { x: leftBtnX - btnW / 2, y: btnY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
@@ -142,7 +142,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         leftArrow.fillTriangle(leftBtnX - 12, btnY, leftBtnX + 8, btnY - 14, leftBtnX + 8, btnY + 14);
 
         // Right arrow button
-        var rightBtnX = rightPanelX + sideW / 2 + btnGap / 2 + btnW / 2;
+        var rightBtnX = rightPanelX + sideW - btnPad - btnW / 2;
         this._rightBg = this.add.graphics().setDepth(200);
         this._rightRect = { x: rightBtnX - btnW / 2, y: btnY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
