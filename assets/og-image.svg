@@ -145,11 +145,11 @@
   <text x="600" y="50" font-family="Roboto, sans-serif" font-size="18" font-weight="bold" fill="#9B59B6" text-anchor="middle">TIME REMAINING: 28s</text>
 
   <!-- ===== TITLE ===== -->
-  <text x="600" y="530" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
-  <text x="600" y="575" font-family="Roboto, sans-serif" font-size="22" fill="#BB8FCE" text-anchor="middle" letter-spacing="4">CAN YOU SORT THE GOOD FROM THE BAD?</text>
+  <text x="600" y="520" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
+  <text x="600" y="585" font-family="Roboto, sans-serif" font-size="32" fill="#BB8FCE" text-anchor="middle" letter-spacing="3" font-weight="bold">CAN YOU SORT THE GOOD FROM THE BAD?</text>
 
-  <!-- ===== GHOST ENEMY 1 (top-left area) ===== -->
-  <g transform="translate(130, 160)">
+  <!-- ===== GHOST ENEMY 1 (left area) ===== -->
+  <g transform="translate(280, 160)">
     <!-- Ghost body -->
     <ellipse cx="0" cy="-6" rx="18" ry="16" fill="#EEEEEF" opacity="0.9"/>
     <rect x="-18" y="-6" width="36" height="20" fill="#EEEEEF" opacity="0.9"/>
@@ -164,8 +164,8 @@
     <path d="M-5,8 Q0,4 5,8" stroke="#9999BB" stroke-width="1.5" fill="none" opacity="0.8"/>
   </g>
 
-  <!-- ===== GHOST ENEMY 2 (right side, lower) ===== -->
-  <g transform="translate(1060, 200)">
+  <!-- ===== GHOST ENEMY 2 (right area) ===== -->
+  <g transform="translate(920, 200)">
     <!-- Ghost body -->
     <ellipse cx="0" cy="-6" rx="18" ry="16" fill="#EEEEEF" opacity="0.9"/>
     <rect x="-18" y="-6" width="36" height="20" fill="#EEEEEF" opacity="0.9"/>
