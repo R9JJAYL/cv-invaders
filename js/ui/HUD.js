@@ -89,12 +89,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
         var barH = CFG.MOBILE_CONTROLS_HEIGHT;
+        var safeBottom = CFG.MOBILE_SAFE_BOTTOM || 0;
         var barY = CFG.HEIGHT; // top of controls bar (below gameplay area)
 
         // ========== CONTROLS BAR BACKGROUND ==========
+        // Extends through safe-bottom zone so the whole area is themed purple
         var barBg = this.add.graphics().setDepth(199);
         barBg.fillStyle(0x1a0a2e, 0.85);
-        barBg.fillRect(0, barY, CFG.WIDTH, barH);
+        barBg.fillRect(0, barY, CFG.WIDTH, barH + safeBottom);
         // Subtle divider line at top of bar
         barBg.lineStyle(1, 0x9B59B6, 0.15);
         barBg.lineBetween(0, barY, CFG.WIDTH, barY);

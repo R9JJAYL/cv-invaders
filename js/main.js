@@ -12,8 +12,8 @@ window.addEventListener('load', function () {
 
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
-    // On mobile, add extra height for a dedicated controls bar below gameplay
-    var gameHeight = isMobile ? CFG.HEIGHT + CFG.MOBILE_CONTROLS_HEIGHT : CFG.HEIGHT;
+    // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)
+    var gameHeight = isMobile ? CFG.HEIGHT + CFG.MOBILE_CONTROLS_HEIGHT + (CFG.MOBILE_SAFE_BOTTOM || 0) : CFG.HEIGHT;
 
     const config = {
         type: Phaser.AUTO,
