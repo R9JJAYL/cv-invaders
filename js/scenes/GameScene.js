@@ -66,6 +66,11 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0)');
         this.cameras.main.transparent = true;
 
+        // On mobile, clip camera to gameplay area (above the controls bar)
+        if (!this.sys.game.device.os.desktop) {
+            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+        }
+
         // Allow camera to pan upward for boss reveal
         this.cameras.main.setBounds(0, -300, CFG.WIDTH, CFG.HEIGHT + 300);
 

@@ -15,6 +15,11 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     create() {
         const CFG = window.CVInvaders.Config;
 
+        // On mobile, clip camera to gameplay area (above the controls bar)
+        if (!this.sys.game.device.os.desktop) {
+            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+        }
+
         // Background starfield
         for (let i = 0; i < 40; i++) {
             this.add.image(

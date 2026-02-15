@@ -25,6 +25,11 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const playerGrade = this.getGrade(playerScore).grade;
         this.saveScoreAndFetch(playerName, playerScore, playerGrade, playerCompany, playerType, CFG);
 
+        // On mobile, clip camera to gameplay area (above the controls bar)
+        if (!this.sys.game.device.os.desktop) {
+            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+        }
+
         // Build both screens: ad at top, results below
         // Then scroll down to reveal results like a page scroll
         this.showFirstAd(CFG);

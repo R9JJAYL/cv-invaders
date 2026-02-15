@@ -42,6 +42,11 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
             if (hud && hud.updateMuteText) hud.updateMuteText(muted);
         });
 
+        // On mobile, clip camera to gameplay area (above the controls bar)
+        if (!this.sys.game.device.os.desktop) {
+            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+        }
+
         // Starfield
         this.stars = [];
         this._wrapY = CFG.HEIGHT + 20; // for starfield wrap in update()

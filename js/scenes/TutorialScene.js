@@ -55,6 +55,11 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
+        // On mobile, clip camera to gameplay area (above the controls bar)
+        if (!this.sys.game.device.os.desktop) {
+            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+        }
+
         // Set camera bounds to allow panning down
         this.cameras.main.setBounds(0, 0, CFG.WIDTH, worldH);
 
