@@ -93,10 +93,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== CONTROLS BAR BACKGROUND ==========
         var barBg = this.add.graphics().setDepth(199);
-        barBg.fillStyle(0x000000, 1);
+        barBg.fillStyle(0x1a0a2e, 0.85);
         barBg.fillRect(0, barY, CFG.WIDTH, barH);
         // Subtle divider line at top of bar
-        barBg.lineStyle(1, 0x9B59B6, 0.3);
+        barBg.lineStyle(1, 0x9B59B6, 0.15);
         barBg.lineBetween(0, barY, CFG.WIDTH, barY);
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, INSIDE BAR) ==========
@@ -201,9 +201,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
      */
     _drawBtnBg(gfx, rect, fillAlpha) {
         gfx.clear();
-        gfx.fillStyle(0x111111, fillAlpha);
+        gfx.fillStyle(0x2d1450, fillAlpha);
         gfx.fillRoundedRect(rect.x, rect.y, rect.w, rect.h, rect.r);
-        gfx.lineStyle(2, 0x00E5FF, 0.5);
+        gfx.lineStyle(1, 0x9B59B6, 0.35);
         gfx.strokeRoundedRect(rect.x, rect.y, rect.w, rect.h, rect.r);
     }
 
