@@ -138,9 +138,26 @@ window.addEventListener('load', function () {
             window.addEventListener('resize', refreshScale);
         }
 
-        // Orientation change needs a delayed refresh for layout to finalise
+        // Orientation change needs aggressive re-measurement because the
+        // viewport dimensions are unreliable for the first few hundred ms
+        // after rotation.  We fire applyViewportSize at staggered intervals
+        // and reset the lastWidth/lastHeight so the keyboard-detection
+        // heuristic doesn't accidentally suppress the resize.
         window.addEventListener('orientationchange', function () {
-            setTimeout(refreshScale, 300);
+            if (typeof applyViewportSize === 'function') {
+                // Reset so the keyboard-guard doesn't suppress the new size
+                lastWidth = 0;
+                lastHeight = 0;
+                // Staggered calls — the viewport settles at different speeds
+                // across devices / browsers
+                setTimeout(applyViewportSize, 100);
+                setTimeout(applyViewportSize, 300);
+                setTimeout(applyViewportSize, 600);
+                setTimeout(applyViewportSize, 1000);
+            } else {
+                // Fallback — no visualViewport, just refresh Phaser scale
+                setTimeout(refreshScale, 300);
+            }
         });
 
         // Android Chrome: request fullscreen on first interaction
