@@ -88,37 +88,57 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     // that prevent simultaneous two-finger input.
     createMobileControls() {
         var CFG = window.CVInvaders.Config;
+        var barH = CFG.MOBILE_CONTROLS_HEIGHT;
+        var barY = CFG.HEIGHT; // top of controls bar (below gameplay area)
 
-        // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, MID-SCREEN) ==========
-        var arrowY = CFG.HEIGHT / 2;
-        var arrowSize = 40;
-        var arrowGap = 20;
+        // ========== CONTROLS BAR BACKGROUND ==========
+        var barBg = this.add.graphics().setDepth(199);
+        barBg.fillStyle(0x000000, 1);
+        barBg.fillRect(0, barY, CFG.WIDTH, barH);
+        // Subtle divider line at top of bar
+        barBg.lineStyle(1, 0x9B59B6, 0.3);
+        barBg.lineBetween(0, barY, CFG.WIDTH, barY);
+
+        // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, INSIDE BAR) ==========
+        var arrowY = barY + barH / 2; // vertically centred in bar
+        var arrowSize = 28;
+        var arrowGap = 16;
         var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button (visual only — hitbox is full-height zone)
-        var btnSize = arrowSize * 2; // width & height of rounded square
-        var btnR = 12; // corner radius
+        var btnW = arrowSize * 2;
+        var btnH = barH - 16; // slightly smaller than bar height
+        var btnR = 10;
         var leftX = rightCenter - arrowSize - arrowGap / 2;
         this._leftBg = this.add.graphics().setDepth(200);
-        this._leftRect = { x: leftX - btnSize / 2, y: arrowY - btnSize / 2, w: btnSize, h: btnSize, r: btnR };
+        this._leftRect = { x: leftX - btnW / 2, y: arrowY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
-        leftArrow.fillTriangle(leftX - 14, arrowY, leftX + 10, arrowY - 14, leftX + 10, arrowY + 14);
+        leftArrow.fillTriangle(leftX - 12, arrowY, leftX + 8, arrowY - 12, leftX + 8, arrowY + 12);
 
         // Right arrow button (visual only — hitbox is full-height zone)
         var rightX = rightCenter + arrowSize + arrowGap / 2;
         this._rightBg = this.add.graphics().setDepth(200);
-        this._rightRect = { x: rightX - btnSize / 2, y: arrowY - btnSize / 2, w: btnSize, h: btnSize, r: btnR };
+        this._rightRect = { x: rightX - btnW / 2, y: arrowY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
-        rightArrow.fillTriangle(rightX + 14, arrowY, rightX - 10, arrowY - 14, rightX - 10, arrowY + 14);
+        rightArrow.fillTriangle(rightX + 12, arrowY, rightX - 8, arrowY - 12, rightX - 8, arrowY + 12);
+
+        // ========== SHOOT LABEL (left side of bar) ==========
+        this.add.text(CFG.WIDTH / 4, arrowY, 'TAP TO FIRE', {
+            fontFamily: 'Roboto',
+            fontSize: '11px',
+            color: 'rgba(255,255,255,0.3)',
+            letterSpacing: 2
+        }).setOrigin(0.5).setDepth(200);
 
         // ========== STATE ==========
-        // Hitbox: full-height rectangular zones on right half of screen
-        // Left zone: from _halfW to _splitX (full height)
-        // Right zone: from _splitX to screen edge (full height)
+        // Hitbox: full-height rectangular zones covering entire screen
+        // Left zone: from 0 to _halfW (full height) — shoot
+        // Middle zone: from _halfW to _splitX (full height) — move left
+        // Right zone: from _splitX to screen edge (full height) — move right
         this._shootHeld = false;
         this._halfW = CFG.WIDTH / 2;
         this._splitX = (leftX + rightX) / 2;
