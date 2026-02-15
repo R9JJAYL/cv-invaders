@@ -106,7 +106,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightCenter = CFG.WIDTH - 110;
 
         // Left arrow button (visual only — hitbox is full-height zone)
-        var btnW = arrowSize * 2;
+        var btnW = arrowSize * 4;
         var btnH = barH - 16; // slightly smaller than bar height
         var btnR = 10;
         var leftX = rightCenter - arrowSize - arrowGap / 2;
