@@ -10,7 +10,7 @@ window.CVInvaders = window.CVInvaders || {};
 window.CVInvaders.Config = {
     WIDTH: 800,
     HEIGHT: 600,
-    MOBILE_CONTROLS_HEIGHT: 80, // extra height added on mobile for a controls bar
+    MOBILE_CONTROLS_HEIGHT: 96, // extra height added on mobile for a controls bar
 
     // Player
     PLAYER_SPEED: 330,
