@@ -101,15 +101,15 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== VISUAL: ARROW BUTTONS (RIGHT SIDE, INSIDE BAR) ==========
         var arrowY = barY + barH / 2; // vertically centred in bar
-        var arrowSize = 28;
-        var arrowGap = 24;
-        var rightCenter = CFG.WIDTH - 110;
+        var arrowSpread = 70;   // half-distance between button centres
+        var arrowGap = 16;
+        var rightCenter = CFG.WIDTH - 140;
 
         // Left arrow button (visual only — hitbox is full-height zone)
-        var btnW = arrowSize * 4;
+        var btnW = 112;         // fixed 2x width (independent of spread)
         var btnH = barH - 16; // slightly smaller than bar height
         var btnR = 10;
-        var leftX = rightCenter - arrowSize - arrowGap / 2;
+        var leftX = rightCenter - arrowSpread - arrowGap / 2;
         this._leftBg = this.add.graphics().setDepth(200);
         this._leftRect = { x: leftX - btnW / 2, y: arrowY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
@@ -118,7 +118,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         leftArrow.fillTriangle(leftX - 12, arrowY, leftX + 8, arrowY - 12, leftX + 8, arrowY + 12);
 
         // Right arrow button (visual only — hitbox is full-height zone)
-        var rightX = rightCenter + arrowSize + arrowGap / 2;
+        var rightX = rightCenter + arrowSpread + arrowGap / 2;
         this._rightBg = this.add.graphics().setDepth(200);
         this._rightRect = { x: rightX - btnW / 2, y: arrowY - btnH / 2, w: btnW, h: btnH, r: btnR };
         this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
