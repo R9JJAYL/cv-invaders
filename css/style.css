@@ -59,6 +59,7 @@ body {
 @media (pointer: coarse) and (orientation: portrait) {
     #rotate-overlay {
         display: flex;
+        flex-direction: column;
         position: fixed;
         inset: 0;
         z-index: 9999;
@@ -73,12 +74,15 @@ body {
         color: rgba(255, 255, 255, 0.85);
         text-align: center;
         line-height: 1.6;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
-    .rotate-msg::after {
-        content: '\A\A\1F4F1 \27A1\FE0F';
-        white-space: pre;
-        font-size: 32px;
+    .rotate-icon {
+        margin-top: 20px;
+        animation: rotate-hint 2s ease-in-out infinite;
+    }
+    @keyframes rotate-hint {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(90deg); }
     }
 }
 
