@@ -23,14 +23,16 @@ window.CVInvaders.PurpleUnicorn = class PurpleUnicorn extends Phaser.Physics.Arc
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        var s = window.CVInvaders.Config.MOBILE_SCALE || 1;
+        this.setScale(s);
         this.setDepth(9);
         this.body.setAllowGravity(false);
 
         // Gentle scale pulse to make the power-up visually distinct
         scene.tweens.add({
             targets: this,
-            scaleX: 1.2,
-            scaleY: 1.2,
+            scaleX: 1.2 * s,
+            scaleY: 1.2 * s,
             duration: 500,
             yoyo: true,
             repeat: -1

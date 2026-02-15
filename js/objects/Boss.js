@@ -19,7 +19,8 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         scene.physics.add.existing(this);
 
         this.setDepth(9);
-        this.setScale(1.5);
+        var s = window.CVInvaders.Config.MOBILE_SCALE || 1;
+        this.setScale(1.5 * s);
         this.body.setSize(60, 45);
         this.body.setOffset(10, 5);
         this.body.setAllowGravity(false);

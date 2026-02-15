@@ -18,6 +18,8 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        var s = window.CVInvaders.Config.MOBILE_SCALE || 1;
+        this.setScale(s);
         this.setCollideWorldBounds(true);
         this.setDepth(10);
         this.body.setSize(76, 34);

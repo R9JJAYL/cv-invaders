@@ -26,6 +26,7 @@ window.CVInvaders.Bullet = class Bullet extends Phaser.Physics.Arcade.Image {
         this.setActive(true);
         this.setVisible(true);
         this.body.enable = true;
+        this.setScale(window.CVInvaders.Config.MOBILE_SCALE || 1);
         this.setVelocityY(-window.CVInvaders.Config.BULLET_SPEED);
     }
 

@@ -15,7 +15,8 @@ window.CVInvaders.Enemy = class Enemy extends Phaser.Physics.Arcade.Image {
         scene.physics.add.existing(this);
 
         this.setDepth(8);
-        this.setScale(1.66);
+        var s = window.CVInvaders.Config.MOBILE_SCALE || 1;
+        this.setScale(1.66 * s);
         this.body.setSize(26, 28);
         this.body.setOffset(7, 4);
         this.health = window.CVInvaders.Config.ENEMY_HEALTH;

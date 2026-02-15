@@ -29,13 +29,16 @@ window.addEventListener('load', function () {
             CFG.WIDTH = Math.max(800, Math.min(1400, idealW));
         }
 
-        // Scale speeds & zone widths so the wider screen feels the same.
-        // CV volume (maxOnScreen, spawnRate) stays identical — same scoring opportunity.
+        // Scale speeds, zone widths, and sprite sizes so the wider screen
+        // feels identical to the 800px baseline.
+        // CV volume (maxOnScreen, spawnRate) stays the same — fair scoring.
         var wScale = CFG.WIDTH / 800;
+        CFG.MOBILE_SCALE       = wScale;   // stored so objects can scale sprites
         CFG.PLAYER_SPEED       = Math.round(CFG.PLAYER_SPEED * wScale);
         CFG.ENEMY_SPEED        = Math.round(CFG.ENEMY_SPEED * wScale);
         CFG.CATCH_ZONE_WIDTH   = Math.round(CFG.CATCH_ZONE_WIDTH * wScale);
         CFG.CATCH_ZONE_UNICORN = Math.round(CFG.CATCH_ZONE_UNICORN * wScale);
+        CFG.BULLET_SPEED       = Math.round(CFG.BULLET_SPEED * wScale);
     }
 
     // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)

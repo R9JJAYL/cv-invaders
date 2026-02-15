@@ -25,6 +25,7 @@ window.CVInvaders.EnemyBullet = class EnemyBullet extends Phaser.Physics.Arcade.
         this.setActive(true);
         this.setVisible(true);
         this.body.enable = true;
+        this.setScale(window.CVInvaders.Config.MOBILE_SCALE || 1);
         this.setVelocityY(speed || 200);
     }
 
