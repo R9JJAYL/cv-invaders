@@ -25,9 +25,10 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const playerGrade = this.getGrade(playerScore).grade;
         this.saveScoreAndFetch(playerName, playerScore, playerGrade, playerCompany, playerType, CFG);
 
-        // On mobile, clip camera to gameplay area (above the controls bar)
+        // On mobile, offset camera to centre gameplay between side panels
         if (!this.sys.game.device.os.desktop) {
-            this.cameras.main.setViewport(0, 0, CFG.WIDTH, CFG.HEIGHT);
+            var sideW = CFG.SIDE_PANEL_WIDTH || 0;
+            this.cameras.main.setViewport(sideW, 0, CFG.WIDTH, CFG.HEIGHT);
         }
 
         // Build both screens: ad at top, results below

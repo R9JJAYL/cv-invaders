@@ -10,8 +10,8 @@ window.CVInvaders = window.CVInvaders || {};
 window.CVInvaders.Config = {
     WIDTH: 800,
     HEIGHT: 600,
-    MOBILE_CONTROLS_HEIGHT: 96, // extra height added on mobile for a controls bar
-    MOBILE_SAFE_BOTTOM: 34,    // dead zone below controls to avoid iOS Home Indicator
+    CANVAS_WIDTH: 800,          // full canvas width (overridden on mobile to include side panels)
+    SIDE_PANEL_WIDTH: 0,        // width of each side control panel (0 on desktop)
 
     // Player
     PLAYER_SPEED: 330,

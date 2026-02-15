@@ -12,19 +12,29 @@ window.addEventListener('load', function () {
 
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
-    // Mobile keeps the same 4:3 (800×600) gameplay as desktop.
-    // No width or sprite scaling — identical experience across devices.
+    // On mobile, widen the canvas to fill the screen by adding side control
+    // panels that flank the 800×600 gameplay area.  CFG.WIDTH stays 800 so
+    // all gameplay logic is unchanged; CANVAS_WIDTH is the full Phaser width.
     if (isMobile) {
         CFG.MOBILE_SCALE = 1;
+        var sw = window.screen.width, sh = window.screen.height;
+        var iw = window.innerWidth,   ih = window.innerHeight;
+        var vw = window.visualViewport ? window.visualViewport.width  : iw;
+        var vh = window.visualViewport ? window.visualViewport.height : ih;
+        var landscapeW = Math.max(sw, sh, iw, ih, vw, vh);
+        var landscapeH = Math.min(sw, sh, iw, ih, vw, vh);
+        if (landscapeW > 0 && landscapeH > 0) {
+            var deviceAspect = landscapeW / landscapeH;
+            var idealW = Math.round(CFG.HEIGHT * deviceAspect);
+            CFG.CANVAS_WIDTH = Math.max(800, Math.min(1400, idealW));
+        }
+        CFG.SIDE_PANEL_WIDTH = Math.floor((CFG.CANVAS_WIDTH - CFG.WIDTH) / 2);
     }
-
-    // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)
-    var gameHeight = isMobile ? CFG.HEIGHT + CFG.MOBILE_CONTROLS_HEIGHT + (CFG.MOBILE_SAFE_BOTTOM || 0) : CFG.HEIGHT;
 
     const config = {
         type: Phaser.AUTO,
-        width: CFG.WIDTH,
-        height: gameHeight,
+        width: CFG.CANVAS_WIDTH,
+        height: CFG.HEIGHT,
         parent: 'game',
         backgroundColor: CFG.COLORS.BG,
         physics: {
