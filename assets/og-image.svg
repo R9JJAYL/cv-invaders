@@ -103,17 +103,17 @@
   <!-- ===== BULLET TRAILS (from ship to CVs) ===== -->
 
   <!-- Bullet 1 — heading toward bad CV at center -->
-  <ellipse cx="604" cy="260" rx="12" ry="20" fill="url(#bulletGlow)"/>
-  <rect x="601" y="250" width="6" height="18" rx="2" fill="#00E5FF"/>
-  <rect x="601" y="250" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+  <ellipse cx="604" cy="240" rx="12" ry="20" fill="url(#bulletGlow)"/>
+  <rect x="601" y="230" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="230" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
 
   <!-- Bullet 2 — trailing behind -->
-  <ellipse cx="604" cy="330" rx="10" ry="16" fill="url(#bulletGlow)"/>
-  <rect x="601" y="322" width="6" height="18" rx="2" fill="#00E5FF"/>
-  <rect x="601" y="322" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+  <ellipse cx="604" cy="300" rx="10" ry="16" fill="url(#bulletGlow)"/>
+  <rect x="601" y="292" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="292" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
 
   <!-- ===== PLAYER SHIP (bottom center) ===== -->
-  <g transform="translate(600, 440)">
+  <g transform="translate(600, 400)">
     <!-- Engine glow -->
     <ellipse cx="0" cy="16" rx="30" ry="8" fill="#00E5FF" opacity="0.15"/>
 
@@ -145,11 +145,11 @@
   <text x="600" y="50" font-family="Roboto, sans-serif" font-size="18" font-weight="bold" fill="#9B59B6" text-anchor="middle">TIME REMAINING: 28s</text>
 
   <!-- ===== TITLE ===== -->
-  <text x="600" y="520" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
-  <text x="600" y="585" font-family="Roboto, sans-serif" font-size="32" fill="#BB8FCE" text-anchor="middle" letter-spacing="3" font-weight="bold">CAN YOU SORT THE GOOD FROM THE BAD?</text>
+  <text x="600" y="500" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
+  <text x="600" y="570" font-family="Roboto, sans-serif" font-size="38" fill="#BB8FCE" text-anchor="middle" letter-spacing="2" font-weight="bold">CAN YOU SORT THE GOOD FROM THE BAD?</text>
 
   <!-- ===== GHOST ENEMY 1 (left area) ===== -->
-  <g transform="translate(280, 160)">
+  <g transform="translate(150, 300)">
     <!-- Ghost body -->
     <ellipse cx="0" cy="-6" rx="18" ry="16" fill="#EEEEEF" opacity="0.9"/>
     <rect x="-18" y="-6" width="36" height="20" fill="#EEEEEF" opacity="0.9"/>
@@ -165,7 +165,7 @@
   </g>
 
   <!-- ===== GHOST ENEMY 2 (right area) ===== -->
-  <g transform="translate(920, 200)">
+  <g transform="translate(1050, 300)">
     <!-- Ghost body -->
     <ellipse cx="0" cy="-6" rx="18" ry="16" fill="#EEEEEF" opacity="0.9"/>
     <rect x="-18" y="-6" width="36" height="20" fill="#EEEEEF" opacity="0.9"/>
