@@ -145,8 +145,8 @@
   <text x="600" y="50" font-family="Roboto, sans-serif" font-size="18" font-weight="bold" fill="#9B59B6" text-anchor="middle">TIME REMAINING: 28s</text>
 
   <!-- ===== TITLE ===== -->
-  <text x="600" y="500" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
-  <text x="600" y="570" font-family="Roboto, sans-serif" font-size="38" fill="#BB8FCE" text-anchor="middle" letter-spacing="2" font-weight="bold">CAN YOU SORT THE GOOD FROM THE BAD?</text>
+  <text x="600" y="490" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="28" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
+  <text x="600" y="565" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="36" font-weight="900" fill="#BB8FCE" text-anchor="middle" letter-spacing="1">CAN YOU PROTECT THE ATS FROM BOTS?</text>
 
   <!-- ===== GHOST ENEMY 1 (left area) ===== -->
   <g transform="translate(150, 300)">
