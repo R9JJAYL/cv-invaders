@@ -38,14 +38,12 @@ window.addEventListener('load', function () {
             CFG.WIDTH = Math.max(800, Math.min(1400, idealW));
         }
 
-        // Scale horizontal speeds & catch-zone widths so the wider canvas
-        // feels the same to play.  Sprites are NOT scaled — Phaser's FIT mode
-        // already maps the internal canvas to the physical screen, so objects
-        // look the correct size. Height stays at 600px, unchanged.
+        // Scale sprites so they occupy the same proportion of screen as on
+        // the 800px desktop canvas.  Speeds stay at base values — the larger
+        // sprites on the wider canvas at the same px/s feel equivalent because
+        // everything is proportionally bigger.  Catch zones scale to match.
         var wScale = CFG.WIDTH / 800;
-        CFG.MOBILE_SCALE       = 1;        // no sprite scaling — FIT handles it
-        CFG.PLAYER_SPEED       = Math.round(CFG.PLAYER_SPEED * wScale);
-        CFG.ENEMY_SPEED        = Math.round(CFG.ENEMY_SPEED * wScale);
+        CFG.MOBILE_SCALE       = wScale;
         CFG.CATCH_ZONE_WIDTH   = Math.round(CFG.CATCH_ZONE_WIDTH * wScale);
         CFG.CATCH_ZONE_UNICORN = Math.round(CFG.CATCH_ZONE_UNICORN * wScale);
     }
