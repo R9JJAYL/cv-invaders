@@ -128,7 +128,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var btnGap = 12;
         var btnW = (sideW - btnGap * 3) / 2; // two buttons with gaps
         btnW = Math.min(btnW, 100);           // cap button width
-        var btnH = gameH * 0.35;              // tall buttons for easy tapping
+        var btnH = gameH * 0.6;               // tall buttons for easy tapping
         var btnR = 10;
         var btnY = gameH / 2;                 // vertically centred
 
