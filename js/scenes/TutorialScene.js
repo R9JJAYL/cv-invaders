@@ -367,7 +367,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var shootColor = this.add.text(badX, cvY + 53, 'RED', {
+        var shootColor = this.add.text(badX, cvY + 53, 'RED CVs', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_BAD_HEX,
@@ -381,7 +381,7 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var catchColor = this.add.text(goodX, cvY + 53, 'GREEN', {
+        var catchColor = this.add.text(goodX, cvY + 53, 'GREEN CVs', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_GOOD_HEX,
