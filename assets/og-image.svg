@@ -102,15 +102,15 @@
 
   <!-- ===== BULLET TRAILS (from ship to CVs) ===== -->
 
-  <!-- Bullet 1 — heading toward bad CV at center -->
-  <ellipse cx="604" cy="240" rx="12" ry="20" fill="url(#bulletGlow)"/>
-  <rect x="601" y="230" width="6" height="18" rx="2" fill="#00E5FF"/>
-  <rect x="601" y="230" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+  <!-- Bullet 1 — just touching bottom of center CV -->
+  <ellipse cx="604" cy="265" rx="12" ry="20" fill="url(#bulletGlow)"/>
+  <rect x="601" y="255" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="255" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
 
   <!-- Bullet 2 — trailing behind -->
-  <ellipse cx="604" cy="300" rx="10" ry="16" fill="url(#bulletGlow)"/>
-  <rect x="601" y="292" width="6" height="18" rx="2" fill="#00E5FF"/>
-  <rect x="601" y="292" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+  <ellipse cx="604" cy="325" rx="10" ry="16" fill="url(#bulletGlow)"/>
+  <rect x="601" y="317" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="317" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
 
   <!-- ===== PLAYER SHIP (bottom center) ===== -->
   <g transform="translate(600, 400)">
