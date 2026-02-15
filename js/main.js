@@ -12,40 +12,10 @@ window.addEventListener('load', function () {
 
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
-    // On mobile, widen game to match the screen's aspect ratio so there
-    // are no black bars on the sides.  CFG.WIDTH is updated in-place so
-    // every scene that reads it automatically uses the wider value.
+    // Mobile keeps the same 4:3 (800×600) gameplay as desktop.
+    // No width or sprite scaling — identical experience across devices.
     if (isMobile) {
-        // Work out the actual visible landscape dimensions.
-        // screen.width/height give the full device resolution; innerWidth/Height
-        // or visualViewport give the usable area after browser chrome & notch.
-        // We take the widest available source so the game fills edge-to-edge.
-        var sw = window.screen.width, sh = window.screen.height;
-        var iw = window.innerWidth,   ih = window.innerHeight;
-        var vw = window.visualViewport ? window.visualViewport.width  : iw;
-        var vh = window.visualViewport ? window.visualViewport.height : ih;
-        // Pick the largest landscape dimensions from all sources
-        var landscapeW = Math.max(sw, sh, iw, ih, vw, vh);
-        var landscapeH = Math.min(sw, sh, iw, ih, vw, vh);
-        if (landscapeW > 0 && landscapeH > 0) {
-            var deviceAspect = landscapeW / landscapeH;
-            // Size the width so the GAMEPLAY area (600px) fills the screen width
-            // once Phaser scales the full canvas (gameplay + bar) to fit.
-            var barH = CFG.MOBILE_CONTROLS_HEIGHT + (CFG.MOBILE_SAFE_BOTTOM || 0);
-            var totalH = CFG.HEIGHT + barH;
-            var idealW = Math.round(totalH * deviceAspect);
-            // Clamp: never narrower than 800, never wider than 1400
-            CFG.WIDTH = Math.max(800, Math.min(1400, idealW));
-        }
-
-        // Scale sprites so they occupy the same proportion of screen as on
-        // the 800px desktop canvas.  Speeds stay at base values — the larger
-        // sprites on the wider canvas at the same px/s feel equivalent because
-        // everything is proportionally bigger.  Catch zones scale to match.
-        var wScale = CFG.WIDTH / 800;
-        CFG.MOBILE_SCALE       = wScale;
-        CFG.CATCH_ZONE_WIDTH   = Math.round(CFG.CATCH_ZONE_WIDTH * wScale);
-        CFG.CATCH_ZONE_UNICORN = Math.round(CFG.CATCH_ZONE_UNICORN * wScale);
+        CFG.MOBILE_SCALE = 1;
     }
 
     // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)
