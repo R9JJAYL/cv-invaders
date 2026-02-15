@@ -12,6 +12,24 @@ window.addEventListener('load', function () {
 
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
+    // On mobile, widen game to match the screen's aspect ratio so there
+    // are no black bars on the sides.  CFG.WIDTH is updated in-place so
+    // every scene that reads it automatically uses the wider value.
+    if (isMobile) {
+        var screenW = window.screen.width;
+        var screenH = window.screen.height;
+        // Use the larger dimension as landscape width
+        var landscapeW = Math.max(screenW, screenH);
+        var landscapeH = Math.min(screenW, screenH);
+        if (landscapeW > 0 && landscapeH > 0) {
+            var deviceAspect = landscapeW / landscapeH;      // e.g. 1.78 for 16:9
+            var totalH = CFG.HEIGHT + CFG.MOBILE_CONTROLS_HEIGHT + (CFG.MOBILE_SAFE_BOTTOM || 0);
+            var idealW = Math.round(totalH * deviceAspect);  // width that fills screen
+            // Clamp: never narrower than 800, never wider than 1400
+            CFG.WIDTH = Math.max(800, Math.min(1400, idealW));
+        }
+    }
+
     // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)
     var gameHeight = isMobile ? CFG.HEIGHT + CFG.MOBILE_CONTROLS_HEIGHT + (CFG.MOBILE_SAFE_BOTTOM || 0) : CFG.HEIGHT;
 
