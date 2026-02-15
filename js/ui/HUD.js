@@ -131,32 +131,28 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             align: 'center'
         }).setOrigin(0.5).setDepth(201);
 
-        // ========== RIGHT PANEL — background only ==========
+        // ========== RIGHT PANEL — background fills from game edge to canvas edge ==========
         var rightPanelX = sideW + CFG.WIDTH; // start of right panel
+        var rightPanelW = canvasW - rightPanelX; // use actual remaining width (not sideW) to avoid rounding gaps
         var rightPanel = this.add.graphics().setDepth(199);
         rightPanel.fillStyle(0x1a0a2e, 0.85);
-        rightPanel.fillRect(rightPanelX, 0, sideW, gameH);
+        rightPanel.fillRect(rightPanelX, 0, rightPanelW, gameH);
         // Subtle divider line on left edge of right panel
         rightPanel.lineStyle(1, 0x9B59B6, 0.15);
         rightPanel.lineBetween(rightPanelX, 0, rightPanelX, gameH);
 
-        // ========== ARROW BUTTONS — visual buttons in RIGHT PANEL only ==========
-        // The touch hitbox zones span the gameplay area too (see HITBOX ZONES below),
-        // but the visible buttons are only drawn inside the right side panel so they
-        // don't cover the gameplay.
+        // ========== ARROW BUTTONS — fill from game edge to screen edge ==========
         var btnPad = 8;
         var btnGap = 8;
         var btnH = gameH - btnPad * 2;
         var btnR = 10;
         var btnY = gameH / 2;
 
-        // Right panel inner area for the two arrow buttons
-        var rpInnerX = rightPanelX + btnPad;
-        var rpInnerW = sideW - btnPad * 2;
-        var rpMidX = rightPanelX + sideW / 2;
+        // Buttons span from rightPanelX+pad to canvasW-pad (full remaining width)
+        var rpMidX = rightPanelX + rightPanelW / 2;
 
-        // Left arrow button — left half of right panel
-        var leftBtnX0 = rpInnerX;
+        // Left arrow button — from game edge to midpoint
+        var leftBtnX0 = rightPanelX + btnPad;
         var leftBtnW = (rpMidX - btnGap / 2) - leftBtnX0;
         var leftBtnCX = leftBtnX0 + leftBtnW / 2;
         this._leftBg = this.add.graphics().setDepth(200);
@@ -166,9 +162,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         leftArrow.fillStyle(0xFFFFFF, 0.8);
         leftArrow.fillTriangle(leftBtnCX - 12, btnY, leftBtnCX + 8, btnY - 14, leftBtnCX + 8, btnY + 14);
 
-        // Right arrow button — right half of right panel
+        // Right arrow button — from midpoint to screen edge
         var rightBtnX0 = rpMidX + btnGap / 2;
-        var rightBtnW = (rightPanelX + sideW - btnPad) - rightBtnX0;
+        var rightBtnW = (canvasW - btnPad) - rightBtnX0;
         var rightBtnCX = rightBtnX0 + rightBtnW / 2;
         this._rightBg = this.add.graphics().setDepth(200);
         this._rightRect = { x: rightBtnX0, y: btnY - btnH / 2, w: rightBtnW, h: btnH, r: btnR };
