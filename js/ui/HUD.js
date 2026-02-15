@@ -140,21 +140,24 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         rightPanel.lineStyle(1, 0x9B59B6, 0.15);
         rightPanel.lineBetween(rightPanelX, 0, rightPanelX, gameH);
 
-        // ========== ARROW BUTTONS — span gameplay area + right panel ==========
-        // The move zone runs from sideW (end of shoot panel) to canvasW.
-        // Split at gameplay midpoint: left arrow = sideW..midX, right arrow = midX..canvasW
-        var moveZoneX = sideW;                            // start of movement area
-        var moveZoneW = canvasW - sideW;                  // total width of movement area
-        var midX = sideW + CFG.WIDTH / 2;                 // split point
+        // ========== ARROW BUTTONS — visual buttons in RIGHT PANEL only ==========
+        // The touch hitbox zones span the gameplay area too (see HITBOX ZONES below),
+        // but the visible buttons are only drawn inside the right side panel so they
+        // don't cover the gameplay.
         var btnPad = 8;
-        var btnGap = 8;                                   // gap between the two buttons
+        var btnGap = 8;
         var btnH = gameH - btnPad * 2;
         var btnR = 10;
         var btnY = gameH / 2;
 
-        // Left arrow button — from moveZoneX+pad to midX-gap/2
-        var leftBtnX0 = moveZoneX + btnPad;
-        var leftBtnW = (midX - btnGap / 2) - leftBtnX0;
+        // Right panel inner area for the two arrow buttons
+        var rpInnerX = rightPanelX + btnPad;
+        var rpInnerW = sideW - btnPad * 2;
+        var rpMidX = rightPanelX + sideW / 2;
+
+        // Left arrow button — left half of right panel
+        var leftBtnX0 = rpInnerX;
+        var leftBtnW = (rpMidX - btnGap / 2) - leftBtnX0;
         var leftBtnCX = leftBtnX0 + leftBtnW / 2;
         this._leftBg = this.add.graphics().setDepth(200);
         this._leftRect = { x: leftBtnX0, y: btnY - btnH / 2, w: leftBtnW, h: btnH, r: btnR };
@@ -163,9 +166,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         leftArrow.fillStyle(0xFFFFFF, 0.8);
         leftArrow.fillTriangle(leftBtnCX - 12, btnY, leftBtnCX + 8, btnY - 14, leftBtnCX + 8, btnY + 14);
 
-        // Right arrow button — from midX+gap/2 to canvasW-pad
-        var rightBtnX0 = midX + btnGap / 2;
-        var rightBtnW = (canvasW - btnPad) - rightBtnX0;
+        // Right arrow button — right half of right panel
+        var rightBtnX0 = rpMidX + btnGap / 2;
+        var rightBtnW = (rightPanelX + sideW - btnPad) - rightBtnX0;
         var rightBtnCX = rightBtnX0 + rightBtnW / 2;
         this._rightBg = this.add.graphics().setDepth(200);
         this._rightRect = { x: rightBtnX0, y: btnY - btnH / 2, w: rightBtnW, h: btnH, r: btnR };
