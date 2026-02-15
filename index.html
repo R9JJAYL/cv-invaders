@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CV Invaders - Agency vs Internal</title>
     <meta name="description" content="A quick fun game to see who knows their way around a CV best, agency or internal.">
     <meta property="og:title" content="CV Invaders - Agency vs Internal">
@@ -13,6 +13,7 @@
     <meta name="twitter:title" content="CV Invaders - Agency vs Internal">
     <meta name="twitter:description" content="A quick fun game to see who knows their way around a CV best, agency or internal.">
     <link rel="icon" type="image/png" href="assets/first-icon.png">
+    <link rel="apple-touch-icon" href="assets/first-icon.png">
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,9 +21,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@600;700&family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=47">
+    <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
+    <!-- Mobile portrait: nudge user to rotate to landscape -->
+    <div id="rotate-overlay">
+        <div class="rotate-msg">Rotate your phone for the best experience</div>
+    </div>
+
     <div id="game"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
@@ -61,6 +67,6 @@
     <script src="js/scenes/GameOverScene.js?v=93"></script>
 
     <!-- Main (must be last) -->
-    <script src="js/main.js?v=11"></script>
+    <script src="js/main.js?v=12"></script>
 </body>
 </html>

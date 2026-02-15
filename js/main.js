@@ -1,9 +1,9 @@
 /**
  * main.js — Entry point: creates the Phaser game instance and handles
- * mobile address-bar hiding.
+ * mobile viewport sizing via the visualViewport API.
  *
- * On mobile, three staggered scale-refresh timeouts (100/300/500 ms) work
- * around browser layout timing quirks where the viewport isn't final at DOMContentLoaded.
+ * On mobile, the visualViewport API gives accurate dimensions that account
+ * for Safari's dynamic address bar, avoiding the old scrollTo(0,1) hack.
  */
 window.CVInvaders = window.CVInvaders || {};
 
@@ -48,36 +48,58 @@ window.addEventListener('load', function () {
 
     window.CVInvaders.game = new Phaser.Game(config);
 
-    // Hide mobile address bar on load and first touch
-    if (isMobile) {
-        setTimeout(function () { window.scrollTo(0, 1); }, 50);
-        document.addEventListener('touchstart', function hideBar() {
-            window.scrollTo(0, 1);
-            document.removeEventListener('touchstart', hideBar);
-        }, { once: true });
-    }
-
-    // Force Phaser to recalculate scale on orientation change
-    // Multiple refreshes with delays to handle mobile address bar retracting
     function refreshScale() {
         if (window.CVInvaders.game && window.CVInvaders.game.scale) {
             window.CVInvaders.game.scale.refresh();
         }
     }
 
-    window.addEventListener('resize', function () {
-        refreshScale();
-        setTimeout(refreshScale, 100);
-        setTimeout(refreshScale, 300);
-        setTimeout(refreshScale, 500);
-    });
+    if (isMobile) {
+        // Use visualViewport API for accurate sizing on mobile Safari.
+        // This reflects the actual visible area, accounting for the
+        // dynamic address bar, on-screen keyboard, and other browser chrome.
+        if (window.visualViewport) {
+            var resizeTimeout;
+            var onViewportResize = function () {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function () {
+                    var gameEl = document.getElementById('game');
+                    if (gameEl) {
+                        gameEl.style.width = window.visualViewport.width + 'px';
+                        gameEl.style.height = window.visualViewport.height + 'px';
+                    }
+                    refreshScale();
+                }, 150);
+            };
 
-    // orientationchange fires on actual device rotation
-    window.addEventListener('orientationchange', function () {
-        // Scroll to top to hide mobile address bar
-        setTimeout(function () { window.scrollTo(0, 1); }, 50);
-        setTimeout(refreshScale, 100);
-        setTimeout(refreshScale, 300);
-        setTimeout(refreshScale, 500);
-    });
+            window.visualViewport.addEventListener('resize', onViewportResize);
+            window.visualViewport.addEventListener('scroll', onViewportResize);
+
+            // Initial sizing after layout settles
+            setTimeout(onViewportResize, 100);
+        } else {
+            // Fallback for browsers without visualViewport
+            window.addEventListener('resize', refreshScale);
+        }
+
+        // Orientation change needs a delayed refresh for layout to finalise
+        window.addEventListener('orientationchange', function () {
+            setTimeout(refreshScale, 300);
+        });
+
+        // Android Chrome: request fullscreen on first interaction
+        // (silently fails on iOS Safari which doesn't support Fullscreen API on iPhone)
+        document.addEventListener('touchstart', function requestFS() {
+            var el = document.documentElement;
+            if (el.requestFullscreen) {
+                el.requestFullscreen().catch(function () {});
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+            }
+            document.removeEventListener('touchstart', requestFS);
+        }, { once: true });
+    } else {
+        // Desktop: simple resize handler
+        window.addEventListener('resize', refreshScale);
+    }
 });
