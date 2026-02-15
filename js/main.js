@@ -55,6 +55,19 @@ window.addEventListener('load', function () {
     }
 
     if (isMobile) {
+        // Block pinch-to-zoom and multi-touch zoom gestures on the whole page.
+        // Safari ignores the viewport meta's user-scalable=no for multi-finger
+        // gestures, so we need to cancel them at the JS level.
+        document.addEventListener('touchmove', function (e) {
+            if (e.touches.length > 1) { e.preventDefault(); }
+        }, { passive: false });
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+        document.addEventListener('gesturechange', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+
         // Use visualViewport API for accurate sizing on mobile Safari.
         // This reflects the actual visible area, accounting for the
         // dynamic address bar, on-screen keyboard, and other browser chrome.
