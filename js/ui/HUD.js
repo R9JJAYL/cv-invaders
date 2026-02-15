@@ -178,12 +178,14 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         rightArrow.fillTriangle(rightBtnCX + 12, btnY, rightBtnCX - 8, btnY - 14, rightBtnCX - 8, btnY + 14);
 
         // ========== HITBOX ZONES ==========
-        // Shoot: left panel only
-        // Move left: left half of gameplay + right panel left button
-        // Move right: right half of gameplay + right panel right button
+        // Shoot: left panel only (0 to sideW)
+        // Move left: gameplay area + left half of right panel (sideW to rpMidX)
+        // Move right: right half of right panel (rpMidX to canvasW)
+        // This aligns the hitbox split with the visual button split so
+        // tapping the left arrow triggers left movement, not right.
         this._shootHeld = false;
         this._shootBoundary = sideW;                             // shoot zone = left panel only
-        this._splitX = sideW + CFG.WIDTH / 2;                   // left/right split at gameplay midpoint
+        this._splitX = rpMidX;                                   // left/right split at right panel midpoint
     }
 
     // ===== UPDATE — poll pointers directly & relay to ship =====
