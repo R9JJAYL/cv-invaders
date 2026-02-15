@@ -60,23 +60,47 @@ window.addEventListener('load', function () {
         // dynamic address bar, on-screen keyboard, and other browser chrome.
         if (window.visualViewport) {
             var resizeTimeout;
+            var lastWidth = 0;
+            var lastHeight = 0;
+
+            var applyViewportSize = function () {
+                var gameEl = document.getElementById('game');
+                var vw = window.visualViewport.width;
+                var vh = window.visualViewport.height;
+
+                // Ignore keyboard-triggered resizes: if height shrinks by
+                // more than 25% while width stays the same, the on-screen
+                // keyboard has opened — keep the previous size so the game
+                // doesn't collapse into a tiny square.
+                if (lastHeight > 0 && lastWidth > 0) {
+                    var heightRatio = vh / lastHeight;
+                    var widthUnchanged = Math.abs(vw - lastWidth) < 5;
+                    if (widthUnchanged && heightRatio < 0.75) {
+                        // Keyboard opened — skip resize
+                        return;
+                    }
+                }
+
+                lastWidth = vw;
+                lastHeight = vh;
+
+                if (gameEl) {
+                    gameEl.style.width = vw + 'px';
+                    gameEl.style.height = vh + 'px';
+                }
+                refreshScale();
+            };
+
             var onViewportResize = function () {
                 clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(function () {
-                    var gameEl = document.getElementById('game');
-                    if (gameEl) {
-                        gameEl.style.width = window.visualViewport.width + 'px';
-                        gameEl.style.height = window.visualViewport.height + 'px';
-                    }
-                    refreshScale();
-                }, 150);
+                resizeTimeout = setTimeout(applyViewportSize, 150);
             };
 
             window.visualViewport.addEventListener('resize', onViewportResize);
             window.visualViewport.addEventListener('scroll', onViewportResize);
 
             // Initial sizing after layout settles
-            setTimeout(onViewportResize, 100);
+            setTimeout(applyViewportSize, 100);
         } else {
             // Fallback for browsers without visualViewport
             window.addEventListener('resize', refreshScale);
