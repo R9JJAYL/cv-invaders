@@ -375,3 +375,47 @@ body {
     margin-left: 8px;
     vertical-align: middle;
 }
+
+/* Mobile: larger, easier-to-read form inputs */
+@media (pointer: coarse) {
+    .menu-form {
+        gap: 8px;
+    }
+
+    .form-row {
+        gap: 10px;
+    }
+
+    .menu-form input,
+    .menu-form select {
+        font-size: 16px;
+        padding: 10px 14px;
+        width: 240px;
+        border-width: 1.5px;
+    }
+
+    .menu-form input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 15px;
+    }
+
+    .menu-form select {
+        width: 240px;
+        font-size: 16px;
+    }
+
+    .menu-form select:invalid,
+    .menu-form select:has(option[disabled]:checked) {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 15px;
+    }
+
+    .menu-form select option[disabled] {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 15px;
+    }
+
+    .menu-form select option {
+        font-size: 15px;
+    }
+}

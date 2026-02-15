@@ -96,26 +96,42 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         leftPanel.lineStyle(1, 0x9B59B6, 0.15);
         leftPanel.lineBetween(sideW, 0, sideW, gameH);
 
-        // "TAP TO FIRE" label
-        this.add.text(sideW / 2, gameH / 2, 'TAP\nTO\nFIRE', {
-            fontFamily: 'Roboto',
-            fontSize: '13px',
-            color: 'rgba(255,255,255,0.25)',
-            letterSpacing: 2,
-            align: 'center',
-            lineSpacing: 8
-        }).setOrigin(0.5).setDepth(200);
+        // Shoot button — same style as arrow buttons (rounded rect, full height)
+        var sBtnPad = 8;
+        var sBtnW = sideW - sBtnPad * 2;
+        var sBtnH = gameH - sBtnPad * 2;
+        var sBtnR = 10;
+        this._shootBg = this.add.graphics().setDepth(200);
+        this._shootRect = { x: sBtnPad, y: sBtnPad, w: sBtnW, h: sBtnH, r: sBtnR };
+        this._drawBtnBg(this._shootBg, this._shootRect, 0.5);
 
-        // Crosshair icon in left panel
-        var crosshair = this.add.graphics().setDepth(200);
         var cx = sideW / 2;
-        var cy = gameH / 2 - 60;
-        crosshair.lineStyle(1.5, 0xFFFFFF, 0.2);
-        crosshair.strokeCircle(cx, cy, 16);
-        crosshair.lineBetween(cx - 22, cy, cx + 22, cy);
-        crosshair.lineBetween(cx, cy - 22, cx, cy + 22);
+        var cy = gameH / 2 - 30;
 
-        // ========== RIGHT PANEL — ARROW BUTTONS ==========
+        // Crosshair — larger, with outer ring and inner dot
+        var crosshair = this.add.graphics().setDepth(201);
+        crosshair.lineStyle(2, 0x9B59B6, 0.5);
+        crosshair.strokeCircle(cx, cy, 26);
+        crosshair.lineStyle(1.5, 0xFFFFFF, 0.4);
+        crosshair.strokeCircle(cx, cy, 14);
+        crosshair.lineBetween(cx - 30, cy, cx - 8, cy);
+        crosshair.lineBetween(cx + 8, cy, cx + 30, cy);
+        crosshair.lineBetween(cx, cy - 30, cx, cy - 8);
+        crosshair.lineBetween(cx, cy + 8, cx, cy + 30);
+        crosshair.fillStyle(0x00E5FF, 0.6);
+        crosshair.fillCircle(cx, cy, 3);
+
+        // "FIRE" label below crosshair
+        this.add.text(cx, cy + 50, 'FIRE', {
+            fontFamily: 'Roboto',
+            fontSize: '15px',
+            color: 'rgba(155,89,182,0.6)',
+            letterSpacing: 4,
+            fontStyle: 'bold',
+            align: 'center'
+        }).setOrigin(0.5).setDepth(201);
+
+        // ========== RIGHT PANEL — background only ==========
         var rightPanelX = sideW + CFG.WIDTH; // start of right panel
         var rightPanel = this.add.graphics().setDepth(199);
         rightPanel.fillStyle(0x1a0a2e, 0.85);
@@ -124,39 +140,47 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         rightPanel.lineStyle(1, 0x9B59B6, 0.15);
         rightPanel.lineBetween(rightPanelX, 0, rightPanelX, gameH);
 
-        // Arrow buttons — fill as much of the panel as possible
-        var btnPad = 8;                        // padding from panel edges
-        var btnGap = 8;                        // gap between the two buttons
-        var btnW = (sideW - btnPad * 2 - btnGap) / 2;  // fill width minus padding & gap
-        var btnH = gameH - btnPad * 2;         // full height minus top/bottom padding
+        // ========== ARROW BUTTONS — span gameplay area + right panel ==========
+        // The move zone runs from sideW (end of shoot panel) to canvasW.
+        // Split at gameplay midpoint: left arrow = sideW..midX, right arrow = midX..canvasW
+        var moveZoneX = sideW;                            // start of movement area
+        var moveZoneW = canvasW - sideW;                  // total width of movement area
+        var midX = sideW + CFG.WIDTH / 2;                 // split point
+        var btnPad = 8;
+        var btnGap = 8;                                   // gap between the two buttons
+        var btnH = gameH - btnPad * 2;
         var btnR = 10;
-        var btnY = gameH / 2;                  // vertically centred
+        var btnY = gameH / 2;
 
-        // Left arrow button
-        var leftBtnX = rightPanelX + btnPad + btnW / 2;
+        // Left arrow button — from moveZoneX+pad to midX-gap/2
+        var leftBtnX0 = moveZoneX + btnPad;
+        var leftBtnW = (midX - btnGap / 2) - leftBtnX0;
+        var leftBtnCX = leftBtnX0 + leftBtnW / 2;
         this._leftBg = this.add.graphics().setDepth(200);
-        this._leftRect = { x: leftBtnX - btnW / 2, y: btnY - btnH / 2, w: btnW, h: btnH, r: btnR };
+        this._leftRect = { x: leftBtnX0, y: btnY - btnH / 2, w: leftBtnW, h: btnH, r: btnR };
         this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
         var leftArrow = this.add.graphics().setDepth(201);
         leftArrow.fillStyle(0xFFFFFF, 0.8);
-        leftArrow.fillTriangle(leftBtnX - 12, btnY, leftBtnX + 8, btnY - 14, leftBtnX + 8, btnY + 14);
+        leftArrow.fillTriangle(leftBtnCX - 12, btnY, leftBtnCX + 8, btnY - 14, leftBtnCX + 8, btnY + 14);
 
-        // Right arrow button
-        var rightBtnX = rightPanelX + sideW - btnPad - btnW / 2;
+        // Right arrow button — from midX+gap/2 to canvasW-pad
+        var rightBtnX0 = midX + btnGap / 2;
+        var rightBtnW = (canvasW - btnPad) - rightBtnX0;
+        var rightBtnCX = rightBtnX0 + rightBtnW / 2;
         this._rightBg = this.add.graphics().setDepth(200);
-        this._rightRect = { x: rightBtnX - btnW / 2, y: btnY - btnH / 2, w: btnW, h: btnH, r: btnR };
+        this._rightRect = { x: rightBtnX0, y: btnY - btnH / 2, w: rightBtnW, h: btnH, r: btnR };
         this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
         var rightArrow = this.add.graphics().setDepth(201);
         rightArrow.fillStyle(0xFFFFFF, 0.8);
-        rightArrow.fillTriangle(rightBtnX + 12, btnY, rightBtnX - 8, btnY - 14, rightBtnX - 8, btnY + 14);
+        rightArrow.fillTriangle(rightBtnCX + 12, btnY, rightBtnCX - 8, btnY - 14, rightBtnCX - 8, btnY + 14);
 
         // ========== HITBOX ZONES ==========
-        // Shoot: left panel + left half of gameplay
-        // Move left: right half of gameplay + left half of right panel
-        // Move right: right half of right panel
+        // Shoot: left panel only
+        // Move left: left half of gameplay + right panel left button
+        // Move right: right half of gameplay + right panel right button
         this._shootHeld = false;
-        this._shootBoundary = sideW + CFG.WIDTH / 2;            // shoot zone right edge
-        this._splitX = rightPanelX + sideW / 2;                 // left/right arrow split
+        this._shootBoundary = sideW;                             // shoot zone = left panel only
+        this._splitX = sideW + CFG.WIDTH / 2;                   // left/right split at gameplay midpoint
     }
 
     // ===== UPDATE — poll pointers directly & relay to ship =====
@@ -192,7 +216,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         this._shootHeld = shootHeld;
 
-        // Visual feedback on arrow buttons
+        // Visual feedback on all buttons
+        this._drawBtnBg(this._shootBg, this._shootRect, shootHeld ? 0.8 : 0.5);
         this._drawBtnBg(this._leftBg, this._leftRect, moveDir === -1 ? 0.8 : 0.5);
         this._drawBtnBg(this._rightBg, this._rightRect, moveDir === 1 ? 0.8 : 0.5);
 

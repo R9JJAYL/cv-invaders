@@ -167,7 +167,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Show movement hint — detect touch/mobile vs desktop
         const isMobile = !this.sys.game.device.os.desktop;
         const moveHint = isMobile
-            ? 'Press < > to move\nTap left side to shoot'
+            ? 'Hold < > to move\nTap left side to shoot'
             : '← → to move, and SPACE to shoot';
         this.showAnnouncement(moveHint, 6000);
 
@@ -296,6 +296,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 bullet.fire(this.ship.x, this.ship.y - 30);
                 this.sound_engine.shoot();
             }
+            this.ship.shootPressed = false;  // consume — requires a new press/tap to fire again
         }
 
         // Only run wave manager after tutorial is done (and not in boss phase)

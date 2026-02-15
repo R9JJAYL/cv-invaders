@@ -95,8 +95,12 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
     }
 
     // Called by HUD shoot button (mobile only)
+    // Only fires on new tap (rising edge) — holding does not continuously fire.
     setMobileShootPressed(isPressed) {
-        this.shootPressed = isPressed;
+        if (isPressed && !this._mobileShootWasDown) {
+            this.shootPressed = true;     // rising edge — allow one shot
+        }
+        this._mobileShootWasDown = isPressed;
     }
 
     fireBullet(time) {

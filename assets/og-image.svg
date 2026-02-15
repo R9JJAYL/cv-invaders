@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <!-- Starfield dots -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9B59B6" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#1a0a2e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bulletGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00E5FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#1a0a2e"/>
+
+  <!-- Ambient glow behind gameplay -->
+  <ellipse cx="600" cy="350" rx="500" ry="300" fill="url(#glow)"/>
+
+  <!-- Stars -->
+  <circle cx="80" cy="60" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="200" cy="120" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="350" cy="40" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="500" cy="90" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="650" cy="55" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="780" cy="110" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="900" cy="35" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="1050" cy="80" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="1150" cy="50" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="130" cy="200" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="300" cy="180" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="1000" cy="170" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="1100" cy="200" r="1.5" fill="#fff" opacity="0.5"/>
+  <circle cx="70" cy="350" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="1130" cy="380" r="1" fill="#fff" opacity="0.3"/>
+  <circle cx="150" cy="500" r="1.5" fill="#fff" opacity="0.4"/>
+  <circle cx="1050" cy="520" r="1" fill="#fff" opacity="0.3"/>
+
+  <!-- ===== FALLING CVs (top area) ===== -->
+
+  <!-- Bad CV 1 (left) -->
+  <g transform="translate(220, 140) rotate(-8)">
+    <rect x="0" y="0" width="48" height="64" rx="4" fill="#FF8A80"/>
+    <polygon points="32,0 48,0 48,16" fill="#E06B6B"/>
+    <polygon points="32,0 48,16 32,16" fill="#CC5555" opacity="0.4"/>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="30" width="20" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="38" width="26" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="46" width="16" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+  </g>
+
+  <!-- Good CV 1 (center-left) -->
+  <g transform="translate(420, 100) rotate(5)">
+    <rect x="0" y="0" width="48" height="64" rx="4" fill="#4ADE80"/>
+    <polygon points="32,0 48,0 48,16" fill="#2EBD5E"/>
+    <polygon points="32,0 48,16 32,16" fill="#38A865" opacity="0.4"/>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="30" width="20" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="38" width="26" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="46" width="16" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+  </g>
+
+  <!-- Bad CV 2 (center) — being hit / exploding -->
+  <g transform="translate(580, 180) rotate(3)">
+    <rect x="0" y="0" width="48" height="64" rx="4" fill="#FF8A80" opacity="0.7"/>
+    <polygon points="32,0 48,0 48,16" fill="#E06B6B" opacity="0.7"/>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="#CC5555" opacity="0.4"/>
+    <rect x="8" y="30" width="20" height="3" rx="1" fill="#CC5555" opacity="0.4"/>
+    <rect x="8" y="38" width="26" height="3" rx="1" fill="#CC5555" opacity="0.4"/>
+    <!-- Hit flash -->
+    <rect x="-4" y="-4" width="56" height="72" rx="6" fill="#fff" opacity="0.15"/>
+  </g>
+
+  <!-- Good CV 2 (right) -->
+  <g transform="translate(780, 120) rotate(-4)">
+    <rect x="0" y="0" width="48" height="64" rx="4" fill="#4ADE80"/>
+    <polygon points="32,0 48,0 48,16" fill="#2EBD5E"/>
+    <polygon points="32,0 48,16 32,16" fill="#38A865" opacity="0.4"/>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="30" width="20" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="38" width="26" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+    <rect x="8" y="46" width="16" height="3" rx="1" fill="#38A865" opacity="0.6"/>
+  </g>
+
+  <!-- Bad CV 3 (far right) -->
+  <g transform="translate(950, 160) rotate(6)">
+    <rect x="0" y="0" width="48" height="64" rx="4" fill="#FF8A80"/>
+    <polygon points="32,0 48,0 48,16" fill="#E06B6B"/>
+    <polygon points="32,0 48,16 32,16" fill="#CC5555" opacity="0.4"/>
+    <rect x="8" y="22" width="24" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="30" width="20" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="38" width="26" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+    <rect x="8" y="46" width="16" height="3" rx="1" fill="#CC5555" opacity="0.6"/>
+  </g>
+
+  <!-- ===== BULLET TRAILS (from ship to CVs) ===== -->
+
+  <!-- Bullet 1 — heading toward bad CV at center -->
+  <ellipse cx="604" cy="260" rx="12" ry="20" fill="url(#bulletGlow)"/>
+  <rect x="601" y="250" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="250" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+
+  <!-- Bullet 2 — trailing behind -->
+  <ellipse cx="604" cy="330" rx="10" ry="16" fill="url(#bulletGlow)"/>
+  <rect x="601" y="322" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="601" y="322" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+
+  <!-- Bullet 3 — far left -->
+  <ellipse cx="244" cy="280" rx="10" ry="16" fill="url(#bulletGlow)"/>
+  <rect x="241" y="272" width="6" height="18" rx="2" fill="#00E5FF"/>
+  <rect x="241" y="272" width="6" height="6" rx="2" fill="#fff" opacity="0.5"/>
+
+  <!-- ===== PLAYER SHIP (bottom center) ===== -->
+  <g transform="translate(600, 440)">
+    <!-- Engine glow -->
+    <ellipse cx="0" cy="16" rx="30" ry="8" fill="#00E5FF" opacity="0.15"/>
+
+    <!-- Ship body — B-2 stealth bomber silhouette -->
+    <polygon points="0,-23 -50,10 -45,18 -15,12 0,20 15,12 45,18 50,10" fill="#8E44AD"/>
+    <!-- Center fuselage -->
+    <polygon points="0,-20 -12,8 0,16 12,8" fill="#6B3FA0" opacity="0.8"/>
+    <!-- Wing edge highlights -->
+    <line x1="-48" y1="12" x2="0" y2="-20" stroke="#BB8FCE" stroke-width="1" opacity="0.5"/>
+    <line x1="48" y1="12" x2="0" y2="-20" stroke="#BB8FCE" stroke-width="1" opacity="0.5"/>
+    <!-- Cockpit -->
+    <ellipse cx="0" cy="-8" rx="5" ry="3" fill="#00E5FF" opacity="0.4"/>
+    <!-- Engine exhausts -->
+    <ellipse cx="-10" cy="14" rx="4" ry="2" fill="#00E5FF" opacity="0.5"/>
+    <ellipse cx="10" cy="14" rx="4" ry="2" fill="#00E5FF" opacity="0.5"/>
+  </g>
+
+  <!-- ===== FLOATING SCORE TEXT ===== -->
+  <text x="620" y="225" font-family="Roboto, sans-serif" font-size="20" font-weight="bold" fill="#00FF00" opacity="0.8">+150</text>
+
+  <!-- ===== HUD ELEMENTS ===== -->
+  <!-- Score -->
+  <text x="1060" y="50" font-family="Roboto, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="end">SCORE: 4,350</text>
+
+  <!-- Combo -->
+  <text x="140" y="50" font-family="Roboto, sans-serif" font-size="18" font-weight="bold" fill="#FFD700">COMBO x8 (2.0x)</text>
+
+  <!-- Timer -->
+  <text x="600" y="50" font-family="Roboto, sans-serif" font-size="18" font-weight="bold" fill="#9B59B6" text-anchor="middle">TIME REMAINING: 28s</text>
+
+  <!-- ===== TITLE ===== -->
+  <text x="600" y="560" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="42" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
+  <text x="600" y="590" font-family="Roboto, sans-serif" font-size="16" fill="#9B59B6" text-anchor="middle" letter-spacing="3">CAN YOU SORT THE GOOD FROM THE BAD?</text>
+
+  <!-- ===== GHOST ENEMY (top-left area) ===== -->
+  <g transform="translate(130, 160)">
+    <!-- Ghost body -->
+    <ellipse cx="0" cy="-6" rx="18" ry="16" fill="#EEEEEF" opacity="0.9"/>
+    <rect x="-18" y="-6" width="36" height="20" fill="#EEEEEF" opacity="0.9"/>
+    <!-- Wavy tail -->
+    <polygon points="-18,14 -12,20 -6,14 0,20 6,14 12,20 18,14 18,8 -18,8" fill="#EEEEEF" opacity="0.9"/>
+    <!-- Eyes -->
+    <circle cx="-7" cy="-4" r="5" fill="#fff"/>
+    <circle cx="7" cy="-4" r="5" fill="#fff"/>
+    <circle cx="-6" cy="-2" r="2.5" fill="#2a1a4e"/>
+    <circle cx="8" cy="-2" r="2.5" fill="#2a1a4e"/>
+    <!-- Sad mouth -->
+    <path d="M-5,8 Q0,4 5,8" stroke="#9999BB" stroke-width="1.5" fill="none" opacity="0.8"/>
+  </g>
+
+</svg>

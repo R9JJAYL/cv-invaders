@@ -350,8 +350,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         var goodCV = this.add.image(goodX, cvY, 'cv-good')
             .setDepth(50).setAlpha(0).setScale(1.2).setScrollFactor(0);
 
-        // "RULES:" header above the CVs
-        var rulesLabel = this.add.text(cx, cvY - 50, 'RULES:', {
+        // "YOU MUST:" header above the CVs
+        var rulesLabel = this.add.text(cx, cvY - 50, 'YOU MUST:', {
             fontFamily: 'Courier New',
             fontSize: '16px',
             color: '#FFFFFF',
