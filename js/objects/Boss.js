@@ -103,7 +103,7 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     updatePhase2(time, delta, CFG) {
         // Figure-8 movement — lerp into it to avoid snap
         this.fig8Time += delta * 0.001;
-        const targetX = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.0) * 200;
+        const targetX = CFG.WIDTH / 2 + Math.sin(this.fig8Time * 1.0) * (CFG.WIDTH * 0.25);
         const targetY = 80 + Math.sin(this.fig8Time * 2.0) * 30;
         // Blend factor ramps from 0→1 over ~1 second
         this._phase2Blend = Math.min(1, (this._phase2Blend || 0) + delta * 0.002);

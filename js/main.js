@@ -28,6 +28,17 @@ window.addEventListener('load', function () {
             // Clamp: never narrower than 800, never wider than 1400
             CFG.WIDTH = Math.max(800, Math.min(1400, idealW));
         }
+
+        // Scale gameplay values so density & feel match the 800px baseline.
+        // Without this the wider screen makes CVs sparse and the ship too slow.
+        var wScale = CFG.WIDTH / 800;
+        CFG.PLAYER_SPEED   = Math.round(CFG.PLAYER_SPEED * wScale);
+        CFG.ENEMY_SPEED    = Math.round(CFG.ENEMY_SPEED * wScale);
+        CFG.CATCH_ZONE_WIDTH   = Math.round(CFG.CATCH_ZONE_WIDTH * wScale);
+        CFG.CATCH_ZONE_UNICORN = Math.round(CFG.CATCH_ZONE_UNICORN * wScale);
+        for (var i = 0; i < CFG.WAVES.length; i++) {
+            CFG.WAVES[i].maxOnScreen = Math.round(CFG.WAVES[i].maxOnScreen * wScale);
+        }
     }
 
     // On mobile, add extra height for controls bar + safe bottom zone (avoids iOS Home Indicator)
