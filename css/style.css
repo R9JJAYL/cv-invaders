@@ -205,12 +205,7 @@ body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-    transition: scrollbar-color 0.3s;
-}
-
-.lb-scroll-wrap:hover {
-    scrollbar-color: rgba(155, 89, 182, 0.6) rgba(155, 89, 182, 0.1);
+    scrollbar-color: rgba(155, 89, 182, 0.5) rgba(155, 89, 182, 0.1);
 }
 
 .lb-scroll-wrap::-webkit-scrollbar {
@@ -218,23 +213,13 @@ body {
 }
 
 .lb-scroll-wrap::-webkit-scrollbar-track {
-    background: transparent;
-    transition: background 0.3s;
-}
-
-.lb-scroll-wrap:hover::-webkit-scrollbar-track {
     background: rgba(155, 89, 182, 0.1);
     border-radius: 3px;
 }
 
 .lb-scroll-wrap::-webkit-scrollbar-thumb {
-    background: transparent;
+    background: rgba(155, 89, 182, 0.5);
     border-radius: 3px;
-    transition: background 0.3s;
-}
-
-.lb-scroll-wrap:hover::-webkit-scrollbar-thumb {
-    background: rgba(155, 89, 182, 0.6);
 }
 
 .lb-scroll-hint {
