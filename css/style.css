@@ -201,11 +201,12 @@ body {
 /* Scrollable leaderboard table wrapper — shows 5 rows, rest scrollable */
 .lb-scroll-wrap {
     max-height: 150px;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(155, 89, 182, 0.5) rgba(155, 89, 182, 0.1);
+    width: 100%;
 }
 
 .lb-scroll-wrap::-webkit-scrollbar {
