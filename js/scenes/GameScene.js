@@ -688,7 +688,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.ship.shutdown();
             this.scene.stop('HUD');
             this.scene.stop('TutorialScene');
-            this.scene.start('GameOverScene');
+            this.cameras.main.fadeOut(800);
+            this.time.delayedCall(800, () => {
+                this.scene.start('GameOverScene');
+            });
         });
     }
 
@@ -716,8 +719,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.ship.shutdown();
             this.scene.stop('HUD');
             this.scene.stop('TutorialScene');
-            this.cameras.main.fadeOut(500);
-            this.time.delayedCall(500, () => {
+            this.cameras.main.fadeOut(800);
+            this.time.delayedCall(800, () => {
                 this.scene.start('GameOverScene');
             });
         });
@@ -844,7 +847,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             this.ship.shutdown();
             this.scene.stop('HUD');
             this.scene.stop('TutorialScene');
-            this.scene.start('GameOverScene');
+            this.cameras.main.fadeOut(800);
+            this.time.delayedCall(800, () => {
+                this.scene.start('GameOverScene');
+            });
         });
     }
 

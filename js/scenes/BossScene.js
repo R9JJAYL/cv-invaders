@@ -302,8 +302,8 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.time.delayedCall(2500, () => {
             this.ship.shutdown();
             this.scene.stop('HUD');
-            this.cameras.main.fadeOut(500);
-            this.time.delayedCall(500, () => {
+            this.cameras.main.fadeOut(800);
+            this.time.delayedCall(800, () => {
                 this.scene.start('GameOverScene');
             });
         });
@@ -336,7 +336,10 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.time.delayedCall(1000, () => {
             this.ship.shutdown();
             this.scene.stop('HUD');
-            this.scene.start('GameOverScene');
+            this.cameras.main.fadeOut(800);
+            this.time.delayedCall(800, () => {
+                this.scene.start('GameOverScene');
+            });
         });
     }
 
