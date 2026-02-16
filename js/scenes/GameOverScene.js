@@ -571,7 +571,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         this._leaderboardDom = this.renderTables(CFG, allScores, name, score, yOff);
 
         // If remote data hasn't arrived yet, re-render when it does
-        if (!window.CVInvaders._remoteScores && this._leaderboardPromise) {
+        if (this._leaderboardPromise) {
             const self = this;
             this._leaderboardPromise.then(function() {
                 // Guard: don't re-render if scene was already shut down (Play Again)
@@ -689,6 +689,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
     /** POST the player's score to the remote leaderboard API, then fetch updated rankings. */
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
+        // Clear stale data so the leaderboard re-renders with fresh scores
+        window.CVInvaders._remoteScores = null;
         // POST to Google Sheets API — response includes updated leaderboard
         if (CFG.LEADERBOARD_URL) {
             var self = this;
