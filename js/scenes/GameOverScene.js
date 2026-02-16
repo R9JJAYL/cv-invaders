@@ -387,7 +387,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Rank — sits right below score, fades in once data arrives
         this.rankText = this.add.text(CFG.WIDTH / 2, rankY, '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Roboto',
             fontSize: rankFontSize,
             color: '#FFFFFF',
             fontStyle: 'bold'
@@ -417,7 +417,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const gradeFontSize = isMobile ? '18px' : '14px';
         this.time.delayedCall(scoreDelay + 2200, () => {
             this.add.text(CFG.WIDTH / 2, gradeY, 'GRADE ' + grade.grade + ': ' + grade.title, {
-                fontFamily: 'Courier New',
+                fontFamily: 'Roboto',
                 fontSize: gradeFontSize,
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
