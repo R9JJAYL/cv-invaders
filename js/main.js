@@ -186,7 +186,19 @@ window.addEventListener('load', function () {
             document.removeEventListener('touchstart', requestFS);
         }, { once: true });
     } else {
-        // Desktop: simple resize handler
-        window.addEventListener('resize', refreshScale);
+        // Desktop: debounced resize handler that constrains #game to the
+        // viewport so Phaser's FIT mode always has the correct parent size.
+        var desktopResizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(desktopResizeTimeout);
+            desktopResizeTimeout = setTimeout(function () {
+                var gameEl = document.getElementById('game');
+                if (gameEl) {
+                    gameEl.style.maxWidth = window.innerWidth + 'px';
+                    gameEl.style.maxHeight = window.innerHeight + 'px';
+                }
+                refreshScale();
+            }, 100);
+        });
     }
 });
