@@ -453,7 +453,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = isMobile ? yOff + 155 : yOff + 148;
+        const statsY = isMobile ? yOff + 158 : yOff + 151;
         const cx = CFG.WIDTH / 2;
         const statFontSize = isMobile ? '13px' : '10px';
 
