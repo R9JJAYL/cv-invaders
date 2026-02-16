@@ -48,25 +48,34 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
     }
 
     _onUpdate(time, delta) {
-        if (!this.isAlive || !this.entryComplete || this.scene.gameOver) return;
+        if (!this.isAlive || !this.entryComplete) return;
+        if (!this.scene || this.scene.gameOver) return;
 
-        const CFG = window.CVInvaders.Config;
+        // Clamp huge delta spikes from tab-switch / mobile backgrounding
+        // to prevent timers jumping by seconds and physics going haywire
+        if (delta > 500) delta = 16;
 
-        // Check phase transition (guard prevents re-entry)
-        if (this.phase === 1 && !this._enteringPhase2 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
-            this._enteringPhase2 = true;
-            this.enterPhase2();
-        }
+        try {
+            const CFG = window.CVInvaders.Config;
 
-        if (this.phase === 1) {
-            this.updatePhase1(time, delta, CFG);
-        } else {
-            this.updatePhase2(time, delta, CFG);
-        }
+            // Check phase transition (guard prevents re-entry)
+            if (this.phase === 1 && !this._enteringPhase2 && this.health <= this.maxHealth * CFG.BOSS_PHASE2_THRESHOLD) {
+                this._enteringPhase2 = true;
+                this.enterPhase2();
+            }
 
-        // Sync physics body to display position
-        if (this.body && this.body.enable) {
-            this.body.reset(this.x, this.y);
+            if (this.phase === 1) {
+                this.updatePhase1(time, delta, CFG);
+            } else {
+                this.updatePhase2(time, delta, CFG);
+            }
+
+            // Sync physics body to display position
+            if (this.body && this.body.enable) {
+                this.body.reset(this.x, this.y);
+            }
+        } catch (e) {
+            console.warn('Boss update error:', e);
         }
     }
 
@@ -132,18 +141,23 @@ window.CVInvaders.Boss = class Boss extends Phaser.Physics.Arcade.Image {
         this.bulletTimer = 0;
         this._phase2Blend = 0; // smooth blend into figure-8 movement
 
-        // Flash effect
-        this.scene.cameras.main.flash(200, 120, 0, 0);
+        try {
+            // Flash effect
+            this.scene.cameras.main.flash(200, 120, 0, 0);
 
-        // Show phase 2 dialogue
-        this.scene.showBossDialogue(window.CVInvaders.Dialogue.BOSS.PHASE2);
+            // Show phase 2 dialogue
+            this.scene.showBossDialogue(window.CVInvaders.Dialogue.BOSS.PHASE2);
+        } catch (e) {
+            console.warn('Boss phase2 transition error:', e);
+        }
 
         // Visual change - tint red
         this.setTint(0xFF4444);
     }
 
     takeDamage() {
-        if (!this.isAlive || !this.entryComplete || this.scene.gameOver) return false;
+        if (!this.isAlive || !this.entryComplete) return false;
+        if (!this.scene || this.scene.gameOver) return false;
 
         this.health--;
 

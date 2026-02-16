@@ -342,6 +342,8 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
 
     update(time, delta) {
         if (this.gameOver) return;
+        // Clamp huge delta spikes from tab-switch / mobile backgrounding
+        if (delta > 500) delta = 16;
 
         // Starfield
         this.stars.forEach(s => {

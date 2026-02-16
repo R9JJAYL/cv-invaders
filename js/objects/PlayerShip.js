@@ -61,32 +61,38 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
     }
 
     _onUpdate(time, delta) {
-        if (!this.isAlive) return;
+        if (!this.isAlive || !this.scene) return;
 
-        if (this.isMobile) {
-            // Mobile: velocity driven by arrow buttons in HUD (-1, 0, or 1)
-            var mv = this._mobileVelocityX || 0;
-            this.setVelocityX(mv * this.speed);
-            // shootPressed is set externally by HUD shoot button
-        } else {
-            // Desktop: keyboard movement
-            if (this.cursors.left.isDown) {
-                this.setVelocityX(-this.speed);
-            } else if (this.cursors.right.isDown) {
-                this.setVelocityX(this.speed);
+        try {
+            if (this.isMobile) {
+                // Mobile: velocity driven by arrow buttons in HUD (-1, 0, or 1)
+                var mv = this._mobileVelocityX || 0;
+                this.setVelocityX(mv * this.speed);
+                // shootPressed is set externally by HUD shoot button
             } else {
-                this.setVelocityX(0);
+                // Desktop: keyboard movement
+                if (this.cursors.left.isDown) {
+                    this.setVelocityX(-this.speed);
+                } else if (this.cursors.right.isDown) {
+                    this.setVelocityX(this.speed);
+                } else {
+                    this.setVelocityX(0);
+                }
+
+                // Desktop shoot: spacebar — one shot per press
+                // JustDown returns true only on the first frame the key goes down
+                this.shootPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
             }
 
-            // Desktop shoot: spacebar — one shot per press
-            // JustDown returns true only on the first frame the key goes down
-            this.shootPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
+            // Sync catch zone position
+            if (this.catchZone && this.catchZone.body) {
+                this.catchZone.x = this.x;
+                this.catchZone.y = this.y - 20;
+                this.catchZone.body.reset(this.catchZone.x, this.catchZone.y);
+            }
+        } catch (e) {
+            console.warn('PlayerShip update error:', e);
         }
-
-        // Sync catch zone position
-        this.catchZone.x = this.x;
-        this.catchZone.y = this.y - 20;
-        this.catchZone.body.reset(this.catchZone.x, this.catchZone.y);
     }
 
     // Called by HUD joystick each frame (mobile only)

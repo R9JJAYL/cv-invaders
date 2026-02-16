@@ -287,6 +287,10 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     // ===== UPDATE LOOP =====
     update(time, delta) {
         if (this.gameOver) return;
+        // Guard against abnormally large delta spikes (e.g. tab-switch,
+        // mobile Safari backgrounding). A single 500ms+ frame can cause
+        // the boss timer to skip huge chunks or physics to glitch out.
+        if (delta > 500) delta = 16;
 
         // Fire when shoot is pressed — blocked during boss entry/grace period
         const canShoot = !(this.bossPhase && !this.bossSpawned);
