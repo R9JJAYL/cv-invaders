@@ -357,8 +357,7 @@ body {
 
 .lb-head {
     font-size: 10px;
-    color: #BBBBBB;
-    opacity: 0.8;
+    color: rgba(187, 187, 187, 0.8);
     padding: 5px 0;
     font-weight: 700;
     border-bottom: 1px solid rgba(155, 89, 182, 0.4);
