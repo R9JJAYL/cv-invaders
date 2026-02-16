@@ -561,7 +561,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Buttons — evenly spaced row: Share | Demo | Play Again
-        const btnY = yOff + 560;
+        // Moved up from 560 to avoid iPhone home indicator / bottom nav bar
+        const btnY = yOff + 530;
         const btnStyle = {
             fontFamily: 'Courier New',
             fontSize: '13px',
