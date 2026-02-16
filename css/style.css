@@ -410,10 +410,19 @@ body {
 .lb-cell.lb-rank.lb-bronze { opacity: 0.8; }
 
 /* Player highlight row */
-.lb-highlight { background: rgba(155, 89, 182, 0.2) !important; }
-.lb-highlight .lb-cell { color: #FFFFFF; font-weight: bold; opacity: 1; }
+.lb-highlight {
+    background: linear-gradient(90deg, rgba(155, 89, 182, 0.25) 0%, rgba(155, 89, 182, 0.08) 100%) !important;
+    border-left: 2px solid #BB8FCE;
+    animation: lb-row-glow 2.5s ease-in-out infinite;
+}
+@keyframes lb-row-glow {
+    0%, 100% { box-shadow: inset 3px 0 12px rgba(155, 89, 182, 0.15); }
+    50% { box-shadow: inset 3px 0 18px rgba(155, 89, 182, 0.3); }
+}
+.lb-highlight .lb-cell { color: #FFFFFF; font-weight: 600; opacity: 1; }
+.lb-highlight .lb-cell.lb-name { color: #E8DAEF; }
 .lb-highlight .lb-cell.lb-rank { color: #BB8FCE; }
-.lb-highlight .lb-cell.lb-score { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
+.lb-highlight .lb-cell.lb-score { color: #FFD700; text-shadow: 0 0 6px rgba(255, 215, 0, 0.4); }
 
 /* Loading spinner for loading state */
 @keyframes spin-loader {

@@ -85,7 +85,7 @@ window.CVInvaders.LeaderboardRenderer = {
                 var podiumRank = i === 0 ? ' lb-gold' : i === 1 ? ' lb-silver' : i === 2 ? ' lb-bronze' : '';
                 var podiumRow = i < 3 ? ' lb-podium' : '';
                 var rowClass = (isPlayer ? 'lb-highlight' : '') + podiumRow;
-                var displayName = isPlayer ? '\u25B8 ' + entry.name : entry.name;
+                var displayName = entry.name;
                 return '<tr class="' + rowClass + '">' +
                     '<td class="lb-cell lb-rank' + podiumRank + '">' + (i + 1) + '.</td>' +
                     '<td class="lb-cell lb-name">' + displayName + '</td>' +
