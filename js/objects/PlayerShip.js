@@ -79,8 +79,12 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
                     this.setVelocityX(0);
                 }
 
-                // Desktop shoot: spacebar — one shot per press
-                this.shootPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
+                // Desktop shoot: spacebar — only SET true on rising edge;
+                // cleared by GameScene after a successful fire, so shots
+                // that land during the cooldown are queued, not lost.
+                if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+                    this.shootPressed = true;
+                }
             }
 
             // Sync catch zone position
