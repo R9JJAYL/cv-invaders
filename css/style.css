@@ -201,12 +201,16 @@ body {
 /* Scrollable leaderboard table wrapper — shows 5 rows, rest scrollable */
 .lb-scroll-wrap {
     max-height: 150px;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: rgba(155, 89, 182, 0.5) rgba(155, 89, 182, 0.1);
+    scrollbar-color: transparent transparent;
     width: 100%;
+}
+
+.combined-pill:hover .lb-scroll-wrap {
+    scrollbar-color: rgba(155, 89, 182, 0.5) rgba(155, 89, 182, 0.1);
 }
 
 .lb-scroll-wrap::-webkit-scrollbar {
@@ -214,13 +218,21 @@ body {
 }
 
 .lb-scroll-wrap::-webkit-scrollbar-track {
-    background: rgba(155, 89, 182, 0.1);
+    background: transparent;
     border-radius: 3px;
 }
 
+.combined-pill:hover .lb-scroll-wrap::-webkit-scrollbar-track {
+    background: rgba(155, 89, 182, 0.1);
+}
+
 .lb-scroll-wrap::-webkit-scrollbar-thumb {
-    background: rgba(155, 89, 182, 0.5);
+    background: transparent;
     border-radius: 3px;
+}
+
+.combined-pill:hover .lb-scroll-wrap::-webkit-scrollbar-thumb {
+    background: rgba(155, 89, 182, 0.5);
 }
 
 .lb-scroll-hint {
