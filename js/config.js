@@ -63,7 +63,7 @@ window.CVInvaders.Config = {
 
     // Boss
     BOSS_HEALTH: 12,
-    BOSS_TIMER: 25000,
+    BOSS_TIMER: 20000,
     BOSS_PHASE2_THRESHOLD: 0.5,
     BOSS_SPAM_RATE: 1200,
     BOSS_BULLET_SPEED: 200,
