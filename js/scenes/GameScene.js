@@ -734,7 +734,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
         // Show ATS lock icon
         const lock = this.add.image(x, y, 'ats-lock').setDepth(15);
-        const lockText = this.add.text(x, y + 15, 'Replied', {
+        const lockText = this.add.text(x, y + 15, 'Reply Sent!', {
             fontFamily: 'Roboto',
             fontSize: '10px',
             color: '#888888'
