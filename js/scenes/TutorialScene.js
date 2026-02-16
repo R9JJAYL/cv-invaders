@@ -378,14 +378,16 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
         // Labels visible from the start alongside the CVs — action on top, colour below
-        var shootLabel = this.add.text(badX, cvY + 35, 'SHOOT', {
+        var shootLabel = this.add.text(badX, cvY + 35, 'TAP FIRE BUTTON\nTO SHOOT', {
             fontFamily: 'Courier New',
-            fontSize: '14px',
+            fontSize: '12px',
             color: CFG.COLORS.CV_BAD_HEX,
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            align: 'center',
+            lineSpacing: 2
         }).setOrigin(0.5).setDepth(50).setAlpha(0).setScrollFactor(0);
 
-        var shootColor = this.add.text(badX, cvY + 53, 'RED CVs', {
+        var shootColor = this.add.text(badX, cvY + 62, 'RED CVs', {
             fontFamily: 'Courier New',
             fontSize: '14px',
             color: CFG.COLORS.CV_BAD_HEX,
