@@ -121,14 +121,15 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         crosshair.fillStyle(0x00E5FF, 0.6);
         crosshair.fillCircle(cx, cy, 3);
 
-        // "FIRE" label below crosshair
-        this.add.text(cx, cy + 50, 'FIRE', {
+        // "TAP TO FIRE" label below crosshair — single line
+        this.add.text(cx, cy + 50, 'TAP TO\nFIRE', {
             fontFamily: 'Roboto',
-            fontSize: '15px',
+            fontSize: '13px',
             color: 'rgba(155,89,182,0.6)',
-            letterSpacing: 4,
+            letterSpacing: 2,
             fontStyle: 'bold',
-            align: 'center'
+            align: 'center',
+            lineSpacing: 4
         }).setOrigin(0.5).setDepth(201);
 
         // ========== RIGHT PANEL — background fills from game edge to canvas edge ==========

@@ -86,10 +86,13 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             '</div>';
         this.formInput = this.add.dom(CFG.WIDTH / 2, 145).createFromHTML(formHTML);
 
-        // Start button
-        this.startBtn = this.add.text(CFG.WIDTH / 2, 209, '[ CLICK TO START MISSION ]', {
+        // Start button — larger on mobile for easier tapping
+        var isMobile = !this.sys.game.device.os.desktop;
+        var startLabel = isMobile ? '[ TAP TO START MISSION ]' : '[ CLICK TO START MISSION ]';
+        var startSize = isMobile ? '26px' : '22px';
+        this.startBtn = this.add.text(CFG.WIDTH / 2, 209, startLabel, {
             fontFamily: 'Courier New',
-            fontSize: '22px',
+            fontSize: startSize,
             color: '#FFFFFF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });

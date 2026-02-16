@@ -77,7 +77,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
-            allScores.slice(0, 10).map(function(entry, i) {
+            allScores.slice(0, window.matchMedia('(pointer: coarse)').matches ? 5 : 10).map(function(entry, i) {
                 var isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
                 var typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
                 var typeClass = entry.type === 'agency' ? 'type-agency' : entry.type === 'internal' ? 'type-internal' : 'type-other';
