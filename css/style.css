@@ -226,10 +226,10 @@ body {
 
 .team-label {
     font-family: 'Roboto', sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 6px;
     text-align: center;
 }
@@ -276,9 +276,9 @@ body {
 
 .stat-name {
     font-family: 'Roboto', sans-serif;
-    font-size: 8px;
+    font-size: 9px;
     color: #AAAAAA;
-    opacity: 0.5;
+    opacity: 0.7;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 2px;
@@ -294,9 +294,9 @@ body {
 
 .lb-title {
     font-family: 'Roboto', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
     padding: 0 0 6px 0;
     text-align: center;
     letter-spacing: 2px;
@@ -304,10 +304,10 @@ body {
 }
 
 .lb-head {
-    font-size: 9px;
-    color: #AAAAAA;
-    opacity: 0.6;
-    padding: 4px 0;
+    font-size: 10px;
+    color: #BBBBBB;
+    opacity: 0.8;
+    padding: 5px 0;
     font-weight: 700;
     border-bottom: 1px solid rgba(155, 89, 182, 0.4);
     letter-spacing: 0.5px;
@@ -331,19 +331,19 @@ body {
 }
 
 .lb-cell {
-    font-size: 11px;
-    padding: 4px 0;
-    color: #AAAAAA;
+    font-size: 13px;
+    padding: 6px 0;
+    color: #BBBBBB;
 }
 
-.lb-cell.lb-rank { color: #AAAAAA; opacity: 0.6; }
-.lb-cell.lb-name { color: rgba(204, 204, 204, 0.8); }
-.lb-cell.lb-company { opacity: 0.6; }
-.lb-cell.lb-type { opacity: 0.7; }
-.lb-cell.lb-type.type-agency { color: #9B59B6; }
-.lb-cell.lb-type.type-internal { color: #8BAFC4; }
-.lb-cell.lb-type.type-other { color: #999999; }
-.lb-cell.lb-score { text-align: right; color: rgba(255, 255, 255, 0.75); font-size: 12px; font-weight: 500; }
+.lb-cell.lb-rank { color: #BBBBBB; opacity: 0.8; }
+.lb-cell.lb-name { color: rgba(220, 220, 220, 0.9); }
+.lb-cell.lb-company { opacity: 0.75; }
+.lb-cell.lb-type { opacity: 0.85; }
+.lb-cell.lb-type.type-agency { color: #B070D0; }
+.lb-cell.lb-type.type-internal { color: #9DC5D8; }
+.lb-cell.lb-type.type-other { color: #AAAAAA; }
+.lb-cell.lb-score { text-align: right; color: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 600; }
 
 /* Podium ranks — gold, silver, bronze */
 .lb-cell.lb-rank.lb-gold { color: #FFD700; opacity: 1; font-weight: bold; }
