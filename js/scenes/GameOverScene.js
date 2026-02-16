@@ -735,11 +735,15 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
     }
 
-    /** Open a URL, using window.open with _blank. Works around mobile popup blockers. */
+    /** Open a URL in a new tab. Tries window.open first (works in trusted
+     *  gesture chains), then falls back to programmatic anchor click, then
+     *  falls back to navigating the current page as a last resort. */
     _openURL(url) {
-        // Use a hidden anchor element to open URLs — mobile browsers
-        // block window.open() if it's not from a trusted user gesture,
-        // but anchor clicks are always trusted
+        // Attempt 1: window.open — works on desktop and some mobile browsers
+        var win = window.open(url, '_blank');
+        if (win) return;
+
+        // Attempt 2: programmatic anchor click
         var a = document.createElement('a');
         a.href = url;
         a.target = '_blank';
@@ -747,6 +751,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+
+        // Attempt 3: if all else fails, navigate in the same tab
+        // (short delay so the anchor click has time to work)
+        setTimeout(function () {
+            if (!document.hidden) {
+                window.location.href = url;
+            }
+        }, 500);
     }
 
     playAgain(CFG) {
