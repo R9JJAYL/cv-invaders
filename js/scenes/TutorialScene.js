@@ -302,21 +302,39 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
     }
 
     spawnCinematicCVs(CFG) {
-        // CVs fall from top of screen toward the ATS below
+        // CVs fall from above toward the ATS building (centred at CFG.WIDTH/2).
+        // Each CV starts with a random-ish X offset but converges toward the
+        // ATS centre so they visually "hit" the building.
+        var atsX = CFG.WIDTH / 2;
+        var atsY = CFG.HEIGHT + 130;
+        var offsets = [-120, 80, -40, 140, -90]; // starting X offsets from centre
+
         for (let i = 0; i < 5; i++) {
+            var startX = atsX + offsets[i];
+            // Land within ±30px of ATS centre so they clearly hit it
+            var endX = atsX + Phaser.Math.Between(-30, 30);
+
             const cv = this.add.image(
-                Phaser.Math.Between(80, CFG.WIDTH - 80),
+                startX,
                 CFG.HEIGHT - 30 - (i * 50),
                 'cv-bad'
             ).setDepth(3).setAlpha(0.8).setAngle(Phaser.Math.Between(-15, 15));
 
             this.tweens.add({
                 targets: cv,
-                y: CFG.HEIGHT + 110,
+                x: endX,
+                y: atsY - 10,
                 duration: 1400 + (i * 250),
                 delay: i * 180,
                 ease: 'Power1',
                 onComplete: () => {
+                    // Impact flash on the ATS
+                    if (this.ats) this.ats.setTint(0xFF4444);
+                    var self = this;
+                    this.time.delayedCall(100, function () {
+                        if (self.ats) self.ats.clearTint();
+                    });
+
                     this.tweens.add({
                         targets: cv,
                         alpha: 0,
