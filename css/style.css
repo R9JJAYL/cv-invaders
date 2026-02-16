@@ -397,13 +397,10 @@ body {
 .lb-cell.lb-type.type-other { color: #AAAAAA; }
 .lb-cell.lb-score { text-align: right; color: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 600; }
 
-/* Podium ranks — gold, silver, bronze */
-.lb-cell.lb-rank.lb-gold { color: #FFD700; opacity: 1; font-weight: bold; }
-.lb-cell.lb-rank.lb-silver { color: #C0C0C0; opacity: 1; font-weight: bold; }
-.lb-cell.lb-rank.lb-bronze { color: #CD7F32; opacity: 1; font-weight: bold; }
-
-/* Top 3 score glow */
-.lb-podium .lb-cell.lb-score { text-shadow: 0 0 6px rgba(155, 89, 182, 0.5); }
+/* Podium ranks — no special colour, just match regular rows */
+.lb-cell.lb-rank.lb-gold { opacity: 0.8; }
+.lb-cell.lb-rank.lb-silver { opacity: 0.8; }
+.lb-cell.lb-rank.lb-bronze { opacity: 0.8; }
 
 /* Player highlight row */
 .lb-highlight { background: rgba(155, 89, 182, 0.2) !important; }
