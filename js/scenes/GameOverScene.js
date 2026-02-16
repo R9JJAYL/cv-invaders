@@ -643,9 +643,9 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return window.CVInvaders.LeaderboardRenderer.renderTables(this, CFG, allScores, {
             playerName: playerName,
             playerScore: playerScore,
-            // Match the ~8px gap between score bottom and rank top:
-            // stats pill bottom = 148 + 23 = 171, target leaderboard top ≈ 179
-            yPosition: (yOff || 0) + 305,
+            // Centre leaderboard between stats pill bottom (171) and CTA buttons (530):
+            // midpoint = (171 + 530) / 2 = 350
+            yPosition: (yOff || 0) + 350,
             disablePointerEvents: false
         });
     }
