@@ -363,6 +363,10 @@ body {
     font-weight: 700;
     border-bottom: 1px solid rgba(155, 89, 182, 0.4);
     letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    background: #1a0a2e;
+    z-index: 1;
 }
 
 .lb-head.lb-rank { text-align: left; width: 28px; }
