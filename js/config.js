@@ -95,7 +95,7 @@ window.CVInvaders.Config = {
 
     // Grades
     GRADES: [
-        { min: 15000, grade: 'S', title: 'Unicorn Hunter' },
+        { min: 15000, grade: 'A+', title: 'Unicorn Hunter' },
         { min: 12500, grade: 'A', title: 'Talent Whisperer' },
         { min: 10000, grade: 'B', title: 'CV Slayer' },
         { min: 7500, grade: 'C', title: 'Inbox Warrior' },
