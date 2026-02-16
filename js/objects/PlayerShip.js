@@ -79,8 +79,8 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
                     this.setVelocityX(0);
                 }
 
-                // Desktop shoot: spacebar — hold to auto-fire at fire rate
-                this.shootPressed = this.cursors.space.isDown;
+                // Desktop shoot: spacebar — one shot per press
+                this.shootPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
             }
 
             // Sync catch zone position
