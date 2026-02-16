@@ -90,36 +90,16 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         var isMobile = !this.sys.game.device.os.desktop;
         var startLabel = isMobile ? '[ TAP TO START MISSION ]' : '[ CLICK TO START MISSION ]';
         var startSize = isMobile ? '26px' : '22px';
-        // On mobile, position exactly between the bottom of the form and the
-        // top of the leaderboard. formInput is at y=145, leaderboard at y=416.
-        // We measure the form's actual rendered height after a short delay.
-        var startY = 209; // desktop default
+        // On mobile, fixed position centred between the bottom of the form
+        // (y≈188) and the top of a full 5-entry leaderboard (y≈296).
+        // Midpoint ≈ 242, rounded to 242.
+        var startY = isMobile ? 242 : 209;
         this.startBtn = this.add.text(CFG.WIDTH / 2, startY, startLabel, {
             fontFamily: 'Courier New',
             fontSize: startSize,
             color: '#FFFFFF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        if (isMobile) {
-            // Reposition once the DOM form has rendered so we can measure it
-            var self = this;
-            this.time.delayedCall(100, function () {
-                var formNode = self.formInput && self.formInput.node;
-                if (formNode) {
-                    // formInput.y is the Phaser world-y of the DOM centre
-                    var formBottom = self.formInput.y + formNode.offsetHeight / 2;
-                    // Leaderboard DOM y position
-                    var lbTop = 416; // leaderboard DOM centre y
-                    var lbNode = self.leaderboardDom && self.leaderboardDom.node;
-                    if (lbNode) {
-                        lbTop = self.leaderboardDom.y - lbNode.offsetHeight / 2;
-                    }
-                    var midY = Math.round((formBottom + lbTop) / 2);
-                    self.startBtn.setY(midY);
-                }
-            });
-        }
 
         // Pulse animation
         this.tweens.add({
