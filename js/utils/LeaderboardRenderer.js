@@ -95,7 +95,7 @@ window.CVInvaders.LeaderboardRenderer = {
                     '</tr>';
             }).join('') +
             '</tbody></table></div>' +
-            (allScores.length > 5 ? '<div class="lb-scroll-hint">↓ Scroll for more ↓</div>' : '') +
+            (allScores.length > 5 ? '<div class="lb-scroll-hint">↓ ' + (window.matchMedia('(pointer: coarse)').matches ? 'Swipe' : 'Scroll') + ' for more ↓</div>' : '') +
             '</div></div>';
 
         var domElement = scene.add.dom(CFG.WIDTH / 2, yPosition).createFromHTML(statsHTML);
