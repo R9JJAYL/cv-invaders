@@ -631,7 +631,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             playerName: playerName,
             playerScore: playerScore,
             yPosition: (yOff || 0) + 335,
-            disablePointerEvents: true
+            disablePointerEvents: false
         });
     }
 

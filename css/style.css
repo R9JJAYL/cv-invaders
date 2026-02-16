@@ -198,6 +198,44 @@ body {
     margin: 8px 0;
 }
 
+/* Scrollable leaderboard table wrapper — shows 5 rows, rest scrollable */
+.lb-scroll-wrap {
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(155, 89, 182, 0.4) transparent;
+}
+
+.lb-scroll-wrap::-webkit-scrollbar {
+    width: 4px;
+}
+
+.lb-scroll-wrap::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.lb-scroll-wrap::-webkit-scrollbar-thumb {
+    background: rgba(155, 89, 182, 0.4);
+    border-radius: 2px;
+}
+
+.lb-scroll-hint {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 9px;
+    color: rgba(155, 89, 182, 0.6);
+    letter-spacing: 1px;
+    padding: 4px 0 2px;
+    animation: lb-hint-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes lb-hint-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
 /* Stats section — two-column pill layout */
 .stats-section {
     width: 100%;

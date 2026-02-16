@@ -68,6 +68,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '</div></div>' +
             '</div></div>' +
             '<div class="lb-divider"></div>' +
+            '<div class="lb-scroll-wrap">' +
             '<table class="leaderboard-table">' +
             '<thead>' +
             '<tr>' +
@@ -77,7 +78,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
-            allScores.slice(0, window.matchMedia('(pointer: coarse)').matches ? 5 : 8).map(function(entry, i) {
+            allScores.map(function(entry, i) {
                 var isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
                 var typeLabel = entry.type === 'agency' ? 'Agency' : entry.type === 'internal' ? 'Internal' : entry.type ? 'Other' : '';
                 var typeClass = entry.type === 'agency' ? 'type-agency' : entry.type === 'internal' ? 'type-internal' : 'type-other';
@@ -93,7 +94,9 @@ window.CVInvaders.LeaderboardRenderer = {
                     '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
                     '</tr>';
             }).join('') +
-            '</tbody></table></div></div>';
+            '</tbody></table></div>' +
+            (allScores.length > 5 ? '<div class="lb-scroll-hint">↓ Scroll for more ↓</div>' : '') +
+            '</div></div>';
 
         var domElement = scene.add.dom(CFG.WIDTH / 2, yPosition).createFromHTML(statsHTML);
 
@@ -105,6 +108,15 @@ window.CVInvaders.LeaderboardRenderer = {
             if (domElement.node && domElement.node.parentElement) {
                 domElement.node.parentElement.style.pointerEvents = 'none';
             }
+        }
+
+        // Hide the scroll hint once user starts scrolling
+        var scrollWrap = domElement.node.querySelector('.lb-scroll-wrap');
+        var scrollHint = domElement.node.querySelector('.lb-scroll-hint');
+        if (scrollWrap && scrollHint) {
+            scrollWrap.addEventListener('scroll', function() {
+                scrollHint.style.display = 'none';
+            }, { once: true });
         }
 
         return domElement;
