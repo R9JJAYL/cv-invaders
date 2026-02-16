@@ -34,14 +34,6 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         }
         this.sound_engine = window.CVInvaders._sharedSoundEngine;
 
-        // Mute key
-        this.muteKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
-        this.muteKey.on('down', () => {
-            const muted = this.sound_engine.toggleMute();
-            const hud = this.scene.get('HUD');
-            if (hud && hud.updateMuteText) hud.updateMuteText(muted);
-        });
-
         // On mobile, offset camera to centre gameplay between side panels
         if (!this.sys.game.device.os.desktop) {
             var sideW = CFG.SIDE_PANEL_WIDTH || 0;

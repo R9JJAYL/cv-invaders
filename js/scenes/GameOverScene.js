@@ -412,8 +412,24 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // Grade + title — delayed after score count-up + rank
-        const gradeY = isMobile ? yOff + 115 : yOff + 111;
+        // Grade + title — pixel-centred between rank bottom edge and stats pill top edge
+        //
+        // Rank text uses setOrigin(0.5) so its centre is at rankY.
+        // Phaser's bounding box for Roboto bold ≈ fontSize × 1.4, but uppercase
+        // text ("YOU RANKED") has no descenders, so the *visual* bottom sits at
+        // roughly rankY + fontSize × 0.4  (baseline, not full bbox bottom).
+        //
+        // Stats pill top = statsY − outerH / 2
+        //   outerH = innerH×2 + innerGap + outerPad×2
+        //
+        // Desktop: visual rank bottom ≈ 74 + 13×0.4 = 79.2
+        //          stats pill top     = 148 − 46/2   = 125
+        //          midpoint           = (79.2+125)/2  = 102.1 → 102
+        //
+        // Mobile:  visual rank bottom ≈ 75 + 17×0.4 = 81.8
+        //          stats pill top     = 155 − 70/2   = 120
+        //          midpoint           = (81.8+120)/2  = 100.9 → 101
+        const gradeY = isMobile ? yOff + 101 : yOff + 102;
         const gradeFontSize = isMobile ? '18px' : '14px';
         this.time.delayedCall(scoreDelay + 2200, () => {
             this.add.text(CFG.WIDTH / 2, gradeY, 'GRADE ' + grade.grade + ': ' + grade.title, {
@@ -437,7 +453,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        // Evenly spaced between top and leaderboard top (~yOff+185)
         const statsY = isMobile ? yOff + 155 : yOff + 148;
         const cx = CFG.WIDTH / 2;
         const statFontSize = isMobile ? '13px' : '10px';
@@ -570,7 +585,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         }
 
         // Buttons — evenly spaced row: Share | Demo | Play Again
-        // Moved up from 560 to avoid iPhone home indicator / bottom nav bar
         const btnY = yOff + 530;
         const btnStyle = {
             fontFamily: 'Courier New',
@@ -629,7 +643,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return window.CVInvaders.LeaderboardRenderer.renderTables(this, CFG, allScores, {
             playerName: playerName,
             playerScore: playerScore,
-            yPosition: (yOff || 0) + 335,
+            yPosition: (yOff || 0) + 285,
             disablePointerEvents: false
         });
     }

@@ -54,14 +54,6 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         }
         this.sound_engine = window.CVInvaders._sharedSoundEngine;
 
-        // Mute key
-        this.muteKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
-        this.muteKey.on('down', () => {
-            const muted = this.sound_engine.toggleMute();
-            const hud = this.scene.get('HUD');
-            if (hud && hud.updateMuteText) hud.updateMuteText(muted);
-        });
-
         // Transparent background — starfield runs in TutorialScene underneath
         this.cameras.main.setBackgroundColor('rgba(0,0,0,0)');
         this.cameras.main.transparent = true;
@@ -439,7 +431,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // 0.5s: CV burst animation (clear screen)
         // 2.0s: "Uh oh... hiring manager threw out all the CVs!" (2.5s)
         // 5.0s: Boss entry starts (flies down over 2s, 1s grace = vulnerable at 8s)
-        //        "We readvertised the job but we're being attacked by bots. Stop them!"
+        //        "We readvertised the job but we're being attacked by bot's. Stop them!"
         // 7.0s: Health bar appears
         // 8.0s: Boss vulnerable, timer + background CVs start
 

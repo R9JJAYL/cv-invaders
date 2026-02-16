@@ -4,7 +4,7 @@ window.CVInvaders = window.CVInvaders || {};
  * HUD — Persistent overlay scene for score, combo, countdown, and mobile controls.
  *
  * Launched alongside GameScene/BossScene and rendered on top of gameplay.
- * On desktop it shows score, combo counter, countdown timer, and mute hint.
+ * On desktop it shows score, combo counter, and countdown timer.
  * On mobile it draws side-panel controls: left panel = shoot zone,
  * right panel = left/right arrow buttons.  The 800×600 gameplay area is
  * centred between the panels.
@@ -47,13 +47,6 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             fontStyle: 'bold'
         }).setDepth(100);
 
-        // Mute indicator
-        this.muteText = this.add.text(sideW + CFG.WIDTH - 20, CFG.HEIGHT - 20, '[M] Sound: ON', {
-            fontFamily: 'Roboto',
-            fontSize: '12px',
-            color: CFG.COLORS.TEXT_SECONDARY
-        }).setOrigin(1, 1).setDepth(100);
-
         // Listen for registry changes
         this.registry.events.on('changedata-score', (parent, value) => {
             this.scoreText.setText('SCORE: ' + value);
@@ -77,7 +70,6 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this.isMobile = !this.sys.game.device.os.desktop;
         if (this.isMobile) {
             this.createMobileControls();
-            this.muteText.setVisible(false);
         }
     }
 
@@ -175,13 +167,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         rightArrow.fillTriangle(rightBtnCX + 12, btnY, rightBtnCX - 8, btnY - 14, rightBtnCX - 8, btnY + 14);
 
         // ========== HITBOX ZONES ==========
-        // Shoot: left panel only (0 to sideW)
-        // Move left: gameplay area + left half of right panel (sideW to rpMidX)
-        // Move right: right half of right panel (rpMidX to canvasW)
-        // This aligns the hitbox split with the visual button split so
-        // tapping the left arrow triggers left movement, not right.
+        // Shoot: left panel + left half of game screen (0 to sideW + WIDTH/2)
+        // Move left: right half of game screen + left arrow button (sideW + WIDTH/2 to rpMidX)
+        // Move right: right arrow button (rpMidX to canvasW)
         this._shootHeld = false;
-        this._shootBoundary = sideW;                             // shoot zone = left panel only
+        this._shootBoundary = sideW + CFG.WIDTH / 2;            // shoot zone = left panel + left half of game
         this._splitX = rpMidX;                                   // left/right split at right panel midpoint
     }
 
@@ -314,10 +304,6 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
     hideCountdown() {
         this.countdownText.setText('');
-    }
-
-    updateMuteText(muted) {
-        this.muteText.setText('[M] Sound: ' + (muted ? 'OFF' : 'ON'));
     }
 
     showBossHealth(visible) {

@@ -15,7 +15,7 @@ window.CVInvaders = window.CVInvaders || {};
 window.CVInvaders.Dialogue = {
     CINEMATIC: [
         { text: '[ ALERT ]\n\nINCOMING THREAT DETECTED', duration: 1800 },
-        { text: 'The bots are attacking\nour ATS!', duration: 2000 },
+        { text: 'The bot\'s are attacking\nour ATS!', duration: 2000 },
         { text: 'Take control of the ship\nand protect it!', duration: 2000 },
         { text: 'Shoot the RED CVs\nCapture the GREEN ones', duration: 2200 }
     ],
@@ -45,7 +45,7 @@ window.CVInvaders.Dialogue = {
     },
 
     GAME_OVER: {
-        WIN: 'You defeated the bots!\nRecruiters: 1, Bots: 0',
-        LOSE: 'The bots got the better of you...\nTime to upskill!'
+        WIN: 'You defeated the bot\'s!\nRecruiters: 1, Bot\'s: 0',
+        LOSE: 'The bot\'s got the better of you...\nTime to upskill!'
     }
 };

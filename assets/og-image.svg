@@ -146,7 +146,7 @@
 
   <!-- ===== TITLE ===== -->
   <text x="600" y="490" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="28" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">CV INVADERS</text>
-  <text x="600" y="565" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="36" font-weight="900" fill="#BB8FCE" text-anchor="middle" letter-spacing="1">CAN YOU PROTECT THE ATS FROM BOTS?</text>
+  <text x="600" y="565" font-family="'Press Start 2P', 'Orbitron', monospace" font-size="36" font-weight="900" fill="#BB8FCE" text-anchor="middle" letter-spacing="1">CAN YOU PROTECT THE ATS FROM BOT'S?</text>
 
   <!-- ===== GHOST ENEMY 1 (left area) ===== -->
   <g transform="translate(150, 300)">
