@@ -166,8 +166,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             this.showNarrative(DLG[1].text, DLG[1].duration);
         });
 
-        // Beat 3 (5.4s): Ship launches up, camera follows, show helm text + CV examples
-        this.time.delayedCall(5400, () => {
+        // Beat 3 (6.2s): Ship launches up, camera follows, show helm text + CV examples
+        this.time.delayedCall(6200, () => {
             this.shipSprite.setAlpha(1);
 
             // Ship flies up from below ATS to gameplay position (bottom of screen)
@@ -197,8 +197,8 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
             });
         });
 
-        // Beat 4 (11.5s): Dramatic countdown 3... 2... 1... GO!
-        this.time.delayedCall(11500, () => {
+        // Beat 4 (12.3s): Dramatic countdown 3... 2... 1... GO!
+        this.time.delayedCall(12300, () => {
             this.runCountdown(CFG);
         });
     }
