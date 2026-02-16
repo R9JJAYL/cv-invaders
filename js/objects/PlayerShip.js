@@ -79,9 +79,8 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
                     this.setVelocityX(0);
                 }
 
-                // Desktop shoot: spacebar — one shot per press
-                // JustDown returns true only on the first frame the key goes down
-                this.shootPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space);
+                // Desktop shoot: spacebar — hold to auto-fire at fire rate
+                this.shootPressed = this.cursors.space.isDown;
             }
 
             // Sync catch zone position
