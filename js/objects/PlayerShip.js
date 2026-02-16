@@ -50,6 +50,9 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
         // Mobile movement — set by HUD joystick each frame
         this._mobileVelocityX = 0;
 
+        // Direction tracking for exhaust puff effect
+        this._prevDir = 0;
+
         // Desktop: keyboard input
         this.cursors = scene.input.keyboard.createCursorKeys();
 
@@ -87,6 +90,13 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
                 }
             }
 
+            // Exhaust puff on direction change
+            var dir = Math.sign(this.body.velocity.x);
+            if (dir !== 0 && dir !== this._prevDir) {
+                this._spawnExhaustPuff(dir);
+            }
+            if (dir !== 0) this._prevDir = dir;
+
             // Sync catch zone position
             if (this.catchZone && this.catchZone.body) {
                 this.catchZone.x = this.x;
@@ -95,6 +105,26 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
             }
         } catch (e) {
             console.warn('PlayerShip update error:', e);
+        }
+    }
+
+    /** Tiny exhaust puff when ship changes direction. */
+    _spawnExhaustPuff(newDir) {
+        if (!this.scene) return;
+        var count = 3;
+        for (var i = 0; i < count; i++) {
+            var p = this.scene.add.image(this.x, this.y + 15, 'particle')
+                .setDepth(5).setAlpha(0.5).setScale(0.35);
+            this.scene.tweens.add({
+                targets: p,
+                x: this.x + (-newDir) * Phaser.Math.Between(12, 28),
+                y: this.y + 15 + Phaser.Math.Between(4, 12),
+                alpha: 0,
+                scale: 0.05,
+                duration: 150,
+                ease: 'Sine.easeOut',
+                onComplete: function () { p.destroy(); }
+            });
         }
     }
 

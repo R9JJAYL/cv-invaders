@@ -230,6 +230,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             const points = this.scoreManager.shootBadCV();
             this.sound_engine.hitBadCV();
             this.showFloatingScore(cv.x, cv.y, points);
+            this.spawnPoof(cv.x, cv.y);
             cv.recycle();
         }, null, this);
 
@@ -768,6 +769,27 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
                 window.CVInvaders.Config.HEIGHT - 20,
                 points
             );
+        }
+    }
+
+    /** Small radial particle burst when a CV is destroyed. */
+    spawnPoof(x, y) {
+        const count = 6;
+        for (let i = 0; i < count; i++) {
+            const angle = (i / count) * Math.PI * 2;
+            const dist = Phaser.Math.Between(25, 45);
+            const p = this.add.image(x, y, 'particle')
+                .setDepth(15).setAlpha(0.8).setScale(0.6);
+            this.tweens.add({
+                targets: p,
+                x: x + Math.cos(angle) * dist,
+                y: y + Math.sin(angle) * dist,
+                alpha: 0,
+                scale: 0.1,
+                duration: 250,
+                ease: 'Power2',
+                onComplete: () => p.destroy()
+            });
         }
     }
 
