@@ -598,6 +598,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
                     // NOW the fight begins — start timer and background CVs
                     this.bossSpawned = true;
+                    // Clear any stale shoot input from before boss entry
+                    if (this.ship) this.ship.shootPressed = false;
                     this.bossTimeRemaining = CFG.BOSS_TIMER;
 
                     // Enable bullet-boss collision
