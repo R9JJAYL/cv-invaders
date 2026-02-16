@@ -373,17 +373,22 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Score with count-up — delay until page scrolls into view
         const grade = this.getGrade(score);
-        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, yOff + 18, 'SCORE: 0', {
+        const isMobile = !this.sys.game.device.os.desktop;
+        const scoreFontSize = isMobile ? '36px' : '28px';
+        const rankFontSize = isMobile ? '17px' : '13px';
+        const scoreY = isMobile ? yOff + 30 : yOff + 18;
+        const rankY = isMobile ? yOff + 68 : yOff + 48;
+        this.scoreDisplay = this.add.text(CFG.WIDTH / 2, scoreY, 'SCORE: 0', {
             fontFamily: 'Courier New',
-            fontSize: '28px',
+            fontSize: scoreFontSize,
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
         // Rank — sits right below score, fades in once data arrives
-        this.rankText = this.add.text(CFG.WIDTH / 2, yOff + 48, '', {
+        this.rankText = this.add.text(CFG.WIDTH / 2, rankY, '', {
             fontFamily: 'Courier New',
-            fontSize: '13px',
+            fontSize: rankFontSize,
             color: '#FFFFFF',
             fontStyle: 'bold'
         }).setOrigin(0.5).setAlpha(0);
@@ -408,10 +413,12 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Grade + title — delayed after score count-up + rank
+        const gradeY = isMobile ? yOff + 100 : yOff + 72;
+        const gradeFontSize = isMobile ? '18px' : '14px';
         this.time.delayedCall(scoreDelay + 2200, () => {
-            this.add.text(CFG.WIDTH / 2, yOff + 72, 'GRADE ' + grade.grade + ': ' + grade.title, {
+            this.add.text(CFG.WIDTH / 2, gradeY, 'GRADE ' + grade.grade + ': ' + grade.title, {
                 fontFamily: 'Courier New',
-                fontSize: '14px',
+                fontSize: gradeFontSize,
                 color: CFG.COLORS.PURPLE_ACCENT_HEX,
                 fontStyle: 'bold'
             }).setOrigin(0.5).setAlpha(0);
@@ -430,15 +437,16 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        const statsY = yOff + 110;
+        const statsY = isMobile ? yOff + 150 : yOff + 110;
         const cx = CFG.WIDTH / 2;
+        const statFontSize = isMobile ? '13px' : '10px';
 
-        const innerH = 18;
+        const innerH = isMobile ? 24 : 18;
         const innerR = innerH / 2;
-        const innerGap = 4;
-        const innerPad = 10;
-        const iconSpace = 28;
-        const outerPad = 6;
+        const innerGap = isMobile ? 6 : 4;
+        const innerPad = isMobile ? 14 : 10;
+        const iconSpace = isMobile ? 36 : 28;
+        const outerPad = isMobile ? 8 : 6;
         const outerH = innerH * 2 + innerGap + outerPad * 2;
         const outerR = 12;
         const outerGap = 12;
@@ -467,7 +475,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const groupWidths = cvGroups.map(group => {
             const innerWidths = group.stats.map(s => {
                 const tmp = this.add.text(0, -100, s.label, {
-                    fontFamily: 'Roboto', fontSize: '10px', fontStyle: 'bold'
+                    fontFamily: 'Roboto', fontSize: statFontSize, fontStyle: 'bold'
                 });
                 const w = tmp.width + innerPad * 2;
                 tmp.destroy();
@@ -499,7 +507,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             pillGfx.strokeRoundedRect(ox + 1, outerTop + 1, gw.outerW - 2, outerH - 2, outerR - 1);
 
             // CV icon inside outer pill, vertically centred
-            var icon = this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(0.6).setAlpha(0);
+            var icon = this.add.image(ox + iconSpace / 2 + 2, statsY, group.icon).setScale(isMobile ? 0.8 : 0.6).setAlpha(0);
             statElements.push(icon);
 
             // Inner capsules — stacked vertically
@@ -516,7 +524,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
                 var statText = this.add.text(innerX + iw / 2, iy, stat.label, {
                     fontFamily: 'Roboto',
-                    fontSize: '10px',
+                    fontSize: statFontSize,
                     fontStyle: 'bold',
                     color: stat.hex,
                     resolution: 2
@@ -651,7 +659,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     }
 
     _getRankString() {
-        return 'RANK ' + this._playerRank.toLocaleString() + ' / ' + this._totalPlayers.toLocaleString();
+        return 'YOU RANKED ' + this._playerRank.toLocaleString() + ' / ' + this._totalPlayers.toLocaleString();
     }
 
     getGrade(score) {
