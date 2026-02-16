@@ -559,18 +559,24 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
 
         // Clean up cinematic objects but keep the starfield running
         if (this.ats) { this.ats.destroy(); this.ats = null; }
-        if (this.shipSprite) { this.shipSprite.destroy(); this.shipSprite = null; }
         if (this.narrativeText) { this.narrativeText.destroy(); this.narrativeText = null; }
         if (this.cvExamples) {
             this.cvExamples.forEach(i => i.destroy());
             this.cvExamples = null;
         }
 
+        // Keep the ship visible during transition so there's no flash.
+        // Destroy it after GameScene has rendered its first frame.
+        var ship = this.shipSprite;
+        this.shipSprite = null;
+        if (ship) {
+            this.time.delayedCall(100, () => { ship.destroy(); });
+        }
+
         // Reset camera to normal viewport but keep scene alive for starfield
         const CFG = window.CVInvaders.Config;
         this.cameras.main.setBounds(0, 0, CFG.WIDTH, CFG.HEIGHT);
         this.cameras.main.setScroll(0, 0);
-        this.cameras.main.resetFX();
 
         // Launch GameScene on top — TutorialScene stays running underneath as starfield
         this.scene.launch('GameScene');
