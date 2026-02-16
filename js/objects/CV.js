@@ -59,9 +59,9 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
 
         try {
             if (this.isGood) {
-                this.scene.onGoodCVMissed();
+                this.scene.onGoodCVMissed(this.x);
             } else {
-                this.scene.onBadCVReachedBottom();
+                this.scene.onBadCVReachedBottom(this.x);
             }
         } catch (e) {
             console.warn('CV handleMiss error:', e);

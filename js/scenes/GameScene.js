@@ -744,27 +744,27 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
     }
 
-    onGoodCVMissed() {
+    onGoodCVMissed(cvX) {
         if (this.tutorialPhase) return; // no penalties during tutorial
         const points = this.scoreManager.missGoodCV();
         this.sound_engine.missGoodCV();
         const hud = this.scene.get('HUD');
         if (hud && hud.showFloatingScore) {
             hud.showFloatingScore(
-                window.CVInvaders.Config.WIDTH / 2,
+                cvX != null ? cvX : window.CVInvaders.Config.WIDTH / 2,
                 window.CVInvaders.Config.HEIGHT - 20,
                 points
             );
         }
     }
 
-    onBadCVReachedBottom() {
+    onBadCVReachedBottom(cvX) {
         if (this.tutorialPhase) return; // no penalties during tutorial
         const points = this.scoreManager.badCVReachesBottom();
         const hud = this.scene.get('HUD');
         if (hud && hud.showFloatingScore) {
             hud.showFloatingScore(
-                window.CVInvaders.Config.WIDTH / 2,
+                cvX != null ? cvX : window.CVInvaders.Config.WIDTH / 2,
                 window.CVInvaders.Config.HEIGHT - 20,
                 points
             );
