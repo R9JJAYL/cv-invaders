@@ -776,19 +776,19 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
 
     /** Small radial particle burst when a CV is destroyed. */
     spawnPoof(x, y) {
-        const count = 6;
+        const count = 8;
         for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2;
-            const dist = Phaser.Math.Between(25, 45);
+            const angle = (i / count) * Math.PI * 2 + Phaser.Math.FloatBetween(-0.2, 0.2);
+            const dist = Phaser.Math.Between(30, 55);
             const p = this.add.image(x, y, 'particle')
-                .setDepth(15).setAlpha(0.8).setScale(0.6);
+                .setDepth(15).setAlpha(0.9).setScale(Phaser.Math.FloatBetween(0.7, 1.0));
             this.tweens.add({
                 targets: p,
                 x: x + Math.cos(angle) * dist,
                 y: y + Math.sin(angle) * dist,
                 alpha: 0,
-                scale: 0.1,
-                duration: 250,
+                scale: 0.15,
+                duration: 300,
                 ease: 'Power2',
                 onComplete: () => p.destroy()
             });
