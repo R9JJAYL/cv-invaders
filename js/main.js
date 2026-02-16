@@ -7,6 +7,20 @@
  */
 window.CVInvaders = window.CVInvaders || {};
 
+// Global error handler — catches uncaught exceptions that would silently
+// kill Phaser's requestAnimationFrame loop on mobile.  When an error is
+// caught we force-restart the game loop so the game doesn't freeze.
+window.addEventListener('error', function (e) {
+    console.error('CV Invaders – uncaught error:', e.error || e.message);
+    // Attempt to restart the game loop if it was killed
+    try {
+        if (window.CVInvaders.game && window.CVInvaders.game.loop && !window.CVInvaders.game.loop.running) {
+            console.warn('Game loop stopped — restarting');
+            window.CVInvaders.game.loop.wake();
+        }
+    } catch (ignore) {}
+});
+
 window.addEventListener('load', function () {
     const CFG = window.CVInvaders.Config;
 

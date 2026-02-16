@@ -292,63 +292,67 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // the boss timer to skip huge chunks or physics to glitch out.
         if (delta > 500) delta = 16;
 
-        // Fire when shoot is pressed — blocked during boss entry/grace period
-        const canShoot = !(this.bossPhase && !this.bossSpawned);
-        if (canShoot && this.ship.shootPressed && this.ship.fireBullet(time)) {
-            const bullet = this.bullets.getFirstDead(false);
-            if (bullet) {
-                bullet.fire(this.ship.x, this.ship.y - 30);
-                this.sound_engine.shoot();
+        try {
+            // Fire when shoot is pressed — blocked during boss entry/grace period
+            const canShoot = !(this.bossPhase && !this.bossSpawned);
+            if (canShoot && this.ship && this.ship.shootPressed && this.ship.fireBullet(time)) {
+                const bullet = this.bullets.getFirstDead(false);
+                if (bullet) {
+                    bullet.fire(this.ship.x, this.ship.y - 30);
+                    this.sound_engine.shoot();
+                }
+                this.ship.shootPressed = false;  // consume — requires a new press/tap to fire again
             }
-            this.ship.shootPressed = false;  // consume — requires a new press/tap to fire again
-        }
 
-        // Only run wave manager after tutorial is done (and not in boss phase)
-        if (this.tutorialComplete && !this.bossPhase) {
-            const result = this.waveManager.update(delta);
-            if (result && result.waveComplete && result.allWavesDone) {
-                this.startBossPhase();
-            }
-        }
-
-        // Keep CVs falling during boss phase — only after boss has spawned
-        if (this.bossPhase && this.bossSpawned && !this.gameOver) {
-            this.bossSpawnTimer += delta;
-            if (this.bossSpawnTimer >= 1400) {
-                this.bossSpawnTimer = 0;
-                const activeCVs = this.cvs.countActive(true);
-                if (activeCVs < 6) {
-                    this.spawnBossBackgroundCV();
+            // Only run wave manager after tutorial is done (and not in boss phase)
+            if (this.tutorialComplete && !this.bossPhase) {
+                const result = this.waveManager.update(delta);
+                if (result && result.waveComplete && result.allWavesDone) {
+                    this.startBossPhase();
                 }
             }
-        }
 
-        // Wave countdown — only ticks during wave gameplay, stops at boss phase
-        if (this.gameCountdownActive && !this.bossPhase && !this.gameOver) {
-            this.gameTimeRemaining -= delta;
-            if (this.gameTimeRemaining < 0) this.gameTimeRemaining = 0;
-        }
-
-        // Boss timer — separate, ticks only after boss has spawned
-        if (this.bossPhase && this.bossSpawned && !this.gameOver) {
-            this.bossTimeRemaining -= delta;
-            if (this.bossTimeRemaining <= 0) {
-                this.bossTimeRemaining = 0;
-                this.onBossTimeUp();
-            }
-        }
-
-        // Update HUD combo and countdown
-        const hud = this.scene.get('HUD');
-        if (hud && hud.updateCombo) {
-            hud.updateCombo(this.scoreManager.combo);
-        }
-        if (hud && hud.updateCountdown) {
+            // Keep CVs falling during boss phase — only after boss has spawned
             if (this.bossPhase && this.bossSpawned && !this.gameOver) {
-                hud.updateCountdown(this.bossTimeRemaining);
-            } else if (this.gameCountdownActive && !this.bossPhase) {
-                hud.updateCountdown(this.gameTimeRemaining);
+                this.bossSpawnTimer += delta;
+                if (this.bossSpawnTimer >= 1400) {
+                    this.bossSpawnTimer = 0;
+                    const activeCVs = this.cvs.countActive(true);
+                    if (activeCVs < 6) {
+                        this.spawnBossBackgroundCV();
+                    }
+                }
             }
+
+            // Wave countdown — only ticks during wave gameplay, stops at boss phase
+            if (this.gameCountdownActive && !this.bossPhase && !this.gameOver) {
+                this.gameTimeRemaining -= delta;
+                if (this.gameTimeRemaining < 0) this.gameTimeRemaining = 0;
+            }
+
+            // Boss timer — separate, ticks only after boss has spawned
+            if (this.bossPhase && this.bossSpawned && !this.gameOver) {
+                this.bossTimeRemaining -= delta;
+                if (this.bossTimeRemaining <= 0) {
+                    this.bossTimeRemaining = 0;
+                    this.onBossTimeUp();
+                }
+            }
+
+            // Update HUD combo and countdown
+            const hud = this.scene.get('HUD');
+            if (hud && hud.updateCombo) {
+                hud.updateCombo(this.scoreManager.combo);
+            }
+            if (hud && hud.updateCountdown) {
+                if (this.bossPhase && this.bossSpawned && !this.gameOver) {
+                    hud.updateCountdown(this.bossTimeRemaining);
+                } else if (this.gameCountdownActive && !this.bossPhase) {
+                    hud.updateCountdown(this.gameTimeRemaining);
+                }
+            }
+        } catch (e) {
+            console.error('GameScene update error:', e);
         }
     }
 

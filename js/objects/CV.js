@@ -55,12 +55,16 @@ window.CVInvaders.CV = class CV extends Phaser.Physics.Arcade.Image {
 
     /** Handle a CV that fell off the bottom without being caught or shot. */
     handleMiss() {
-        if (!this.active) return;
+        if (!this.active || !this.scene) return;
 
-        if (this.isGood) {
-            this.scene.onGoodCVMissed();
-        } else {
-            this.scene.onBadCVReachedBottom();
+        try {
+            if (this.isGood) {
+                this.scene.onGoodCVMissed();
+            } else {
+                this.scene.onBadCVReachedBottom();
+            }
+        } catch (e) {
+            console.warn('CV handleMiss error:', e);
         }
         this.recycle();
     }
