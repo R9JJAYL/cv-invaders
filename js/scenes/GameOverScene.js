@@ -376,8 +376,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const isMobile = !this.sys.game.device.os.desktop;
         const scoreFontSize = isMobile ? '36px' : '28px';
         const rankFontSize = isMobile ? '17px' : '13px';
-        const scoreY = isMobile ? yOff + 30 : yOff + 18;
-        const rankY = isMobile ? yOff + 68 : yOff + 48;
+        const scoreY = isMobile ? yOff + 35 : yOff + 37;
+        const rankY = isMobile ? yOff + 75 : yOff + 74;
         this.scoreDisplay = this.add.text(CFG.WIDTH / 2, scoreY, 'SCORE: 0', {
             fontFamily: 'Courier New',
             fontSize: scoreFontSize,
@@ -413,7 +413,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         });
 
         // Grade + title — delayed after score count-up + rank
-        const gradeY = isMobile ? yOff + 100 : yOff + 72;
+        const gradeY = isMobile ? yOff + 115 : yOff + 111;
         const gradeFontSize = isMobile ? '18px' : '14px';
         this.time.delayedCall(scoreDelay + 2200, () => {
             this.add.text(CFG.WIDTH / 2, gradeY, 'GRADE ' + grade.grade + ': ' + grade.title, {
@@ -437,9 +437,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         const goodMissed = this.registry.get('goodCVsMissed') || 0;
         const badHit = this.registry.get('badCVsShot') || 0;
         const badMissed = this.registry.get('badCVsMissed') || 0;
-        // On mobile: centred between grade bottom (yOff+109) and leaderboard top (yOff+215)
-        // Midpoint = yOff + 162
-        const statsY = isMobile ? yOff + 162 : yOff + 110;
+        // Evenly spaced between top and leaderboard top (~yOff+185)
+        const statsY = isMobile ? yOff + 155 : yOff + 148;
         const cx = CFG.WIDTH / 2;
         const statFontSize = isMobile ? '13px' : '10px';
 
