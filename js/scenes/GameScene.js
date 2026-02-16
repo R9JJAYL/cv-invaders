@@ -175,8 +175,8 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         // Start countdown immediately
         this.gameCountdownActive = true;
 
-        // Start spawning tutorial CVs right away
-        this.time.delayedCall(600, () => {
+        // Delay CV spawning so the player can read the controls hint first
+        this.time.delayedCall(2100, () => {
             this.tutorialSpawnTimer = this.time.addEvent({
                 delay: 1200,
                 callback: () => this.spawnTutorialCV(),
@@ -185,7 +185,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         });
 
         // After brief practice, transition to Wave 1
-        this.time.delayedCall(7000, () => {
+        this.time.delayedCall(8500, () => {
             this.endTutorial();
         });
     }
