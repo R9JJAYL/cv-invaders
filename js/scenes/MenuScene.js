@@ -91,9 +91,9 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         var startLabel = isMobile ? '[ TAP TO START MISSION ]' : '[ CLICK TO START MISSION ]';
         var startSize = isMobile ? '26px' : '22px';
         // On mobile, fixed position centred between the bottom of the form
-        // (y≈188) and the top of a full 5-entry leaderboard (y≈296).
-        // Midpoint ≈ 242, rounded to 242.
-        var startY = isMobile ? 242 : 209;
+        // (y≈188) and the top of the leaderboard (y≈275 with larger fonts).
+        // Midpoint ≈ 232.
+        var startY = isMobile ? 232 : 209;
         this.startBtn = this.add.text(CFG.WIDTH / 2, startY, startLabel, {
             fontFamily: 'Courier New',
             fontSize: startSize,
