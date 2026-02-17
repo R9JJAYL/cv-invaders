@@ -376,6 +376,7 @@ body {
 .lb-head.lb-name { text-align: left; }
 .lb-head.lb-company { text-align: left; }
 .lb-head.lb-type { text-align: left; width: 70px; }
+.lb-head.lb-games { text-align: center; width: 50px; }
 .lb-head.lb-score { text-align: right; width: 60px; }
 
 /* Alternating row backgrounds */
@@ -402,6 +403,7 @@ body {
 .lb-cell.lb-type.type-agency { color: #B070D0; }
 .lb-cell.lb-type.type-internal { color: #9DC5D8; }
 .lb-cell.lb-type.type-other { color: #AAAAAA; }
+.lb-cell.lb-games { text-align: center; opacity: 0.7; }
 .lb-cell.lb-score { text-align: right; color: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 600; }
 
 /* Podium ranks — no special colour, just match regular rows */
