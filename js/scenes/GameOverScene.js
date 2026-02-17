@@ -686,19 +686,17 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return grades[grades.length - 1];
     }
 
-    /** POST the player's score to the remote leaderboard API, then fetch updated rankings. */
+    /** POST the player's score and fetch updated rankings.
+     *  Primary: Supabase (fast, reliable). Fallback: Google Apps Script. */
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
-        // Clear stale data so the leaderboard re-renders with fresh scores
         window.CVInvaders._remoteScores = null;
-        if (!CFG.LEADERBOARD_URL) return;
-
         var self = this;
 
-        /** Parse score data from an API response and store it */
-        function handleScores(data) {
-            if (data && data.scores) {
-                window.CVInvaders._remoteScores = data.scores;
-                var sorted = data.scores.slice().sort(function(a, b) { return b.score - a.score; });
+        /** Store scores array and calculate player rank */
+        function handleScores(scores) {
+            if (scores && scores.length > 0) {
+                window.CVInvaders._remoteScores = scores;
+                var sorted = scores.slice().sort(function(a, b) { return b.score - a.score; });
                 var rank = 1;
                 for (var i = 0; i < sorted.length; i++) {
                     if (sorted[i].score > score) {
@@ -713,47 +711,69 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }
         }
 
-        /** GET fallback — fetch existing scores even if the POST failed */
-        function fetchScoresFallback() {
-            var getCtrl = new AbortController();
-            var getTimeout = setTimeout(function() { getCtrl.abort(); }, 15000);
-            var getUrl = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
-            return fetch(getUrl, { signal: getCtrl.signal })
-                .then(function(r) { return r.json().catch(function() { return {}; }); })
-                .then(function(data) { clearTimeout(getTimeout); handleScores(data); })
-                .catch(function() { clearTimeout(getTimeout); /* final fallback — render empty */ });
+        /** Unwrap Google Apps Script response format { scores: [...] } */
+        function handleGASResponse(data) {
+            if (data && data.scores) handleScores(data.scores);
         }
 
-        // POST with 20-second timeout (Google Apps Script cold starts can take 5-10s)
-        var controller = new AbortController();
-        var timeoutId = setTimeout(function() { controller.abort(); }, 20000);
+        /** Google Apps Script GET-only fallback */
+        function gasGetFallback() {
+            if (!CFG.LEADERBOARD_URL) return Promise.resolve();
+            var ctrl = new AbortController();
+            var t = setTimeout(function() { ctrl.abort(); }, 15000);
+            var url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
+            return fetch(url, { signal: ctrl.signal })
+                .then(function(r) { return r.json().catch(function() { return {}; }); })
+                .then(function(data) { clearTimeout(t); handleGASResponse(data); })
+                .catch(function() { clearTimeout(t); });
+        }
 
-        this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                token: CFG.LEADERBOARD_TOKEN,
-                action: 'addScore',
-                name: name,
-                company: company,
-                type: type,
-                score: score,
-                grade: grade
-            }),
-            signal: controller.signal
-        })
-        .then(function(r) { return r.json().catch(function() { return {}; }); })
-        .then(function(data) {
-            clearTimeout(timeoutId);
-            handleScores(data);
-            // If POST succeeded but returned no scores, fetch them separately
-            if (!data || !data.scores) return fetchScoresFallback();
-        })
-        .catch(function(e) {
-            clearTimeout(timeoutId);
-            console.warn('Leaderboard POST failed:', e);
-            // POST failed — still try to load existing scores via GET
-            return fetchScoresFallback();
-        });
+        /** Full Google Apps Script fallback — POST score then GET leaderboard */
+        function gasFallback() {
+            if (!CFG.LEADERBOARD_URL) return Promise.resolve();
+            var controller = new AbortController();
+            var timeoutId = setTimeout(function() { controller.abort(); }, 20000);
+            return fetch(CFG.LEADERBOARD_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    token: CFG.LEADERBOARD_TOKEN,
+                    action: 'addScore',
+                    name: name, company: company, type: type,
+                    score: score, grade: grade
+                }),
+                signal: controller.signal
+            })
+            .then(function(r) { return r.json().catch(function() { return {}; }); })
+            .then(function(data) {
+                clearTimeout(timeoutId);
+                handleGASResponse(data);
+                if (!data || !data.scores) return gasGetFallback();
+            })
+            .catch(function(e) {
+                clearTimeout(timeoutId);
+                console.warn('GAS POST fallback failed:', e);
+                return gasGetFallback();
+            });
+        }
+
+        // === Primary path: Supabase ===
+        var SB = window.CVInvaders.SupabaseClient;
+        if (SB && SB.isConfigured()) {
+            this._leaderboardPromise = SB.saveAndFetch({
+                name: name, company: company, type: type,
+                score: score, grade: grade
+            })
+            .then(function(scores) {
+                handleScores(scores);
+            })
+            .catch(function(e) {
+                console.warn('Supabase save failed, falling back to GAS:', e);
+                return gasFallback();
+            });
+        } else {
+            // Supabase not configured — use Google Apps Script directly
+            this._leaderboardPromise = gasFallback();
+        }
     }
 
     getLeaderboard() {
