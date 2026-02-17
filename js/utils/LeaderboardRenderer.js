@@ -99,8 +99,8 @@ window.CVInvaders.LeaderboardRenderer = {
             '<th class="lb-head lb-name">PLAYER</th>' +
             '<th class="lb-head lb-company">COMPANY</th>' +
             '<th class="lb-head lb-type">TEAM</th>' +
-            '<th class="lb-head lb-score">SCORE</th>' +
             '<th class="lb-head lb-games">GAMES</th>' +
+            '<th class="lb-head lb-score">SCORE</th>' +
             '</tr></thead><tbody>' +
             allScores.map(function(entry, i) {
                 var isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
@@ -115,8 +115,8 @@ window.CVInvaders.LeaderboardRenderer = {
                     '<td class="lb-cell lb-name">' + displayName + '</td>' +
                     '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
                     '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
-                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
                     '<td class="lb-cell lb-games">' + (entry._gamesPlayed || 1) + '</td>' +
+                    '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
                     '</tr>';
             }).join('') +
             '</tbody></table></div>' +
