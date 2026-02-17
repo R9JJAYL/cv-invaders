@@ -42,7 +42,8 @@ window.addEventListener('load', function () {
             var idealW = Math.round(CFG.HEIGHT * deviceAspect);
             CFG.CANVAS_WIDTH = Math.max(800, Math.min(1400, idealW));
         }
-        CFG.SIDE_PANEL_WIDTH = Math.floor((CFG.CANVAS_WIDTH - CFG.WIDTH) / 2);
+        // 1/3 of extra space to left (shoot) panel, 2/3 to right (arrows) panel
+        CFG.SIDE_PANEL_WIDTH = Math.floor((CFG.CANVAS_WIDTH - CFG.WIDTH) / 3);
     }
 
     const config = {
