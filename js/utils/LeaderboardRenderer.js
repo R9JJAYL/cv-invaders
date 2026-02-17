@@ -28,6 +28,13 @@ window.CVInvaders.LeaderboardRenderer = {
         var yPosition = options.yPosition != null ? options.yPosition : 420;
         var disablePointerEvents = options.disablePointerEvents || false;
 
+        // Count games per player before deduplication
+        var gamesCount = {};
+        allScores.forEach(function(entry) {
+            var key = (entry.name || '') + '|||' + (entry.company || '');
+            gamesCount[key] = (gamesCount[key] || 0) + 1;
+        });
+
         // Deduplicate: keep only each player's highest score
         var bestByPlayer = {};
         allScores.forEach(function(entry) {
@@ -36,7 +43,12 @@ window.CVInvaders.LeaderboardRenderer = {
                 bestByPlayer[key] = entry;
             }
         });
-        allScores = Object.keys(bestByPlayer).map(function(k) { return bestByPlayer[k]; });
+        allScores = Object.keys(bestByPlayer).map(function(k) {
+            var entry = bestByPlayer[k];
+            var key = (entry.name || '') + '|||' + (entry.company || '');
+            entry._gamesPlayed = gamesCount[key] || 1;
+            return entry;
+        });
         allScores.sort(function(a, b) { return b.score - a.score; });
 
         var agency = allScores.filter(function(e) { return e.type === 'agency'; });
@@ -65,7 +77,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-team">' +
             '<div class="team-label agency-label">TEAM AGENCY</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Players</div></div>' +
             '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
             '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Average</div></div>' +
             '</div></div>' +
@@ -73,7 +85,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-team">' +
             '<div class="team-label internal-label">TEAM INTERNAL</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Games</div></div>' +
+            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Players</div></div>' +
             '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
             '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Average</div></div>' +
             '</div></div>' +
@@ -88,6 +100,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<th class="lb-head lb-company">COMPANY</th>' +
             '<th class="lb-head lb-type">TEAM</th>' +
             '<th class="lb-head lb-score">SCORE</th>' +
+            '<th class="lb-head lb-games">GAMES</th>' +
             '</tr></thead><tbody>' +
             allScores.map(function(entry, i) {
                 var isPlayer = playerName && entry.name === playerName && entry.score === playerScore;
@@ -103,6 +116,7 @@ window.CVInvaders.LeaderboardRenderer = {
                     '<td class="lb-cell lb-company">' + (entry.company || '') + '</td>' +
                     '<td class="lb-cell lb-type ' + typeClass + '">' + typeLabel + '</td>' +
                     '<td class="lb-cell lb-score">' + entry.score.toLocaleString() + '</td>' +
+                    '<td class="lb-cell lb-games">' + (entry._gamesPlayed || 1) + '</td>' +
                     '</tr>';
             }).join('') +
             '</tbody></table></div>' +
