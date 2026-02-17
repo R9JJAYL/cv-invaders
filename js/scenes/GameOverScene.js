@@ -565,22 +565,21 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             });
         });
 
-        // Leaderboard — show local+fake data immediately
-        // Remote data may already be cached from the early saveScoreAndFetch call
-        const allScores = this.getLeaderboard();
-        this._leaderboardDom = this.renderTables(CFG, allScores, name, score, yOff);
-
-        // If remote data hasn't arrived yet, re-render when it does
+        // Leaderboard — only render once remote data arrives (avoids empty frame)
         if (this._leaderboardPromise) {
             const self = this;
-            this._leaderboardPromise.then(function() {
-                // Guard: don't re-render if scene was already shut down (Play Again)
+            const renderLeaderboard = function() {
                 if (!self.scene || !self.scene.isActive()) return;
-                if (self._leaderboardDom) {
-                    self._leaderboardDom.destroy();
-                }
-                const updated = self.getLeaderboard();
-                self._leaderboardDom = self.renderTables(CFG, updated, name, score, yOff);
+                if (self._leaderboardDom) self._leaderboardDom.destroy();
+                const allScores = self.getLeaderboard();
+                self._leaderboardDom = self.renderTables(CFG, allScores, name, score, yOff);
+            };
+            this._leaderboardPromise.then(renderLeaderboard).catch(renderLeaderboard);
+
+            // Timeout fallback: if API hasn't responded in 5s, render whatever we have
+            this.time.delayedCall(5000, function() {
+                if (self._leaderboardDom) return;
+                renderLeaderboard();
             });
         }
 
