@@ -168,6 +168,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         // Direction hold — bridges single-frame gaps during rapid left/right switching
         this._lastMoveDir = 0;
         this._moveDirHoldFrames = 0;
+
+        // Track button draw state — only redraw on change (avoid expensive graphics.clear every frame)
+        this._prevShootAlpha = 0.5;
+        this._prevLeftAlpha = 0.5;
+        this._prevRightAlpha = 0.5;
     }
 
     /**
@@ -440,13 +445,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     update(time, delta) {
         if (!this.isMobile) return;
 
-        // During flip animation, skip input but keep buttons at idle alpha
-        if (this._flipAnimating) {
-            this._drawBtnBg(this._shootBg, this._shootRect, 0.5);
-            this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
-            this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
-            return;
-        }
+        // During flip animation, skip input (buttons drawn by _updateFlipAnimation)
+        if (this._flipAnimating) return;
 
         var gameScene = this.scene.get('GameScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
@@ -536,10 +536,24 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         this._shootHeld = shootHeld;
 
-        // Visual feedback on all buttons
-        this._drawBtnBg(this._shootBg, this._shootRect, shootHeld ? 0.8 : 0.5);
-        this._drawBtnBg(this._leftBg, this._leftRect, moveDir === -1 ? 0.8 : 0.5);
-        this._drawBtnBg(this._rightBg, this._rightRect, moveDir === 1 ? 0.8 : 0.5);
+        // Visual feedback — only redraw buttons when state changes
+        // (avoids 3x graphics.clear() per frame which causes mobile frame drops)
+        var shootAlpha = shootHeld ? 0.8 : 0.5;
+        var leftAlpha = moveDir === -1 ? 0.8 : 0.5;
+        var rightAlpha = moveDir === 1 ? 0.8 : 0.5;
+
+        if (shootAlpha !== this._prevShootAlpha) {
+            this._drawBtnBg(this._shootBg, this._shootRect, shootAlpha);
+            this._prevShootAlpha = shootAlpha;
+        }
+        if (leftAlpha !== this._prevLeftAlpha) {
+            this._drawBtnBg(this._leftBg, this._leftRect, leftAlpha);
+            this._prevLeftAlpha = leftAlpha;
+        }
+        if (rightAlpha !== this._prevRightAlpha) {
+            this._drawBtnBg(this._rightBg, this._rightRect, rightAlpha);
+            this._prevRightAlpha = rightAlpha;
+        }
 
         gameScene.ship.setMobileMovement(moveDir);
         gameScene.ship.setMobileShootPressed(this._shootHeld);
