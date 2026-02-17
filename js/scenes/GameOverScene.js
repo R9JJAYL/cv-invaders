@@ -690,42 +690,69 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
         // Clear stale data so the leaderboard re-renders with fresh scores
         window.CVInvaders._remoteScores = null;
-        // POST to Google Sheets API — response includes updated leaderboard
-        if (CFG.LEADERBOARD_URL) {
-            var self = this;
-            this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    token: CFG.LEADERBOARD_TOKEN,
-                    action: 'addScore',
-                    name: name,
-                    company: company,
-                    type: type,
-                    score: score,
-                    grade: grade
-                })
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data && data.scores) {
-                    window.CVInvaders._remoteScores = data.scores;
-                    // Calculate player rank from returned scores
-                    var sorted = data.scores.slice().sort(function(a, b) { return b.score - a.score; });
-                    var rank = 1;
-                    for (var i = 0; i < sorted.length; i++) {
-                        if (sorted[i].score > score) {
-                            rank = i + 2;
-                        } else {
-                            rank = i + 1;
-                            break;
-                        }
+        if (!CFG.LEADERBOARD_URL) return;
+
+        var self = this;
+
+        /** Parse score data from an API response and store it */
+        function handleScores(data) {
+            if (data && data.scores) {
+                window.CVInvaders._remoteScores = data.scores;
+                var sorted = data.scores.slice().sort(function(a, b) { return b.score - a.score; });
+                var rank = 1;
+                for (var i = 0; i < sorted.length; i++) {
+                    if (sorted[i].score > score) {
+                        rank = i + 2;
+                    } else {
+                        rank = i + 1;
+                        break;
                     }
-                    self._playerRank = rank;
-                    self._totalPlayers = sorted.length;
                 }
-            })
-            .catch(function(e) { console.warn('Leaderboard save failed:', e); });
+                self._playerRank = rank;
+                self._totalPlayers = sorted.length;
+            }
         }
+
+        /** GET fallback — fetch existing scores even if the POST failed */
+        function fetchScoresFallback() {
+            var getUrl = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
+            return fetch(getUrl)
+                .then(function(r) { return r.json(); })
+                .then(handleScores)
+                .catch(function() { /* final fallback — render empty */ });
+        }
+
+        // POST with 8-second timeout to prevent hanging on slow/dead connections
+        var controller = new AbortController();
+        var timeoutId = setTimeout(function() { controller.abort(); }, 8000);
+
+        this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token: CFG.LEADERBOARD_TOKEN,
+                action: 'addScore',
+                name: name,
+                company: company,
+                type: type,
+                score: score,
+                grade: grade
+            }),
+            signal: controller.signal
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            clearTimeout(timeoutId);
+            handleScores(data);
+            // If POST succeeded but returned no scores, fetch them separately
+            if (!data || !data.scores) return fetchScoresFallback();
+        })
+        .catch(function(e) {
+            clearTimeout(timeoutId);
+            console.warn('Leaderboard POST failed:', e);
+            // POST failed — still try to load existing scores via GET
+            return fetchScoresFallback();
+        });
     }
 
     getLeaderboard() {
