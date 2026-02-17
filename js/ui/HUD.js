@@ -453,10 +453,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         var pointers = this.input.manager.pointers;
         var flipped = this._controlsFlipped;
-        var shootBound = this._shootBoundary;
         var splitX = this._splitX;
         var rpX = this._rightPanelX;
         var sw = this._sideW;
+        var gameW = window.CVInvaders.Config.WIDTH;
+        var bleed = Math.floor(gameW / 3);
 
         var shootHeld = false;
         var leftPressed = false;
@@ -469,19 +470,17 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             var ptr = pointers[i];
             if (!ptr || !ptr.isDown) continue;
 
-            // Check shoot zone
-            if (!flipped && ptr.x < shootBound) { shootHeld = true; continue; }
-            if (flipped && ptr.x > shootBound) { shootHeld = true; continue; }
+            // Shoot zone: panel + 1/3 bleed into gameplay
+            if (!flipped) {
+                if (ptr.x < sw + bleed) { shootHeld = true; continue; }
+            } else {
+                if (ptr.x > rpX - bleed) { shootHeld = true; continue; }
+            }
 
-            // Arrow panel hitbox: the inner arrow (closest to gameplay) extends
-            // 1/3 into the gameplay area for a larger tap target.
-            var gameW = window.CVInvaders.Config.WIDTH;
-            var innerBleed = Math.floor(gameW / 3);
-
+            // Arrow zone: panel + 1/3 bleed into gameplay (inner arrow)
             if (!flipped) {
                 // Arrows on right — inner arrow bleeds left into gameplay
-                if (ptr.x < rpX - innerBleed) continue;
-                // Touches in the bleed zone always count as the inner (left) arrow
+                if (ptr.x < rpX - bleed) continue; // dead zone — ignore
                 if (ptr.x < rpX) {
                     leftPressed = true;
                     leftPtrX = ptr.x;
@@ -489,8 +488,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
                 }
             } else {
                 // Arrows on left — inner arrow bleeds right into gameplay
-                if (ptr.x > sw + innerBleed) continue;
-                // Touches in the bleed zone always count as the inner (right) arrow
+                if (ptr.x > sw + bleed) continue; // dead zone — ignore
                 if (ptr.x > sw) {
                     rightPressed = true;
                     rightPtrX = ptr.x;
@@ -498,7 +496,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
                 }
             }
 
-            // Determine left/right and track x for conflict resolution
+            // Inside the arrow panel — determine left/right
             if (ptr.x < splitX) {
                 leftPressed = true;
                 leftPtrX = ptr.x;
@@ -524,12 +522,12 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             moveDir = 1;
         }
 
-        // Bridge single-frame gaps during rapid left/right switching:
-        // hold the previous direction for 1 extra frame before going to zero
+        // Bridge gaps during rapid left/right switching:
+        // hold the previous direction for up to 3 frames (~50ms) before stopping
         if (moveDir !== 0) {
             this._lastMoveDir = moveDir;
             this._moveDirHoldFrames = 0;
-        } else if (this._lastMoveDir !== 0 && this._moveDirHoldFrames < 1) {
+        } else if (this._lastMoveDir !== 0 && this._moveDirHoldFrames < 3) {
             moveDir = this._lastMoveDir;
             this._moveDirHoldFrames++;
         } else {
