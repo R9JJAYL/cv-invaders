@@ -145,11 +145,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._flipIcon = this.add.graphics().setDepth(202);
         this._flipLabel = this.add.text(0, 0, '⇄  flip controls', {
             fontFamily: 'Roboto',
-            fontSize: '13px',
+            fontSize: '24px',
             color: 'rgba(255,255,255,0.5)',
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(202);
-        this._flipZone = this.add.zone(0, 0, 120, 30).setDepth(202).setInteractive();
+        this._flipZone = this.add.zone(0, 0, 220, 50).setDepth(202).setInteractive();
         this._flipZone.on('pointerdown', () => {
             if (!this._flipAnimating) {
                 this._doFlip();
@@ -215,7 +215,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightBtnW_left = (sideW - btnPad) - rightBtnX0_left;
 
         // Flip button — always top-left of the gameplay area
-        var flipBtn = { x: sideW + 62, y: 20 };
+        var flipBtn = { x: sideW + 90, y: 22 };
 
         if (!flipped) {
             // DEFAULT: shoot on left, arrows on right
