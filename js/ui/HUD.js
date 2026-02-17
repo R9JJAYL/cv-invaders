@@ -473,14 +473,29 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             if (!flipped && ptr.x < shootBound) { shootHeld = true; continue; }
             if (flipped && ptr.x > shootBound) { shootHeld = true; continue; }
 
-            // Only register movement if pointer is inside the arrow panel
-            // (ignore accidental touches in the gameplay area between panels)
+            // Arrow panel hitbox: the inner arrow (closest to gameplay) extends
+            // 1/3 into the gameplay area for a larger tap target.
+            var gameW = window.CVInvaders.Config.WIDTH;
+            var innerBleed = Math.floor(gameW / 3);
+
             if (!flipped) {
-                // Arrows on right — only count if ptr.x >= right panel edge
-                if (ptr.x < rpX) continue;
+                // Arrows on right — inner arrow bleeds left into gameplay
+                if (ptr.x < rpX - innerBleed) continue;
+                // Touches in the bleed zone always count as the inner (left) arrow
+                if (ptr.x < rpX) {
+                    leftPressed = true;
+                    leftPtrX = ptr.x;
+                    continue;
+                }
             } else {
-                // Arrows on left — only count if ptr.x <= left panel edge
-                if (ptr.x > sw) continue;
+                // Arrows on left — inner arrow bleeds right into gameplay
+                if (ptr.x > sw + innerBleed) continue;
+                // Touches in the bleed zone always count as the inner (right) arrow
+                if (ptr.x > sw) {
+                    rightPressed = true;
+                    rightPtrX = ptr.x;
+                    continue;
+                }
             }
 
             // Determine left/right and track x for conflict resolution
