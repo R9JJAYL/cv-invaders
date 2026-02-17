@@ -164,6 +164,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._shootHeld = false;
         this._shootBoundary = layout.shootBoundary;
         this._splitX = layout.splitX;
+
+        // Direction hold — bridges single-frame gaps during rapid left/right switching
+        this._lastMoveDir = 0;
+        this._moveDirHoldFrames = 0;
     }
 
     /**
@@ -453,8 +457,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var gameScene = this.scene.get('GameScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
-        var pointer1 = this.input.manager.pointers[1];
-        var pointer2 = this.input.manager.pointers[2];
+        var pointers = this.input.manager.pointers;
         var shootHeld = false;
         var moveDir = 0;
 
@@ -487,8 +490,22 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             }
         }
 
-        checkPointer(pointer1);
-        checkPointer(pointer2);
+        // Check ALL pointer slots — Phaser can assign touches to any slot
+        for (var i = 0; i < pointers.length; i++) {
+            checkPointer(pointers[i]);
+        }
+
+        // Bridge single-frame gaps during rapid left/right switching:
+        // hold the previous direction for 1 extra frame before going to zero
+        if (moveDir !== 0) {
+            this._lastMoveDir = moveDir;
+            this._moveDirHoldFrames = 0;
+        } else if (this._lastMoveDir !== 0 && this._moveDirHoldFrames < 1) {
+            moveDir = this._lastMoveDir;
+            this._moveDirHoldFrames++;
+        } else {
+            this._lastMoveDir = 0;
+        }
 
         this._shootHeld = shootHeld;
 
