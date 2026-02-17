@@ -87,7 +87,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // Tagline from First
         const tagline = this.add.text(cx, cy - 155, 'Maybe it\'s time to swap CV sifting for candidate calls.', {
             fontFamily: 'Roboto',
-            fontSize: '15px',
+            fontSize: '18px',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             align: 'center',
             resolution: 2
@@ -227,7 +227,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         // CTA
         const cta = this.add.text(cx, cy + 225, 'Where AI speed meets candidate experience.', {
             fontFamily: 'Roboto',
-            fontSize: '16px',
+            fontSize: '19px',
             fontStyle: 'italic',
             color: CFG.COLORS.PURPLE_ACCENT_HEX,
             resolution: 2

@@ -143,7 +143,13 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== FLIP BUTTON ==========
         this._flipIcon = this.add.graphics().setDepth(202);
-        this._flipZone = this.add.zone(0, 0, 44, 44).setDepth(202).setInteractive();
+        this._flipLabel = this.add.text(0, 0, '⇄  swap control sides', {
+            fontFamily: 'Roboto',
+            fontSize: '11px',
+            color: 'rgba(255,255,255,0.6)',
+            fontStyle: 'bold'
+        }).setOrigin(0.5).setDepth(202);
+        this._flipZone = this.add.zone(0, 0, 160, 30).setDepth(202).setInteractive();
         this._flipZone.on('pointerdown', () => {
             if (!this._flipAnimating) {
                 this._doFlip();
@@ -258,6 +264,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // Flip button
         this._drawFlipIcon(this._flipIcon, layout.flipBtnCenter.x, layout.flipBtnCenter.y);
+        this._flipLabel.setPosition(layout.flipBtnCenter.x, layout.flipBtnCenter.y);
         this._flipZone.setPosition(layout.flipBtnCenter.x, layout.flipBtnCenter.y);
     }
 
@@ -296,29 +303,16 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     }
 
     /**
-     * Draw the flip-controls icon (two curved arrows forming a swap symbol).
+     * Draw the flip-controls button background pill.
      */
     _drawFlipIcon(gfx, cx, cy) {
         gfx.clear();
 
-        // Background pill
+        // Background pill — wide enough for text label
         gfx.fillStyle(0x2d1450, 0.7);
-        gfx.fillRoundedRect(cx - 18, cy - 12, 36, 24, 8);
+        gfx.fillRoundedRect(cx - 72, cy - 13, 144, 26, 10);
         gfx.lineStyle(1, 0x9B59B6, 0.4);
-        gfx.strokeRoundedRect(cx - 18, cy - 12, 36, 24, 8);
-
-        // Left arrow (pointing left)
-        gfx.lineStyle(1.5, 0xFFFFFF, 0.7);
-        gfx.lineBetween(cx - 10, cy - 3, cx + 6, cy - 3);
-        // Arrowhead
-        gfx.lineBetween(cx - 10, cy - 3, cx - 6, cy - 7);
-        gfx.lineBetween(cx - 10, cy - 3, cx - 6, cy + 1);
-
-        // Right arrow (pointing right)
-        gfx.lineBetween(cx + 10, cy + 3, cx - 6, cy + 3);
-        // Arrowhead
-        gfx.lineBetween(cx + 10, cy + 3, cx + 6, cy - 1);
-        gfx.lineBetween(cx + 10, cy + 3, cx + 6, cy + 7);
+        gfx.strokeRoundedRect(cx - 72, cy - 13, 144, 26, 10);
     }
 
     /**
@@ -399,6 +393,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var fCx = from.flipBtnCenter.x + (to.flipBtnCenter.x - from.flipBtnCenter.x) * t;
         var fCy = from.flipBtnCenter.y + (to.flipBtnCenter.y - from.flipBtnCenter.y) * t;
         this._drawFlipIcon(this._flipIcon, fCx, fCy);
+        this._flipLabel.setPosition(fCx, fCy);
         this._flipZone.setPosition(fCx, fCy);
     }
 
