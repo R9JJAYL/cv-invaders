@@ -143,13 +143,13 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         // ========== FLIP BUTTON ==========
         this._flipIcon = this.add.graphics().setDepth(202);
-        this._flipLabel = this.add.text(0, 0, '⇄  swap control sides', {
+        this._flipLabel = this.add.text(0, 0, '⇄  flip controls', {
             fontFamily: 'Roboto',
             fontSize: '11px',
             color: 'rgba(255,255,255,0.6)',
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(202);
-        this._flipZone = this.add.zone(0, 0, 160, 30).setDepth(202).setInteractive();
+        this._flipZone = this.add.zone(0, 0, 120, 30).setDepth(202).setInteractive();
         this._flipZone.on('pointerdown', () => {
             if (!this._flipAnimating) {
                 this._doFlip();
@@ -206,7 +206,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightBtnW_left = (sideW - btnPad) - rightBtnX0_left;
 
         // Flip button — always top-left of the gameplay area
-        var flipBtn = { x: sideW + 28, y: 20 };
+        var flipBtn = { x: sideW + 62, y: 20 };
 
         if (!flipped) {
             // DEFAULT: shoot on left, arrows on right
@@ -308,11 +308,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     _drawFlipIcon(gfx, cx, cy) {
         gfx.clear();
 
-        // Background pill — wide enough for text label
+        // Background pill — sized for "⇄ flip controls" label
         gfx.fillStyle(0x2d1450, 0.7);
-        gfx.fillRoundedRect(cx - 72, cy - 13, 144, 26, 10);
+        gfx.fillRoundedRect(cx - 56, cy - 13, 112, 26, 10);
         gfx.lineStyle(1, 0x9B59B6, 0.4);
-        gfx.strokeRoundedRect(cx - 72, cy - 13, 144, 26, 10);
+        gfx.strokeRoundedRect(cx - 56, cy - 13, 112, 26, 10);
     }
 
     /**
