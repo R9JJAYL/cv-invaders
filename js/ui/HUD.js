@@ -441,14 +441,17 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         } catch (e) {}
     }
 
-    // ===== UPDATE — poll pointers directly & relay to ship =====
-    update(time, delta) {
+    // ===== POLL INPUT — called by PlayerShip (guaranteed fresh) and scene update =====
+    pollInput() {
         if (!this.isMobile) return;
-
-        // During flip animation, skip input (buttons drawn by _updateFlipAnimation)
         if (this._flipAnimating) return;
 
-        var gameScene = this.scene.get('GameScene');
+        // Frame guard: only poll once per frame even if called multiple times
+        var frame = this.scene.scene.manager.game.loop.frame;
+        if (this._lastPollFrame === frame) return;
+        this._lastPollFrame = frame;
+
+        var gameScene = this.scene.get('GameScene') || this.scene.get('BossScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
         var pointers = this.input.manager.pointers;
@@ -466,9 +469,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightPtrX = 0;
 
         // Check ALL pointer slots — Phaser can assign touches to any slot
+        // Also check justDown to catch rapid re-taps where isDown flickers between frames
         for (var i = 0; i < pointers.length; i++) {
             var ptr = pointers[i];
-            if (!ptr || !ptr.isDown) continue;
+            if (!ptr || (!ptr.isDown && !ptr.justDown)) continue;
 
             // Shoot zone: panel + 1/3 bleed into gameplay
             if (!flipped) {
@@ -510,10 +514,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var moveDir = 0;
         if (leftPressed && rightPressed) {
             if (!flipped) {
-                // Arrows on right: closer to left edge (rpX) wins
                 moveDir = (leftPtrX < rightPtrX) ? -1 : 1;
             } else {
-                // Arrows on left: closer to right edge (sw) wins
                 moveDir = (leftPtrX > rightPtrX) ? -1 : 1;
             }
         } else if (leftPressed) {
@@ -522,12 +524,11 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             moveDir = 1;
         }
 
-        // Bridge gaps during rapid left/right switching:
-        // hold the previous direction for up to 3 frames (~50ms) before stopping
+        // Bridge gaps during rapid switching: hold previous direction for 1 frame (~16ms)
         if (moveDir !== 0) {
             this._lastMoveDir = moveDir;
             this._moveDirHoldFrames = 0;
-        } else if (this._lastMoveDir !== 0 && this._moveDirHoldFrames < 3) {
+        } else if (this._lastMoveDir !== 0 && this._moveDirHoldFrames < 1) {
             moveDir = this._lastMoveDir;
             this._moveDirHoldFrames++;
         } else {
@@ -537,7 +538,6 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._shootHeld = shootHeld;
 
         // Visual feedback — only redraw buttons when state changes
-        // (avoids 3x graphics.clear() per frame which causes mobile frame drops)
         var shootAlpha = shootHeld ? 0.8 : 0.5;
         var leftAlpha = moveDir === -1 ? 0.8 : 0.5;
         var rightAlpha = moveDir === 1 ? 0.8 : 0.5;
@@ -557,6 +557,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
 
         gameScene.ship.setMobileMovement(moveDir);
         gameScene.ship.setMobileShootPressed(this._shootHeld);
+    }
+
+    update(time, delta) {
+        this.pollInput();
     }
 
     /**

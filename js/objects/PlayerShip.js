@@ -68,7 +68,10 @@ window.CVInvaders.PlayerShip = class PlayerShip extends Phaser.Physics.Arcade.Im
 
         try {
             if (this.isMobile) {
-                // Mobile: velocity driven by arrow buttons in HUD (-1, 0, or 1)
+                // Force HUD to poll pointers now — guarantees fresh input
+                // regardless of scene update order
+                var hud = this.scene.scene.get('HUD');
+                if (hud && hud.pollInput) hud.pollInput();
                 var mv = this._mobileVelocityX || 0;
                 this.setVelocityX(mv * this.speed);
                 // shootPressed is set externally by HUD shoot button
