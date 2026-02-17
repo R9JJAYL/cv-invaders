@@ -692,22 +692,32 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         window.CVInvaders._remoteScores = null;
         var self = this;
 
-        /** Store scores array and calculate player rank */
+        /** Store scores array and calculate player rank (after dedup, matching the rendered table) */
         function handleScores(scores) {
             if (scores && scores.length > 0) {
                 window.CVInvaders._remoteScores = scores;
-                var sorted = scores.slice().sort(function(a, b) { return b.score - a.score; });
-                var rank = 1;
-                for (var i = 0; i < sorted.length; i++) {
-                    if (sorted[i].score > score) {
-                        rank = i + 2;
-                    } else {
+
+                // Deduplicate: keep only each player's highest score (same logic as LeaderboardRenderer)
+                var bestByPlayer = {};
+                scores.forEach(function(entry) {
+                    var key = (entry.name || '') + '|||' + (entry.company || '');
+                    if (!bestByPlayer[key] || entry.score > bestByPlayer[key].score) {
+                        bestByPlayer[key] = entry;
+                    }
+                });
+                var deduped = Object.keys(bestByPlayer).map(function(k) { return bestByPlayer[k]; });
+                deduped.sort(function(a, b) { return b.score - a.score; });
+
+                // Find player's rank in the deduplicated list
+                var rank = deduped.length + 1;
+                for (var i = 0; i < deduped.length; i++) {
+                    if (deduped[i].score <= score) {
                         rank = i + 1;
                         break;
                     }
                 }
                 self._playerRank = rank;
-                self._totalPlayers = sorted.length;
+                self._totalPlayers = deduped.length;
             }
         }
 
