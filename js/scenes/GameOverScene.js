@@ -715,16 +715,18 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         /** GET fallback — fetch existing scores even if the POST failed */
         function fetchScoresFallback() {
+            var getCtrl = new AbortController();
+            var getTimeout = setTimeout(function() { getCtrl.abort(); }, 15000);
             var getUrl = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
-            return fetch(getUrl)
-                .then(function(r) { return r.json(); })
-                .then(handleScores)
-                .catch(function() { /* final fallback — render empty */ });
+            return fetch(getUrl, { signal: getCtrl.signal })
+                .then(function(r) { return r.json().catch(function() { return {}; }); })
+                .then(function(data) { clearTimeout(getTimeout); handleScores(data); })
+                .catch(function() { clearTimeout(getTimeout); /* final fallback — render empty */ });
         }
 
-        // POST with 8-second timeout to prevent hanging on slow/dead connections
+        // POST with 20-second timeout (Google Apps Script cold starts can take 5-10s)
         var controller = new AbortController();
-        var timeoutId = setTimeout(function() { controller.abort(); }, 8000);
+        var timeoutId = setTimeout(function() { controller.abort(); }, 20000);
 
         this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
             method: 'POST',
@@ -739,7 +741,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }),
             signal: controller.signal
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) { return r.json().catch(function() { return {}; }); })
         .then(function(data) {
             clearTimeout(timeoutId);
             handleScores(data);
