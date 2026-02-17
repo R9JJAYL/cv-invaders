@@ -686,8 +686,7 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
         return grades[grades.length - 1];
     }
 
-    /** POST the player's score and fetch updated rankings.
-     *  Primary: Supabase (fast, reliable). Fallback: Google Apps Script. */
+    /** POST the player's score to Supabase and fetch updated rankings. */
     saveScoreAndFetch(name, score, grade, company, type, CFG) {
         window.CVInvaders._remoteScores = null;
         var self = this;
@@ -721,52 +720,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
             }
         }
 
-        /** Unwrap Google Apps Script response format { scores: [...] } */
-        function handleGASResponse(data) {
-            if (data && data.scores) handleScores(data.scores);
-        }
-
-        /** Google Apps Script GET-only fallback */
-        function gasGetFallback() {
-            if (!CFG.LEADERBOARD_URL) return Promise.resolve();
-            var ctrl = new AbortController();
-            var t = setTimeout(function() { ctrl.abort(); }, 15000);
-            var url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
-            return fetch(url, { signal: ctrl.signal })
-                .then(function(r) { return r.json().catch(function() { return {}; }); })
-                .then(function(data) { clearTimeout(t); handleGASResponse(data); })
-                .catch(function() { clearTimeout(t); });
-        }
-
-        /** Full Google Apps Script fallback — POST score then GET leaderboard */
-        function gasFallback() {
-            if (!CFG.LEADERBOARD_URL) return Promise.resolve();
-            var controller = new AbortController();
-            var timeoutId = setTimeout(function() { controller.abort(); }, 20000);
-            return fetch(CFG.LEADERBOARD_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    token: CFG.LEADERBOARD_TOKEN,
-                    action: 'addScore',
-                    name: name, company: company, type: type,
-                    score: score, grade: grade
-                }),
-                signal: controller.signal
-            })
-            .then(function(r) { return r.json().catch(function() { return {}; }); })
-            .then(function(data) {
-                clearTimeout(timeoutId);
-                handleGASResponse(data);
-                if (!data || !data.scores) return gasGetFallback();
-            })
-            .catch(function(e) {
-                clearTimeout(timeoutId);
-                console.warn('GAS POST fallback failed:', e);
-                return gasGetFallback();
-            });
-        }
-
-        // === Primary path: Supabase ===
         var SB = window.CVInvaders.SupabaseClient;
         if (SB && SB.isConfigured()) {
             this._leaderboardPromise = SB.saveAndFetch({
@@ -777,12 +730,8 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
                 handleScores(scores);
             })
             .catch(function(e) {
-                console.warn('Supabase save failed, falling back to GAS:', e);
-                return gasFallback();
+                console.warn('Leaderboard save failed:', e);
             });
-        } else {
-            // Supabase not configured — use Google Apps Script directly
-            this._leaderboardPromise = gasFallback();
         }
     }
 

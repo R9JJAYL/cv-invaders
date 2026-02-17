@@ -129,13 +129,9 @@ window.CVInvaders.Config = {
         COMBO: '#FFD700'
     },
 
-    // Supabase API (primary — fast, reliable)
+    // Supabase API
     SUPABASE_URL: 'https://hjczgaynpdrobyjwdpnl.supabase.co',
     SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqY3pnYXlucGRyb2J5andkcG5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDQxMjQsImV4cCI6MjA4NjkyMDEyNH0.Bu9E5QB1ALEOOGrCfMlErpt5-4Th-Cbz0kcdUFjcCiU',
-
-    // Leaderboard API (fallback — Google Apps Script)
-    LEADERBOARD_URL: 'https://script.google.com/macros/s/AKfycbx6Tza_RY_a23XIDliEsn1gGl_qKaqFcMxwhuRUpQAbi8K83ESQYnI-h7m9rr6Ze6n1gA/exec',
-    LEADERBOARD_TOKEN: 'cv1nv4d3rs_f1rst_2025',
 
     // Pool sizes
     POOLS: {

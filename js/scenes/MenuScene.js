@@ -158,11 +158,10 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
         this.leaderboardDom = this.add.dom(CFG.WIDTH / 2, 416).createFromHTML(loadingHTML);
     }
 
-    /** Fetch leaderboard data. Primary: Supabase. Fallback: Google Apps Script. */
+    /** Fetch leaderboard data from Supabase. */
     fetchRemoteScores(CFG) {
         var self = this;
 
-        /** Render the leaderboard with whatever scores we have */
         function renderWithData(scores) {
             if (!self.scene || !self.scene.isActive()) return;
             if (scores && scores.length > 0) {
@@ -172,22 +171,6 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             self.renderTables(CFG, self.getLeaderboard());
         }
 
-        /** Google Apps Script GET fallback */
-        function gasFallback() {
-            if (!CFG.LEADERBOARD_URL) { renderWithData([]); return; }
-            var url = CFG.LEADERBOARD_URL + '?action=getScores&token=' + encodeURIComponent(CFG.LEADERBOARD_TOKEN);
-            fetch(url)
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    renderWithData(data && data.scores ? data.scores : []);
-                })
-                .catch(function(e) {
-                    console.warn('GAS leaderboard fetch failed:', e);
-                    renderWithData([]);
-                });
-        }
-
-        // === Primary path: Supabase ===
         var SB = window.CVInvaders.SupabaseClient;
         if (SB && SB.isConfigured()) {
             SB.fetchScores()
@@ -195,11 +178,11 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
                     renderWithData(scores);
                 })
                 .catch(function(e) {
-                    console.warn('Supabase fetch failed, falling back to GAS:', e);
-                    gasFallback();
+                    console.warn('Leaderboard fetch failed:', e);
+                    renderWithData([]);
                 });
         } else {
-            gasFallback();
+            renderWithData([]);
         }
     }
 
