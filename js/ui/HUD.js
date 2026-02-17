@@ -458,41 +458,61 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
 
         var pointers = this.input.manager.pointers;
+        var flipped = this._controlsFlipped;
+        var shootBound = this._shootBoundary;
+        var splitX = this._splitX;
+        var rpX = this._rightPanelX;
+        var sw = this._sideW;
+
         var shootHeld = false;
-        var moveDir = 0;
-
-        var self = this;
-        function checkPointer(ptr) {
-            if (!ptr || !ptr.isDown) return;
-
-            if (self._controlsFlipped) {
-                // FLIPPED: shoot on right, arrows on left
-                if (ptr.x > self._shootBoundary) {
-                    shootHeld = true;
-                    return;
-                }
-                if (ptr.x >= self._splitX) {
-                    moveDir = 1;
-                } else {
-                    moveDir = -1;
-                }
-            } else {
-                // DEFAULT: shoot on left, arrows on right
-                if (ptr.x < self._shootBoundary) {
-                    shootHeld = true;
-                    return;
-                }
-                if (ptr.x < self._splitX) {
-                    moveDir = -1;
-                } else {
-                    moveDir = 1;
-                }
-            }
-        }
+        var leftPressed = false;
+        var rightPressed = false;
+        var leftPtrX = 0;
+        var rightPtrX = 0;
 
         // Check ALL pointer slots — Phaser can assign touches to any slot
         for (var i = 0; i < pointers.length; i++) {
-            checkPointer(pointers[i]);
+            var ptr = pointers[i];
+            if (!ptr || !ptr.isDown) continue;
+
+            // Check shoot zone
+            if (!flipped && ptr.x < shootBound) { shootHeld = true; continue; }
+            if (flipped && ptr.x > shootBound) { shootHeld = true; continue; }
+
+            // Only register movement if pointer is inside the arrow panel
+            // (ignore accidental touches in the gameplay area between panels)
+            if (!flipped) {
+                // Arrows on right — only count if ptr.x >= right panel edge
+                if (ptr.x < rpX) continue;
+            } else {
+                // Arrows on left — only count if ptr.x <= left panel edge
+                if (ptr.x > sw) continue;
+            }
+
+            // Determine left/right and track x for conflict resolution
+            if (ptr.x < splitX) {
+                leftPressed = true;
+                leftPtrX = ptr.x;
+            } else {
+                rightPressed = true;
+                rightPtrX = ptr.x;
+            }
+        }
+
+        // Resolve direction — if both pressed, closest to gameplay area wins
+        var moveDir = 0;
+        if (leftPressed && rightPressed) {
+            if (!flipped) {
+                // Arrows on right: closer to left edge (rpX) wins
+                moveDir = (leftPtrX < rightPtrX) ? -1 : 1;
+            } else {
+                // Arrows on left: closer to right edge (sw) wins
+                moveDir = (leftPtrX > rightPtrX) ? -1 : 1;
+            }
+        } else if (leftPressed) {
+            moveDir = -1;
+        } else if (rightPressed) {
+            moveDir = 1;
         }
 
         // Bridge single-frame gaps during rapid left/right switching:
