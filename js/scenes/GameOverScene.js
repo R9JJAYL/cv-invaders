@@ -728,7 +728,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         this._leaderboardPromise = fetch(CFG.LEADERBOARD_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 token: CFG.LEADERBOARD_TOKEN,
                 action: 'addScore',
