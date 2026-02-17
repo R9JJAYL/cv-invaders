@@ -28,6 +28,17 @@ window.CVInvaders.LeaderboardRenderer = {
         var yPosition = options.yPosition != null ? options.yPosition : 420;
         var disablePointerEvents = options.disablePointerEvents || false;
 
+        // Deduplicate: keep only each player's highest score
+        var bestByPlayer = {};
+        allScores.forEach(function(entry) {
+            var key = (entry.name || '') + '|||' + (entry.company || '');
+            if (!bestByPlayer[key] || entry.score > bestByPlayer[key].score) {
+                bestByPlayer[key] = entry;
+            }
+        });
+        allScores = Object.keys(bestByPlayer).map(function(k) { return bestByPlayer[k]; });
+        allScores.sort(function(a, b) { return b.score - a.score; });
+
         var agency = allScores.filter(function(e) { return e.type === 'agency'; });
         var internal = allScores.filter(function(e) { return e.type === 'internal'; });
         var agencyTotal = agency.reduce(function(s, e) { return s + e.score; }, 0);
