@@ -447,7 +447,7 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         if (this._flipAnimating) return;
 
         // Frame guard: only poll once per frame even if called multiple times
-        var frame = this.scene.scene.manager.game.loop.frame;
+        var frame = this.sys.game.loop.frame;
         if (this._lastPollFrame === frame) return;
         this._lastPollFrame = frame;
 
@@ -469,10 +469,9 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var rightPtrX = 0;
 
         // Check ALL pointer slots — Phaser can assign touches to any slot
-        // Also check justDown to catch rapid re-taps where isDown flickers between frames
         for (var i = 0; i < pointers.length; i++) {
             var ptr = pointers[i];
-            if (!ptr || (!ptr.isDown && !ptr.justDown)) continue;
+            if (!ptr || !ptr.isDown) continue;
 
             // Shoot zone: panel + 1/3 bleed into gameplay
             if (!flipped) {
