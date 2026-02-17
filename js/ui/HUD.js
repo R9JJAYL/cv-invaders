@@ -6,12 +6,16 @@ window.CVInvaders = window.CVInvaders || {};
  * Launched alongside GameScene/BossScene and rendered on top of gameplay.
  * On desktop it shows score, combo counter, and countdown timer.
  * On mobile it draws side-panel controls: left panel = shoot zone,
- * right panel = left/right arrow buttons.  The 800×600 gameplay area is
+ * right panel = left/right arrow buttons.  The 800x600 gameplay area is
  * centred between the panels.
  *
  * Mobile input uses direct pointer polling (reading InputManager.pointers[]
  * every frame) rather than scene input events, because Phaser's event
  * propagation across parallel scenes prevents reliable two-finger input.
+ *
+ * A flip button lets the player swap shoot/arrows to the opposite sides.
+ * During the flip animation, the shoot panel slides across the FRONT of
+ * the game area (depth 250) while the arrows slide BEHIND (depth 198).
  */
 window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     constructor() {
@@ -39,13 +43,13 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5, 0).setDepth(100);
 
-        // Combo counter
-        this.comboText = this.add.text(sideW + 20, 20, '', {
+        // Combo counter — right-aligned under score
+        this.comboText = this.add.text(sideW + CFG.WIDTH - 20, 36, '', {
             fontFamily: 'Roboto',
             fontSize: '14px',
             color: CFG.COLORS.COMBO,
             fontStyle: 'bold'
-        }).setDepth(100);
+        }).setOrigin(1, 0).setDepth(100);
 
         // Listen for registry changes
         this.registry.events.on('changedata-score', (parent, value) => {
@@ -80,41 +84,50 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         var gameH = CFG.HEIGHT;
         var canvasW = CFG.CANVAS_WIDTH;
 
-        // ========== LEFT PANEL — SHOOT ZONE ==========
-        var leftPanel = this.add.graphics().setDepth(199);
-        leftPanel.fillStyle(0x1a0a2e, 0.85);
-        leftPanel.fillRect(0, 0, sideW, gameH);
-        // Subtle divider line on right edge of left panel
-        leftPanel.lineStyle(1, 0x9B59B6, 0.15);
-        leftPanel.lineBetween(sideW, 0, sideW, gameH);
+        // ===== FLIP STATE =====
+        this._controlsFlipped = false;
+        this._flipAnimating = false;
 
-        // Shoot button — same style as arrow buttons (rounded rect, full height)
-        var sBtnPad = 8;
-        var sBtnW = sideW - sBtnPad * 2;
-        var sBtnH = gameH - sBtnPad * 2;
-        var sBtnR = 10;
+        // Check saved preference
+        try {
+            if (localStorage.getItem('cv_invaders_controls_flipped') === 'true') {
+                this._controlsFlipped = true;
+            }
+        } catch (e) {}
+
+        // ========== PANEL BACKGROUNDS (static — always behind everything) ==========
+        this._leftPanelBg = this.add.graphics().setDepth(199);
+        this._leftPanelBg.fillStyle(0x1a0a2e, 0.85);
+        this._leftPanelBg.fillRect(0, 0, sideW, gameH);
+        this._leftPanelBg.lineStyle(1, 0x9B59B6, 0.15);
+        this._leftPanelBg.lineBetween(sideW, 0, sideW, gameH);
+
+        var rightPanelX = sideW + CFG.WIDTH;
+        var rightPanelW = canvasW - rightPanelX;
+        this._rightPanelBg = this.add.graphics().setDepth(199);
+        this._rightPanelBg.fillStyle(0x1a0a2e, 0.85);
+        this._rightPanelBg.fillRect(rightPanelX, 0, rightPanelW, gameH);
+        this._rightPanelBg.lineStyle(1, 0x9B59B6, 0.15);
+        this._rightPanelBg.lineBetween(rightPanelX, 0, rightPanelX, gameH);
+
+        // ========== STORE LAYOUT CONSTANTS ==========
+        this._sideW = sideW;
+        this._gameH = gameH;
+        this._canvasW = canvasW;
+        this._rightPanelX = rightPanelX;
+        this._rightPanelW = rightPanelW;
+
+        // ========== CREATE BUTTON GRAPHICS ==========
         this._shootBg = this.add.graphics().setDepth(200);
-        this._shootRect = { x: sBtnPad, y: sBtnPad, w: sBtnW, h: sBtnH, r: sBtnR };
-        this._drawBtnBg(this._shootBg, this._shootRect, 0.5);
+        this._leftBg = this.add.graphics().setDepth(200);
+        this._rightBg = this.add.graphics().setDepth(200);
 
-        var cx = sideW / 2;
-        var cy = gameH / 2 - 30;
+        // Crosshair graphics — drawn at origin, repositioned via setPosition
+        this._crosshair = this.add.graphics().setDepth(201);
+        this._drawCrosshair(this._crosshair);
 
-        // Crosshair — larger, with outer ring and inner dot
-        var crosshair = this.add.graphics().setDepth(201);
-        crosshair.lineStyle(2, 0x9B59B6, 0.5);
-        crosshair.strokeCircle(cx, cy, 26);
-        crosshair.lineStyle(1.5, 0xFFFFFF, 0.4);
-        crosshair.strokeCircle(cx, cy, 14);
-        crosshair.lineBetween(cx - 30, cy, cx - 8, cy);
-        crosshair.lineBetween(cx + 8, cy, cx + 30, cy);
-        crosshair.lineBetween(cx, cy - 30, cx, cy - 8);
-        crosshair.lineBetween(cx, cy + 8, cx, cy + 30);
-        crosshair.fillStyle(0x00E5FF, 0.6);
-        crosshair.fillCircle(cx, cy, 3);
-
-        // "TAP TO FIRE" label below crosshair — single line
-        this.add.text(cx, cy + 50, 'TAP TO\nFIRE', {
+        // "TAP TO FIRE" label
+        this._fireLabel = this.add.text(0, 0, 'TAP TO\nFIRE', {
             fontFamily: 'Roboto',
             fontSize: '13px',
             color: 'rgba(155,89,182,0.6)',
@@ -124,60 +137,323 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
             lineSpacing: 4
         }).setOrigin(0.5).setDepth(201);
 
-        // ========== RIGHT PANEL — background fills from game edge to canvas edge ==========
-        var rightPanelX = sideW + CFG.WIDTH; // start of right panel
-        var rightPanelW = canvasW - rightPanelX; // use actual remaining width (not sideW) to avoid rounding gaps
-        var rightPanel = this.add.graphics().setDepth(199);
-        rightPanel.fillStyle(0x1a0a2e, 0.85);
-        rightPanel.fillRect(rightPanelX, 0, rightPanelW, gameH);
-        // Subtle divider line on left edge of right panel
-        rightPanel.lineStyle(1, 0x9B59B6, 0.15);
-        rightPanel.lineBetween(rightPanelX, 0, rightPanelX, gameH);
+        // Arrow graphics — drawn at origin, repositioned via setPosition
+        this._leftArrowGfx = this.add.graphics().setDepth(201);
+        this._rightArrowGfx = this.add.graphics().setDepth(201);
 
-        // ========== ARROW BUTTONS — fill from game edge to screen edge ==========
+        // ========== FLIP BUTTON ==========
+        this._flipIcon = this.add.graphics().setDepth(202);
+        this._flipZone = this.add.zone(0, 0, 44, 44).setDepth(202).setInteractive();
+        this._flipZone.on('pointerdown', () => {
+            if (!this._flipAnimating) {
+                this._doFlip();
+            }
+        });
+
+        // ========== APPLY INITIAL LAYOUT ==========
+        var layout = this._calculateLayout(this._controlsFlipped);
+        this._applyLayout(layout);
+
+        // ========== HITBOX ZONES ==========
+        this._shootHeld = false;
+        this._shootBoundary = layout.shootBoundary;
+        this._splitX = layout.splitX;
+    }
+
+    /**
+     * Calculate all position-dependent values for a given flip state.
+     * @param {boolean} flipped — true = arrows on left, shoot on right
+     * @returns {Object} layout with rects, centres, boundaries
+     */
+    _calculateLayout(flipped) {
+        var sideW = this._sideW;
+        var gameH = this._gameH;
+        var canvasW = this._canvasW;
+        var rightPanelX = this._rightPanelX;
+        var rightPanelW = this._rightPanelW;
+        var CFG = window.CVInvaders.Config;
+
         var btnPad = 8;
         var btnGap = 8;
         var btnH = gameH - btnPad * 2;
         var btnR = 10;
         var btnY = gameH / 2;
 
-        // Buttons span from rightPanelX+pad to canvasW-pad (full remaining width)
+        // Right panel midpoint (for splitting left/right arrows)
         var rpMidX = rightPanelX + rightPanelW / 2;
 
-        // Left arrow button — from game edge to midpoint
-        var leftBtnX0 = rightPanelX + btnPad;
-        var leftBtnW = (rpMidX - btnGap / 2) - leftBtnX0;
-        var leftBtnCX = leftBtnX0 + leftBtnW / 2;
-        this._leftBg = this.add.graphics().setDepth(200);
-        this._leftRect = { x: leftBtnX0, y: btnY - btnH / 2, w: leftBtnW, h: btnH, r: btnR };
+        // Shoot rect dimensions (single full-height button in one panel)
+        var sBtnW = sideW - btnPad * 2;
+        var sBtnH = gameH - btnPad * 2;
+
+        // Arrow rect dimensions (two buttons split in one panel)
+        var leftBtnX0_right = rightPanelX + btnPad; // left arrow x when in right panel
+        var leftBtnW_right = (rpMidX - btnGap / 2) - leftBtnX0_right;
+        var rightBtnX0_right = rpMidX + btnGap / 2;
+        var rightBtnW_right = (canvasW - btnPad) - rightBtnX0_right;
+
+        // Left panel midpoint (for splitting arrows when in left panel)
+        var lpMidX = sideW / 2;
+        var leftBtnX0_left = btnPad;
+        var leftBtnW_left = (lpMidX - btnGap / 2) - leftBtnX0_left;
+        var rightBtnX0_left = lpMidX + btnGap / 2;
+        var rightBtnW_left = (sideW - btnPad) - rightBtnX0_left;
+
+        // Flip button — always top-left of the gameplay area
+        var flipBtn = { x: sideW + 28, y: 20 };
+
+        if (!flipped) {
+            // DEFAULT: shoot on left, arrows on right
+            return {
+                shootRect: { x: btnPad, y: btnPad, w: sBtnW, h: sBtnH, r: btnR },
+                shootCenter: { x: sideW / 2, y: gameH / 2 - 30 },
+                leftRect: { x: leftBtnX0_right, y: btnY - btnH / 2, w: leftBtnW_right, h: btnH, r: btnR },
+                rightRect: { x: rightBtnX0_right, y: btnY - btnH / 2, w: rightBtnW_right, h: btnH, r: btnR },
+                leftArrowCenter: { x: leftBtnX0_right + leftBtnW_right / 2, y: btnY },
+                rightArrowCenter: { x: rightBtnX0_right + rightBtnW_right / 2, y: btnY },
+                shootBoundary: sideW + CFG.WIDTH / 2,
+                splitX: rpMidX,
+                flipBtnCenter: flipBtn
+            };
+        } else {
+            // FLIPPED: arrows on left, shoot on right
+            return {
+                shootRect: { x: rightPanelX + btnPad, y: btnPad, w: rightPanelW - btnPad * 2, h: sBtnH, r: btnR },
+                shootCenter: { x: rightPanelX + rightPanelW / 2, y: gameH / 2 - 30 },
+                leftRect: { x: leftBtnX0_left, y: btnY - btnH / 2, w: leftBtnW_left, h: btnH, r: btnR },
+                rightRect: { x: rightBtnX0_left, y: btnY - btnH / 2, w: rightBtnW_left, h: btnH, r: btnR },
+                leftArrowCenter: { x: leftBtnX0_left + leftBtnW_left / 2, y: btnY },
+                rightArrowCenter: { x: rightBtnX0_left + rightBtnW_left / 2, y: btnY },
+                shootBoundary: sideW + CFG.WIDTH / 2,
+                splitX: lpMidX,
+                flipBtnCenter: flipBtn
+            };
+        }
+    }
+
+    /**
+     * Apply a layout object — positions all elements at exact values.
+     * @param {Object} layout from _calculateLayout
+     */
+    _applyLayout(layout) {
+        // Shoot button
+        this._shootRect = layout.shootRect;
+        this._drawBtnBg(this._shootBg, this._shootRect, 0.5);
+
+        // Crosshair
+        this._crosshair.setPosition(layout.shootCenter.x, layout.shootCenter.y);
+
+        // Fire label
+        this._fireLabel.setPosition(layout.shootCenter.x, layout.shootCenter.y + 50);
+
+        // Arrow buttons
+        this._leftRect = layout.leftRect;
         this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
-        var leftArrow = this.add.graphics().setDepth(201);
-        leftArrow.fillStyle(0xFFFFFF, 0.8);
-        leftArrow.fillTriangle(leftBtnCX - 12, btnY, leftBtnCX + 8, btnY - 14, leftBtnCX + 8, btnY + 14);
-
-        // Right arrow button — from midpoint to screen edge
-        var rightBtnX0 = rpMidX + btnGap / 2;
-        var rightBtnW = (canvasW - btnPad) - rightBtnX0;
-        var rightBtnCX = rightBtnX0 + rightBtnW / 2;
-        this._rightBg = this.add.graphics().setDepth(200);
-        this._rightRect = { x: rightBtnX0, y: btnY - btnH / 2, w: rightBtnW, h: btnH, r: btnR };
+        this._rightRect = layout.rightRect;
         this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
-        var rightArrow = this.add.graphics().setDepth(201);
-        rightArrow.fillStyle(0xFFFFFF, 0.8);
-        rightArrow.fillTriangle(rightBtnCX + 12, btnY, rightBtnCX - 8, btnY - 14, rightBtnCX - 8, btnY + 14);
 
-        // ========== HITBOX ZONES ==========
-        // Shoot: left panel + left half of game screen (0 to sideW + WIDTH/2)
-        // Move left: right half of game screen + left arrow button (sideW + WIDTH/2 to rpMidX)
-        // Move right: right arrow button (rpMidX to canvasW)
-        this._shootHeld = false;
-        this._shootBoundary = sideW + CFG.WIDTH / 2;            // shoot zone = left panel + left half of game
-        this._splitX = rpMidX;                                   // left/right split at right panel midpoint
+        // Arrow triangles
+        this._redrawArrow(this._leftArrowGfx, layout.leftArrowCenter.x, layout.leftArrowCenter.y, -1);
+        this._redrawArrow(this._rightArrowGfx, layout.rightArrowCenter.x, layout.rightArrowCenter.y, 1);
+
+        // Flip button
+        this._drawFlipIcon(this._flipIcon, layout.flipBtnCenter.x, layout.flipBtnCenter.y);
+        this._flipZone.setPosition(layout.flipBtnCenter.x, layout.flipBtnCenter.y);
+    }
+
+    /**
+     * Draw crosshair at origin (0,0) — positioned via setPosition on the graphics object.
+     */
+    _drawCrosshair(gfx) {
+        gfx.clear();
+        gfx.lineStyle(2, 0x9B59B6, 0.5);
+        gfx.strokeCircle(0, 0, 26);
+        gfx.lineStyle(1.5, 0xFFFFFF, 0.4);
+        gfx.strokeCircle(0, 0, 14);
+        gfx.lineBetween(-30, 0, -8, 0);
+        gfx.lineBetween(8, 0, 30, 0);
+        gfx.lineBetween(0, -30, 0, -8);
+        gfx.lineBetween(0, 8, 0, 30);
+        gfx.fillStyle(0x00E5FF, 0.6);
+        gfx.fillCircle(0, 0, 3);
+    }
+
+    /**
+     * Draw an arrow triangle at a given position.
+     * @param {Phaser.GameObjects.Graphics} gfx
+     * @param {number} cx — centre x
+     * @param {number} cy — centre y
+     * @param {number} dir — -1 for left, 1 for right
+     */
+    _redrawArrow(gfx, cx, cy, dir) {
+        gfx.clear();
+        gfx.fillStyle(0xFFFFFF, 0.8);
+        if (dir < 0) {
+            gfx.fillTriangle(cx - 12, cy, cx + 8, cy - 14, cx + 8, cy + 14);
+        } else {
+            gfx.fillTriangle(cx + 12, cy, cx - 8, cy - 14, cx - 8, cy + 14);
+        }
+    }
+
+    /**
+     * Draw the flip-controls icon (two curved arrows forming a swap symbol).
+     */
+    _drawFlipIcon(gfx, cx, cy) {
+        gfx.clear();
+
+        // Background pill
+        gfx.fillStyle(0x2d1450, 0.7);
+        gfx.fillRoundedRect(cx - 18, cy - 12, 36, 24, 8);
+        gfx.lineStyle(1, 0x9B59B6, 0.4);
+        gfx.strokeRoundedRect(cx - 18, cy - 12, 36, 24, 8);
+
+        // Left arrow (pointing left)
+        gfx.lineStyle(1.5, 0xFFFFFF, 0.7);
+        gfx.lineBetween(cx - 10, cy - 3, cx + 6, cy - 3);
+        // Arrowhead
+        gfx.lineBetween(cx - 10, cy - 3, cx - 6, cy - 7);
+        gfx.lineBetween(cx - 10, cy - 3, cx - 6, cy + 1);
+
+        // Right arrow (pointing right)
+        gfx.lineBetween(cx + 10, cy + 3, cx - 6, cy + 3);
+        // Arrowhead
+        gfx.lineBetween(cx + 10, cy + 3, cx + 6, cy - 1);
+        gfx.lineBetween(cx + 10, cy + 3, cx + 6, cy + 7);
+    }
+
+    /**
+     * Trigger the flip animation.
+     */
+    _doFlip() {
+        this._flipAnimating = true;
+
+        var fromLayout = this._calculateLayout(this._controlsFlipped);
+        this._controlsFlipped = !this._controlsFlipped;
+        var toLayout = this._calculateLayout(this._controlsFlipped);
+
+        // Store from/to for lerp
+        this._flipFrom = fromLayout;
+        this._flipTo = toLayout;
+
+        // Depth trick: shoot slides across FRONT, arrows slide BEHIND
+        this._shootBg.setDepth(250);
+        this._crosshair.setDepth(251);
+        this._fireLabel.setDepth(251);
+        this._leftArrowGfx.setDepth(198);
+        this._rightArrowGfx.setDepth(198);
+        this._leftBg.setDepth(197);
+        this._rightBg.setDepth(197);
+
+        // Tween a progress value from 0 to 1
+        var self = this;
+        this._flipProgress = { t: 0 };
+        this.tweens.add({
+            targets: this._flipProgress,
+            t: 1,
+            duration: 500,
+            ease: 'Cubic.easeInOut',
+            onUpdate: function () {
+                self._updateFlipAnimation(self._flipProgress.t);
+            },
+            onComplete: function () {
+                self._finalizeFlip();
+            }
+        });
+    }
+
+    /**
+     * Lerp all elements between from and to layouts.
+     */
+    _updateFlipAnimation(t) {
+        var from = this._flipFrom;
+        var to = this._flipTo;
+
+        // Lerp shoot rect
+        var sRect = this._lerpRect(from.shootRect, to.shootRect, t);
+        this._shootRect = sRect;
+        this._drawBtnBg(this._shootBg, sRect, 0.5);
+
+        // Lerp shoot centre (crosshair + label)
+        var sCx = from.shootCenter.x + (to.shootCenter.x - from.shootCenter.x) * t;
+        var sCy = from.shootCenter.y + (to.shootCenter.y - from.shootCenter.y) * t;
+        this._crosshair.setPosition(sCx, sCy);
+        this._fireLabel.setPosition(sCx, sCy + 50);
+
+        // Lerp left arrow rect + position
+        var lRect = this._lerpRect(from.leftRect, to.leftRect, t);
+        this._leftRect = lRect;
+        this._drawBtnBg(this._leftBg, lRect, 0.5);
+        var lCx = from.leftArrowCenter.x + (to.leftArrowCenter.x - from.leftArrowCenter.x) * t;
+        var lCy = from.leftArrowCenter.y + (to.leftArrowCenter.y - from.leftArrowCenter.y) * t;
+        this._redrawArrow(this._leftArrowGfx, lCx, lCy, -1);
+
+        // Lerp right arrow rect + position
+        var rRect = this._lerpRect(from.rightRect, to.rightRect, t);
+        this._rightRect = rRect;
+        this._drawBtnBg(this._rightBg, rRect, 0.5);
+        var rCx = from.rightArrowCenter.x + (to.rightArrowCenter.x - from.rightArrowCenter.x) * t;
+        var rCy = from.rightArrowCenter.y + (to.rightArrowCenter.y - from.rightArrowCenter.y) * t;
+        this._redrawArrow(this._rightArrowGfx, rCx, rCy, 1);
+
+        // Lerp flip button position
+        var fCx = from.flipBtnCenter.x + (to.flipBtnCenter.x - from.flipBtnCenter.x) * t;
+        var fCy = from.flipBtnCenter.y + (to.flipBtnCenter.y - from.flipBtnCenter.y) * t;
+        this._drawFlipIcon(this._flipIcon, fCx, fCy);
+        this._flipZone.setPosition(fCx, fCy);
+    }
+
+    /**
+     * Linear-interpolate rect properties.
+     */
+    _lerpRect(from, to, t) {
+        return {
+            x: from.x + (to.x - from.x) * t,
+            y: from.y + (to.y - from.y) * t,
+            w: from.w + (to.w - from.w) * t,
+            h: from.h + (to.h - from.h) * t,
+            r: from.r + (to.r - from.r) * t
+        };
+    }
+
+    /**
+     * Snap to final positions, restore depths, update input boundaries.
+     */
+    _finalizeFlip() {
+        var layout = this._calculateLayout(this._controlsFlipped);
+        this._applyLayout(layout);
+
+        // Update input boundaries
+        this._shootBoundary = layout.shootBoundary;
+        this._splitX = layout.splitX;
+
+        // Restore normal depths
+        this._shootBg.setDepth(200);
+        this._crosshair.setDepth(201);
+        this._fireLabel.setDepth(201);
+        this._leftArrowGfx.setDepth(201);
+        this._rightArrowGfx.setDepth(201);
+        this._leftBg.setDepth(200);
+        this._rightBg.setDepth(200);
+
+        this._flipAnimating = false;
+
+        // Persist preference
+        try {
+            localStorage.setItem('cv_invaders_controls_flipped', this._controlsFlipped ? 'true' : 'false');
+        } catch (e) {}
     }
 
     // ===== UPDATE — poll pointers directly & relay to ship =====
     update(time, delta) {
         if (!this.isMobile) return;
+
+        // During flip animation, skip input but keep buttons at idle alpha
+        if (this._flipAnimating) {
+            this._drawBtnBg(this._shootBg, this._shootRect, 0.5);
+            this._drawBtnBg(this._leftBg, this._leftRect, 0.5);
+            this._drawBtnBg(this._rightBg, this._rightRect, 0.5);
+            return;
+        }
 
         var gameScene = this.scene.get('GameScene');
         if (!gameScene || !gameScene.ship || !gameScene.ship.isAlive) return;
@@ -191,15 +467,28 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         function checkPointer(ptr) {
             if (!ptr || !ptr.isDown) return;
 
-            if (ptr.x < self._shootBoundary) {
-                shootHeld = true;
-                return;
-            }
-
-            if (ptr.x < self._splitX) {
-                moveDir = -1;
+            if (self._controlsFlipped) {
+                // FLIPPED: shoot on right, arrows on left
+                if (ptr.x > self._shootBoundary) {
+                    shootHeld = true;
+                    return;
+                }
+                if (ptr.x >= self._splitX) {
+                    moveDir = 1;
+                } else {
+                    moveDir = -1;
+                }
             } else {
-                moveDir = 1;
+                // DEFAULT: shoot on left, arrows on right
+                if (ptr.x < self._shootBoundary) {
+                    shootHeld = true;
+                    return;
+                }
+                if (ptr.x < self._splitX) {
+                    moveDir = -1;
+                } else {
+                    moveDir = 1;
+                }
             }
         }
 
