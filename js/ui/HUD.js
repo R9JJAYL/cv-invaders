@@ -145,8 +145,8 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
         this._flipIcon = this.add.graphics().setDepth(202);
         this._flipLabel = this.add.text(0, 0, '⇄  flip controls', {
             fontFamily: 'Roboto',
-            fontSize: '11px',
-            color: 'rgba(255,255,255,0.6)',
+            fontSize: '13px',
+            color: 'rgba(255,255,255,0.5)',
             fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(202);
         this._flipZone = this.add.zone(0, 0, 120, 30).setDepth(202).setInteractive();
@@ -307,16 +307,10 @@ window.CVInvaders.HUD = class HUD extends Phaser.Scene {
     }
 
     /**
-     * Draw the flip-controls button background pill.
+     * Draw the flip-controls button background (no pill — text only).
      */
     _drawFlipIcon(gfx, cx, cy) {
         gfx.clear();
-
-        // Background pill — sized for "⇄ flip controls" label
-        gfx.fillStyle(0x2d1450, 0.7);
-        gfx.fillRoundedRect(cx - 56, cy - 13, 112, 26, 10);
-        gfx.lineStyle(1, 0x9B59B6, 0.4);
-        gfx.strokeRoundedRect(cx - 56, cy - 13, 112, 26, 10);
     }
 
     /**
