@@ -31,7 +31,7 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         if (this._droneGain && this.ctx) {
             try {
                 this._droneGain.gain.linearRampToValueAtTime(
-                    this.muted ? 0 : 0.06,
+                    this.muted ? 0 : 0.06 * (this.musicVolume || 1.0),
                     this.ctx.currentTime + 0.3
                 );
             } catch (e) {}
@@ -187,7 +187,8 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         if (!this.ctx || this.musicPlaying) return;
         this.musicPlaying = true;
         this._arpStopped = false;
-        this.musicTempo = tempo || 1.0; // 1.0 = normal, higher = faster
+        this.musicTempo = tempo || 1.0;
+        this.musicVolume = this.musicTempo >= 1.0 ? 1.0 : 0.5;
 
         // Ambient drone pad
         this._startDrone();
@@ -219,10 +220,19 @@ window.CVInvaders.SoundEngine = class SoundEngine {
         this._arpNoteIdx = 0;
     }
 
-    /** Adjust arpeggio tempo. 1.0 = normal, 1.3 = wave tension, 1.6 = boss fight. */
+    /** Adjust arpeggio tempo and volume. 1.0 = normal gameplay, 0.5 = quiet ambient. */
     setMusicTempo(tempo) {
-        // tempo: 1.0 = normal, 1.3 = slightly faster, 1.6 = intense
         this.musicTempo = tempo;
+        // Scale volume: full at tempo >= 1.0, half at tempo 0.5
+        this.musicVolume = tempo >= 1.0 ? 1.0 : 0.5;
+        // Ramp drone gain to match
+        if (this._droneGain && this.ctx && !this.muted) {
+            try {
+                this._droneGain.gain.linearRampToValueAtTime(
+                    0.06 * this.musicVolume, this.ctx.currentTime + 0.5
+                );
+            } catch (e) {}
+        }
     }
 
     /** Start two slightly detuned sine oscillators for a warm ambient pad. */
@@ -243,8 +253,9 @@ window.CVInvaders.SoundEngine = class SoundEngine {
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(200, this.ctx.currentTime);
 
+            const vol = 0.06 * (this.musicVolume || 1.0);
             gain.gain.setValueAtTime(0, this.ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.06, this.ctx.currentTime + 2);
+            gain.gain.linearRampToValueAtTime(vol, this.ctx.currentTime + 2);
 
             osc1.connect(filter);
             osc2.connect(filter);
@@ -290,8 +301,9 @@ window.CVInvaders.SoundEngine = class SoundEngine {
                 filter.Q.setValueAtTime(2, this.ctx.currentTime);
 
                 const noteDur = 0.6 / this.musicTempo;
+                const noteVol = 0.04 * (this.musicVolume || 1.0);
                 gain.gain.setValueAtTime(0, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.04, this.ctx.currentTime + 0.02);
+                gain.gain.linearRampToValueAtTime(noteVol, this.ctx.currentTime + 0.02);
                 gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + noteDur);
 
                 osc.connect(filter);
