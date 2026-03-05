@@ -17,6 +17,16 @@ window.CVInvaders.TutorialScene = class TutorialScene extends Phaser.Scene {
         const CFG = window.CVInvaders.Config;
         const DLG = window.CVInvaders.Dialogue.CINEMATIC;
 
+        // Start ambient music (slow tempo) if not already playing
+        this.sound_engine = window.CVInvaders._sharedSoundEngine;
+        if (this.sound_engine) {
+            if (this.sound_engine.musicPlaying) {
+                this.sound_engine.setMusicTempo(0.5);
+            } else {
+                this.sound_engine.startMusic(0.5);
+            }
+        }
+
         // Expand the world bounds so we can place the ATS below the viewport
         // Normal viewport: 0 to CFG.HEIGHT (600)
         // ATS zone: CFG.HEIGHT to CFG.HEIGHT + 200

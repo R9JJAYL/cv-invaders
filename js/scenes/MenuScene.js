@@ -15,13 +15,12 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     create() {
         const CFG = window.CVInvaders.Config;
 
-        // Initialise shared sound engine and start menu music (slow ambient)
+        // Initialise shared sound engine (music starts in TutorialScene)
         if (!window.CVInvaders._sharedSoundEngine) {
             window.CVInvaders._sharedSoundEngine = new window.CVInvaders.SoundEngine();
             window.CVInvaders._sharedSoundEngine.init();
         }
         this.sound_engine = window.CVInvaders._sharedSoundEngine;
-        this.sound_engine.startMusic(0.5);
 
         // On mobile, offset camera to centre gameplay between side panels
         if (!this.sys.game.device.os.desktop) {
