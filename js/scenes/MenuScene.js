@@ -15,6 +15,14 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
     create() {
         const CFG = window.CVInvaders.Config;
 
+        // Initialise shared sound engine and start menu music (slow ambient)
+        if (!window.CVInvaders._sharedSoundEngine) {
+            window.CVInvaders._sharedSoundEngine = new window.CVInvaders.SoundEngine();
+            window.CVInvaders._sharedSoundEngine.init();
+        }
+        this.sound_engine = window.CVInvaders._sharedSoundEngine;
+        this.sound_engine.startMusic(0.6);
+
         // On mobile, offset camera to centre gameplay between side panels
         if (!this.sys.game.device.os.desktop) {
             var sideW = CFG.SIDE_PANEL_WIDTH || 0;
@@ -257,6 +265,7 @@ window.CVInvaders.MenuScene = class MenuScene extends Phaser.Scene {
             duration: 150
         });
         this.cameras.main.fadeOut(600);
+        this.sound_engine.stopMusic();
         this.time.delayedCall(600, () => {
             this.scene.start('TutorialScene');
         });

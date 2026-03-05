@@ -183,11 +183,11 @@ window.CVInvaders.SoundEngine = class SoundEngine {
 
     // ===== BACKGROUND MUSIC =====
     /** Start the background music layers (drone + arpeggio). */
-    startMusic() {
+    startMusic(tempo) {
         if (!this.ctx || this.musicPlaying) return;
         this.musicPlaying = true;
         this._arpStopped = false;
-        this.musicTempo = 1.0; // 1.0 = normal, higher = faster
+        this.musicTempo = tempo || 1.0; // 1.0 = normal, higher = faster
 
         // Ambient drone pad
         this._startDrone();
@@ -202,11 +202,21 @@ window.CVInvaders.SoundEngine = class SoundEngine {
             try {
                 this._droneGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.5);
             } catch (e) {}
+            // Stop drone oscillators after fade completes
+            setTimeout(() => {
+                try {
+                    if (this._droneOsc1) { this._droneOsc1.stop(); this._droneOsc1 = null; }
+                    if (this._droneOsc2) { this._droneOsc2.stop(); this._droneOsc2 = null; }
+                    if (this._droneGain) { this._droneGain.disconnect(); this._droneGain = null; }
+                } catch (e) {}
+            }, 600);
         }
         if (this._arpTimer) {
             clearTimeout(this._arpTimer);
             this._arpTimer = null;
         }
+        this._arpPatternIdx = 0;
+        this._arpNoteIdx = 0;
     }
 
     /** Adjust arpeggio tempo. 1.0 = normal, 1.3 = wave tension, 1.6 = boss fight. */
