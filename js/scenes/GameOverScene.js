@@ -16,10 +16,14 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
     create() {
         const CFG = window.CVInvaders.Config;
 
-        // Start ambient music for results screen (slow tempo)
+        // Ensure ambient music is playing at slow tempo for results screen
         this.sound_engine = window.CVInvaders._sharedSoundEngine;
         if (this.sound_engine) {
-            this.sound_engine.startMusic(0.6);
+            if (this.sound_engine.musicPlaying) {
+                this.sound_engine.setMusicTempo(0.5);
+            } else {
+                this.sound_engine.startMusic(0.5);
+            }
         }
 
         // Save score + fetch leaderboard immediately (during ad)
@@ -814,9 +818,6 @@ window.CVInvaders.GameOverScene = class GameOverScene extends Phaser.Scene {
 
         // Kill all running tweens (infinite logo/CTA pulses)
         this.tweens.killAll();
-
-        // Stop results music before transition
-        if (this.sound_engine) this.sound_engine.stopMusic();
 
         // Fade out from current position (don't scroll back to ad page)
         this.cameras.main.fadeOut(600);

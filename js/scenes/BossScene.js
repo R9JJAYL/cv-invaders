@@ -119,9 +119,12 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
             wordWrap: { width: 600 }
         }).setOrigin(0.5).setDepth(50).setAlpha(0);
 
-        // Start music at boss tempo
-        this.sound_engine.startMusic();
-        this.sound_engine.setMusicTempo(1.6);
+        // Start music at boss tempo (may already be playing)
+        if (this.sound_engine.musicPlaying) {
+            this.sound_engine.setMusicTempo(1.6);
+        } else {
+            this.sound_engine.startMusic(1.6);
+        }
 
         // Fade in and spawn boss
         this.cameras.main.fadeIn(500);
@@ -278,7 +281,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
         this.registry.set('bossTime', bossTime);
         this.registry.set('bossDefeated', true);
 
-        this.sound_engine.stopMusic();
+        this.sound_engine.setMusicTempo(0.5);
         this.scoreManager.bossKill(bossTime);
         this.sound_engine.bossDefeated();
 
@@ -312,7 +315,7 @@ window.CVInvaders.BossScene = class BossScene extends Phaser.Scene {
     onPlayerDeath() {
         this.gameOver = true;
         this.tweens.killAll();
-        this.sound_engine.stopMusic();
+        this.sound_engine.setMusicTempo(0.5);
         this.sound_engine.gameOver();
 
         // Stop boss from continuing to act

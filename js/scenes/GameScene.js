@@ -145,8 +145,12 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
             }
         });
 
-        // Start background music
-        this.sound_engine.startMusic();
+        // Ramp music to gameplay tempo (may already be playing from menu/game-over)
+        if (this.sound_engine.musicPlaying) {
+            this.sound_engine.setMusicTempo(1.0);
+        } else {
+            this.sound_engine.startMusic();
+        }
 
         // Start with tutorial
         this.startTutorial();
@@ -664,7 +668,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.registry.set('bossDefeated', false);
 
         this.tweens.killAll();
-        this.sound_engine.stopMusic();
+        this.sound_engine.setMusicTempo(0.5);
         this.sound_engine.gameOver();
 
         // Stop boss
@@ -697,7 +701,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
         this.registry.set('bossDefeated', true);
 
         this.tweens.killAll();
-        this.sound_engine.stopMusic();
+        this.sound_engine.setMusicTempo(0.5);
         this.scoreManager.bossKill(bossTime);
         this.sound_engine.bossDefeated();
 
@@ -846,7 +850,7 @@ window.CVInvaders.GameScene = class GameScene extends Phaser.Scene {
     onPlayerDeath() {
         this.gameOver = true;
         this.tweens.killAll();
-        this.sound_engine.stopMusic();
+        this.sound_engine.setMusicTempo(0.5);
         this.sound_engine.gameOver();
 
         // Stop boss if active
