@@ -292,6 +292,15 @@ body {
 .agency-label { color: #9B59B6; }
 .internal-label { color: #8BAFC4; }
 
+.team-count {
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    color: #AAAAAA;
+    opacity: 0.6;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
 .stat-pills {
     display: flex;
     gap: 6px;

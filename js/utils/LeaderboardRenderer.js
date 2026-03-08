@@ -57,10 +57,12 @@ window.CVInvaders.LeaderboardRenderer = {
         var internalTotal = internal.reduce(function(s, e) { return s + e.score; }, 0);
         var agencyAvg = agency.length > 0 ? Math.round(agencyTotal / agency.length) : 0;
         var internalAvg = internal.length > 0 ? Math.round(internalTotal / internal.length) : 0;
+        var agencyHighest = agency.length > 0 ? Math.max.apply(null, agency.map(function(e) { return e.score; })) : 0;
+        var internalHighest = internal.length > 0 ? Math.max.apply(null, internal.map(function(e) { return e.score; })) : 0;
         var fmt = function(n) { return n.toLocaleString(); };
 
         // Determine crown winners for each stat
-        var gamesWin = agency.length > internal.length ? 'agency' : internal.length > agency.length ? 'internal' : 'tie';
+        var highestWin = agencyHighest > internalHighest ? 'agency' : internalHighest > agencyHighest ? 'internal' : 'tie';
         var totalWin = agencyTotal > internalTotal ? 'agency' : internalTotal > agencyTotal ? 'internal' : 'tie';
         var avgWin = agencyAvg > internalAvg ? 'agency' : internalAvg > agencyAvg ? 'internal' : 'tie';
         var crown = '<span class="stat-crown">\uD83D\uDC51</span>';
@@ -76,18 +78,20 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-columns">' +
             '<div class="stats-team">' +
             '<div class="team-label agency-label">TEAM AGENCY</div>' +
+            '<div class="team-count agency-count">' + agency.length + ' players</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill agency-pill">' + (gamesWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agency.length) + '</div><div class="stat-name">Players</div></div>' +
-            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill agency-pill">' + (highestWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyHighest) + '</div><div class="stat-name">Highest</div></div>' +
             '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Average</div></div>' +
+            '<div class="stat-pill agency-pill">' + (totalWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyTotal) + '</div><div class="stat-name">Total</div></div>' +
             '</div></div>' +
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">TEAM INTERNAL</div>' +
+            '<div class="team-count internal-count">' + internal.length + ' players</div>' +
             '<div class="stat-pills">' +
-            '<div class="stat-pill internal-pill">' + (gamesWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internal.length) + '</div><div class="stat-name">Players</div></div>' +
-            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
+            '<div class="stat-pill internal-pill">' + (highestWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalHighest) + '</div><div class="stat-name">Highest</div></div>' +
             '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Average</div></div>' +
+            '<div class="stat-pill internal-pill">' + (totalWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalTotal) + '</div><div class="stat-name">Total</div></div>' +
             '</div></div>' +
             '</div></div>' +
             '<div class="lb-divider"></div>' +
