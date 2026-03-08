@@ -78,7 +78,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-columns">' +
             '<div class="stats-team">' +
             '<div class="team-label agency-label">TEAM AGENCY</div>' +
-            '<div class="team-count agency-count"><span class="count-num">' + agency.length + '</span> players</div>' +
+            '<div class="team-count agency-count">' + agency.length + ' players</div>' +
             '<div class="stat-pills">' +
             '<div class="stat-pill agency-pill">' + (highestWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyHighest) + '</div><div class="stat-name">Highest</div></div>' +
             '<div class="stat-pill agency-pill">' + (avgWin === 'agency' ? crown : noCrown) + '<div class="stat-val">' + fmt(agencyAvg) + '</div><div class="stat-name">Average</div></div>' +
@@ -87,7 +87,7 @@ window.CVInvaders.LeaderboardRenderer = {
             '<div class="stats-vs">VS</div>' +
             '<div class="stats-team">' +
             '<div class="team-label internal-label">TEAM INTERNAL</div>' +
-            '<div class="team-count internal-count"><span class="count-num">' + internal.length + '</span> players</div>' +
+            '<div class="team-count internal-count">' + internal.length + ' players</div>' +
             '<div class="stat-pills">' +
             '<div class="stat-pill internal-pill">' + (highestWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalHighest) + '</div><div class="stat-name">Highest</div></div>' +
             '<div class="stat-pill internal-pill">' + (avgWin === 'internal' ? crown : noCrown) + '<div class="stat-val">' + fmt(internalAvg) + '</div><div class="stat-name">Average</div></div>' +
