@@ -294,8 +294,11 @@ body {
 
 .team-count {
     font-family: 'Roboto', sans-serif;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.35);
     text-align: center;
     margin-bottom: 5px;
 }
