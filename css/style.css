@@ -285,7 +285,7 @@ body {
     letter-spacing: 2px;
     text-transform: uppercase;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     text-align: center;
 }
 
@@ -295,11 +295,19 @@ body {
 .team-count {
     font-family: 'Roboto', sans-serif;
     font-size: 10px;
-    color: #AAAAAA;
-    opacity: 0.6;
+    color: rgba(255, 255, 255, 0.4);
     text-align: center;
     margin-bottom: 6px;
+    letter-spacing: 0.5px;
 }
+
+.team-count .count-num {
+    font-weight: 700;
+    opacity: 1;
+}
+
+.agency-count .count-num { color: rgba(155, 89, 182, 0.7); }
+.internal-count .count-num { color: rgba(139, 175, 196, 0.7); }
 
 .stat-pills {
     display: flex;
