@@ -95,12 +95,12 @@ window.CVInvaders.Config = {
 
     // Grades
     GRADES: [
-        { min: 15000, grade: 'A+', title: 'Unicorn Hunter' },
-        { min: 12500, grade: 'A', title: 'Talent Whisperer' },
-        { min: 10000, grade: 'B', title: 'CV Slayer' },
-        { min: 7500, grade: 'C', title: 'Inbox Warrior' },
-        { min: 5000, grade: 'D', title: 'LinkedIn Lurker' },
-        { min: 2500, grade: 'E', title: 'Ghost Recruiter' },
+        { min: 20000, grade: 'A+', title: 'Unicorn Hunter' },
+        { min: 15000, grade: 'A', title: 'Talent Whisperer' },
+        { min: 12000, grade: 'B', title: 'CV Slayer' },
+        { min: 9000, grade: 'C', title: 'Inbox Warrior' },
+        { min: 6000, grade: 'D', title: 'LinkedIn Lurker' },
+        { min: 3000, grade: 'E', title: 'Ghost Recruiter' },
         { min: 0, grade: 'F', title: 'First Day on the Job?' }
     ],
 
@@ -130,8 +130,8 @@ window.CVInvaders.Config = {
     },
 
     // Supabase API
-    SUPABASE_URL: 'https://hjczgaynpdrobyjwdpnl.supabase.co',
-    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqY3pnYXlucGRyb2J5andkcG5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNDQxMjQsImV4cCI6MjA4NjkyMDEyNH0.Bu9E5QB1ALEOOGrCfMlErpt5-4Th-Cbz0kcdUFjcCiU',
+    SUPABASE_URL: '__SUPABASE_URL__',
+    SUPABASE_ANON_KEY: '__SUPABASE_ANON_KEY__',
 
     // Pool sizes
     POOLS: {
